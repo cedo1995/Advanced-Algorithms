@@ -2,15 +2,13 @@ import numpy as np
 import random as random
 from decimal import Decimal
 
-
-
 def ER(n,p):
     """
     :param n: number of nodes
     :param p: probability to generate an edge
     :return: Graph
     """
-    random.seed(1)
+    random.seed(2)
     G = np.zeros((n, n))
     count = 0
     for row in range(n):
@@ -27,13 +25,13 @@ def findP(G):
         print("{} \t {}".format(p, count))
 """
 
-def bisectionMethod(a,b,scarto):
+def bisectionMethod(a,b,tolerance):
     G1, count1 = ER(6474, a)
 
-    if (abs(count1 - 13233) > scarto):
+    if (abs(count1 - 13233) > tolerance):
         G2, count2 = ER(6474, b)
 
-        if (abs(count2 - 13233) > scarto):
+        if (abs(count2 - 13233) > tolerance):
                     m = (a+b) / 2
                     if abs(count1-13233) < abs(count2-13233):
                         print(" intervallo",a," ",m)
@@ -52,11 +50,26 @@ def bisectionMethod(a,b,scarto):
 
 
 def main():
-    a=float(0.0)
+    """a=float(0.0)
     b=float(1.0)
-    scarto = 20
-    p= Decimal(bisectionMethod(a,b,scarto))
+    tolerance = 20      ##da valutare se cambiarlo
+    p= Decimal(bisectionMethod(a,b,tolerance))
     print("probability: ",p)
+    """
+    #calcolo di p ideale
+    numNodes = 6474
+    numEdges = 13233
+    p = numEdges / (numNodes**2)
+    G, count = ER(numNodes, p)
+    print(count,p)
+    #read data from file
+    """data = np.loadn('./as20000102.txt', encoding = int)
+    startingNode = data[:,0]
+    endingNode = data[:,1]
+
+    print( "{}\t{}".format(startingNode, endingNode) )
+
+    """
 
     """for p in np.arange(0.000314, 0.0003198, 0.000001):
         G, count = ER(6474, p)
