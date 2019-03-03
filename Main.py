@@ -1,7 +1,7 @@
 import numpy as np
 import random as random
-from decimal import Decimal
-from Graph import UPAGraph, ERGraph
+
+from Graph import UPAGraph, ERGraph, DataGraph
 
 
 def ER(n, p):
@@ -144,18 +144,30 @@ def main():
     """for i,j in new_data:
         print("{}\t{}".format(i,j))
     """
-    # TODO: calcolare i gradi dei nodi e valutare il grado medio per ciascun nodo
-    # TODO: in modo da poter assegnare quel valore ad m ed utilizzare poi UPA
 
+    # Ciao amici :) La parte che va con le classi parte da qui..
+    # se decidete che vi piace con le classi fate un po' di pulizia sopra
     numNodes = 6474
     numEdges = 13233
+
     p = numEdges / (numNodes**2)
+    m = 13233//6474  # numero intero più vicino al grado medio dei vertici della rete reale
 
-    #x = ERGraph(numNodes, p)
-    #x.printG()
+    # Genero un grafo con il processo ER
+    graph_er = ERGraph(numNodes, p)
+    graph_er.printG()
 
-    y = UPAGraph(numNodes, 3)
-    y.printG()
+    # Genero un grafo con il processo UPA
+    graph_upa = UPAGraph(numNodes, m)
+    graph_upa.printG()  # FIXME: 300 archi di differenza.. va bene o è troppo?
+
+    # Genero un grafo dal file txt
+    # FIXME: Credo sia giusto ma nel file ci sono degli id dei nodi che vanno
+    #  ben oltre il 6474 quindi booh, forse ho sbaglaito a capire..
+    #  quindi se runnate da index out of bound (perchè ho inizializzato
+    #  adjArr come un array 6474**
+    # graph_er = DataGraph(numNodes, './as20000102.txt')
+    # graph_er.printG()
 
 
 if __name__ == '__main__':
