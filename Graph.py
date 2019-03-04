@@ -1,5 +1,6 @@
 import random as random
 import numpy as np
+#np.set_printoptions(threshold=np.inf)
 
 # Classe base da cui derivano le tre classi ERGraph, UPAGraph e DataGraph
 class Graph:
@@ -80,6 +81,9 @@ class UPAGraph(Graph):
         return jar, extraction
 
 
+# NB: definisco i numeri che hanno i nodi nel file fornito dal professore come "Old_ID"
+#     mentre i numeri che vanno da 1 a 6474 come gli "ID" dei nodi (che ora voglio aggiungere io)
+
 class DataGraph(Graph):
     def __init__(self, n, file):
         super().__init__()
@@ -89,19 +93,21 @@ class DataGraph(Graph):
         startingNode = data[:, 0]
         endingNode = data[:, 1]
         IDtoNumber = set(startingNode)
-        IDtoNumberArr
-        for i in range(len(IDtoNumber)):
-        	IDtoNumberArr.append()
+        IDtoNumberArr=list(IDtoNumber) # IDtoNumber contiene tutti i gli Old_ID una presenti una sola volta ciascuno (in totale ha lunghezza 6474)
+        IDtoNumberArr.sort()
+
+        #print(startingNode)
         IdDictionary={}
         for i in range(n):
-        	IdDictionary[IDtoNumber[i]] = i
-        #print(numberToID)
+            IdDictionary[IDtoNumberArr[i]] = i # dizionario che associa ad ogni valore degli Old_ID il valore ID (intero incrementale da 0 a 6473)
 
-        new_data = []	#array di tuple
+
         for i in range(len(startingNode)):
-            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[startingNode[i]][IdDictionary[endingNode[i]]]] != 1:
 
-                self.adjArr[IdDictionary[startingNode[i]][IdDictionary[endingNode[i]]]] = 1
+            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] != 1:
+
+                #print(startingNode[i]," - ",endingNode[i])
+                self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] = 1 # leggendo gli Old_ID utilizzo il dizionario per capire a quale ID si riferiscono cosi da poter associare archi
                 self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] = 1
-                #self.arches.append((startingNode, endingNode))
+                self.arches.append((IdDictionary[startingNode[i]], IdDictionary[endingNode[i]]))
 
