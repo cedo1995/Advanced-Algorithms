@@ -154,20 +154,20 @@ def main():
     m = 13233//6474  # numero intero più vicino al grado medio dei vertici della rete reale
 
     # Genero un grafo con il processo ER
-    graph_er = ERGraph(numNodes, p)
+    """graph_er = ERGraph(numNodes, p)
     graph_er.printG()
 
     # Genero un grafo con il processo UPA
     graph_upa = UPAGraph(numNodes, m)
     graph_upa.printG()  # FIXME: 300 archi di differenza.. va bene o è troppo?
-
+	"""
     # Genero un grafo dal file txt
     # FIXME: Credo sia giusto ma nel file ci sono degli id dei nodi che vanno
-    #  ben oltre il 6474 quindi booh, forse ho sbaglaito a capire..
-    #  quindi se runnate da index out of bound (perchè ho inizializzato
-    #  adjArr come un array 6474**
-    # graph_er = DataGraph(numNodes, './as20000102.txt')
-    # graph_er.printG()
+    #  ben oltre il 6474 quindi booh, forse ho sbagliato a capire..
+    #  quindi se runnate dà index out of bound (perchè ho inizializzato
+    #  adjArr come un array 6474**2
+    graph_Dati = DataGraph(numNodes, './as20000102.txt')
+    graph_Dati.printG()
 
 
 if __name__ == '__main__':

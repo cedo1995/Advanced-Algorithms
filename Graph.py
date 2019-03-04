@@ -50,8 +50,11 @@ class UPAGraph(Graph):
         for row in range(m):
             for col in range(row+1, m):
                 self.adjArr[row][col] = 1
+                self.adjArr[col][row] = 1
+        # da valutare se necessario
                 self.arches.append((row, col))
 
+        #UPATRIAL:
         # Aggiunge m volte ognuno degli m nodi a jar
         for i in range(0, self.nodes):
             for j in range(0, self.nodes):
@@ -85,9 +88,20 @@ class DataGraph(Graph):
         data = np.loadtxt(file, delimiter='\t', dtype=int)
         startingNode = data[:, 0]
         endingNode = data[:, 1]
+        IDtoNumber = set(startingNode)
+        IDtoNumberArr
+        for i in range(len(IDtoNumber)):
+        	IDtoNumberArr.append()
+        IdDictionary={}
+        for i in range(n):
+        	IdDictionary[IDtoNumber[i]] = i
+        #print(numberToID)
+
+        new_data = []	#array di tuple
         for i in range(len(startingNode)):
-            if startingNode[i] != endingNode[i] and self.adjArr[startingNode[i]][endingNode[i]] != 1:
-                self.adjArr[startingNode[i]][endingNode[i]] = 1
-                self.adjArr[endingNode[i]][startingNode[i]] = 1
-                self.arches.append((startingNode, endingNode))
+            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[startingNode[i]][IdDictionary[endingNode[i]]]] != 1:
+
+                self.adjArr[IdDictionary[startingNode[i]][IdDictionary[endingNode[i]]]] = 1
+                self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] = 1
+                #self.arches.append((startingNode, endingNode))
 
