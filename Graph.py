@@ -95,7 +95,7 @@ class DataGraph(Graph):
         IDtoNumber = set(startingNode)
         IDtoNumberArr=list(IDtoNumber) # IDtoNumber contiene tutti i gli Old_ID una presenti una sola volta ciascuno (in totale ha lunghezza 6474)
         IDtoNumberArr.sort()
-
+        print(IDtoNumberArr[2])
         #print(startingNode)
         IdDictionary={}
         for i in range(n):
@@ -106,7 +106,8 @@ class DataGraph(Graph):
 
             if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] != 1:
 
-                #print(startingNode[i]," - ",endingNode[i])
+                #print(startingNode[1]," - ",endingNode[1])
+                #print(IdDictionary[startingNode[1]], " - ", IdDictionary[endingNode[1]])
                 self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] = 1 # leggendo gli Old_ID utilizzo il dizionario per capire a quale ID si riferiscono cosi da poter associare archi
                 self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] = 1
                 self.arches.append((IdDictionary[startingNode[i]], IdDictionary[endingNode[i]]))
