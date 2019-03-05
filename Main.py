@@ -167,7 +167,10 @@ def main():
     #  quindi se runnate dà index out of bound (perchè ho inizializzato
     #  adjArr come un array 6474**2
     graph_Dati = DataGraph(numNodes, './as20000102.txt')
-    graph_Dati.printG()
+    #graph_Dati.printG()
+
+    CC = graph_Dati.connectedComponents()
+    print(len(CC[0]))
 
 
 if __name__ == '__main__':

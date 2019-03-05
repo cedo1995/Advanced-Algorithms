@@ -1,6 +1,15 @@
 import random as random
 import numpy as np
-#np.set_printoptions(threshold=np.inf)
+np.set_printoptions(threshold=np.inf)
+from enum import Enum
+
+
+
+class Color(Enum):
+    White = int(0)
+    Gray = int(1)
+    Black = int(2)
+
 
 # Classe base da cui derivano le tre classi ERGraph, UPAGraph e DataGraph
 class Graph:
@@ -11,6 +20,53 @@ class Graph:
 
     def printG(self):
         print("Grafo con", self.nodes, "nodi e", len(self.arches), "archi.")
+
+    def addNode(self, node):
+        self.nodes += 1
+
+    def addEdge(self, node1, node2):
+        self.arches.append(node1,node2)
+        self.adjArr[node1][node2] = 1
+        self.adjArr[node2][node1] = 1
+
+    def DFS_Visited(self, u, visited,idToColor):
+        idToColor[u] = Color.Gray
+        visited.append(u)
+
+        for i,v in enumerate(self.adjArr[u]):  #ogni v contiene gli ID dei vertici che hanno un arco con u
+
+            if v==1:
+                if idToColor[i] == Color.White:
+                    #print(i)
+                    visited.append(self.DFS_Visited( i, visited,idToColor))
+
+
+        idToColor[u] = Color.Black
+        return visited
+
+    def connectedComponents(self):
+        idToColor = [Color.White]*self.nodes        #coloro tutti i nodi di bianco
+        #print(idToColor)
+        ## TODO: valutare se mettere CC=vuoto
+        CC= []                                      #array di componenti connesse
+        for v in range(self.nodes):
+            if idToColor[v] == Color.White:
+                print(v)
+                visited = []
+                comp = self.DFS_Visited(v, visited,idToColor)
+                #print(comp)
+                CC.append(comp)
+        return CC
+
+
+
+
+
+
+
+
+
+
 
 
 class ERGraph(Graph):
@@ -93,13 +149,13 @@ class DataGraph(Graph):
         startingNode = data[:, 0]
         endingNode = data[:, 1]
         IDtoNumber = set(startingNode)
-        IDtoNumberArr=list(IDtoNumber) # IDtoNumber contiene tutti i gli Old_ID una presenti una sola volta ciascuno (in totale ha lunghezza 6474)
+        IDtoNumberArr=list(IDtoNumber)      # IDtoNumber contiene tutti i gli Old_ID una presenti una sola volta ciascuno (in totale ha lunghezza 6474)
         IDtoNumberArr.sort()
-        print(IDtoNumberArr[2])
+        #print(IDtoNumberArr[2])
         #print(startingNode)
         IdDictionary={}
         for i in range(n):
-            IdDictionary[IDtoNumberArr[i]] = i # dizionario che associa ad ogni valore degli Old_ID il valore ID (intero incrementale da 0 a 6473)
+            IdDictionary[IDtoNumberArr[i]] = i      # dizionario che associa ad ogni valore degli Old_ID il valore ID (intero incrementale da 0 a 6473)
 
 
         for i in range(len(startingNode)):
@@ -108,7 +164,6 @@ class DataGraph(Graph):
 
                 #print(startingNode[1]," - ",endingNode[1])
                 #print(IdDictionary[startingNode[1]], " - ", IdDictionary[endingNode[1]])
-                self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] = 1 # leggendo gli Old_ID utilizzo il dizionario per capire a quale ID si riferiscono cosi da poter associare archi
+                self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] = 1     # leggendo gli Old_ID utilizzo il dizionario per capire a quale ID si riferiscono cosi da poter associare archi
                 self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] = 1
                 self.arches.append((IdDictionary[startingNode[i]], IdDictionary[endingNode[i]]))
-
