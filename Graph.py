@@ -63,16 +63,6 @@ class Graph:
         return CC
 
 
-
-
-
-
-
-
-
-
-
-
 class ERGraph(Graph):
     def __init__(self, n, p):
         """
@@ -114,6 +104,7 @@ class UPAGraph(Graph):
                 self.adjArr[col][row] = 1
         # da valutare se necessario
                 self.arches.append((row, col))
+
 
         #UPATRIAL:
         # Aggiunge m volte ognuno degli m nodi a jar

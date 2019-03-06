@@ -1,6 +1,6 @@
 import numpy as np
 import random as random
-
+import sys as sys
 from Graph import UPAGraph, ERGraph, DataGraph
 
 
@@ -148,34 +148,33 @@ def main():
     # Ciao amici :) La parte che va con le classi parte da qui..
     # se decidete che vi piace con le classi fate un po' di pulizia sopra
     numNodes = 6474
-    numEdges = 13233
+    numEdges = 12572
 
     #numNodes = 4
 
     p = numEdges / (numNodes**2)
-    m = 13233//6474  # numero intero più vicino al grado medio dei vertici della rete reale
-
+    m = int(round(numEdges/numNodes))  # numero intero più vicino al grado medio dei vertici della rete reale
+    sys.setrecursionlimit(10000)
     # Genero un grafo con il processo ER
-    """graph_er = ERGraph(numNodes, p)
+    graph_er = ERGraph(numNodes, p)
     graph_er.printG()
+    CCEr = graph_er.connectedComponents()
 
     # Genero un grafo con il processo UPA
     graph_upa = UPAGraph(numNodes, m)
-    graph_upa.printG()  # FIXME: 300 archi di differenza.. va bene o è troppo?
-	"""
-    # Genero un grafo dal file txt
-    # FIXME: Credo sia giusto ma nel file ci sono degli id dei nodi che vanno
-    #  ben oltre il 6474 quindi booh, forse ho sbagliato a capire..
-    #  quindi se runnate dà index out of bound (perchè ho inizializzato
-    #  adjArr come un array 6474**2
+    graph_upa.printG()
+    CCUpa = graph_upa.connectedComponents()
+
+    #Genero un grafo dal file
     graph_Dati = DataGraph(numNodes, './as20000102.txt')
-    #graph_Dati.printG()
+    graph_Dati.printG()
+    CCDati = graph_Dati.connectedComponents()
+    #print(len(CCDati[0]))
 
     #graph_Dati = DataGraph(numNodes, './piccolo_esempietto.txt')
-
     # print(graph_Dati.adjArr)
-    CC = graph_Dati.connectedComponents()
-    print(len(CC[0]))
+
+
 
 
 
