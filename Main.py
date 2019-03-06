@@ -150,6 +150,8 @@ def main():
     numNodes = 6474
     numEdges = 13233
 
+    #numNodes = 4
+
     p = numEdges / (numNodes**2)
     m = 13233//6474  # numero intero più vicino al grado medio dei vertici della rete reale
 
@@ -169,8 +171,12 @@ def main():
     graph_Dati = DataGraph(numNodes, './as20000102.txt')
     #graph_Dati.printG()
 
+    #graph_Dati = DataGraph(numNodes, './piccolo_esempietto.txt')
+
+    # print(graph_Dati.adjArr)
     CC = graph_Dati.connectedComponents()
     print(len(CC[0]))
+
 
 
 if __name__ == '__main__':

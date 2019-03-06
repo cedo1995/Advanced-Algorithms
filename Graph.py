@@ -32,26 +32,30 @@ class Graph:
     def DFS_Visited(self, u, visited,idToColor):
         idToColor[u] = Color.Gray
         visited.append(u)
+        #print(self.adjArr[u])
+        for i, v in enumerate(self.adjArr[u]):  #ogni v contiene gli ID dei vertici che hanno un arco con u
 
-        for i,v in enumerate(self.adjArr[u]):  #ogni v contiene gli ID dei vertici che hanno un arco con u
+            if v == 1:
 
-            if v==1:
                 if idToColor[i] == Color.White:
+
                     #print(i)
-                    visited.append(self.DFS_Visited( i, visited,idToColor))
+
+                    self.DFS_Visited(i, visited, idToColor)
 
 
         idToColor[u] = Color.Black
+
         return visited
 
     def connectedComponents(self):
         idToColor = [Color.White]*self.nodes        #coloro tutti i nodi di bianco
-        #print(idToColor)
+
         ## TODO: valutare se mettere CC=vuoto
         CC= []                                      #array di componenti connesse
         for v in range(self.nodes):
             if idToColor[v] == Color.White:
-                print(v)
+                #print(v)
                 visited = []
                 comp = self.DFS_Visited(v, visited,idToColor)
                 #print(comp)
