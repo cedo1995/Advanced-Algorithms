@@ -105,7 +105,6 @@ class UPAGraph(Graph):
         # da valutare se necessario
                 self.arches.append((row, col))
 
-
         #UPATRIAL:
         # Aggiunge m volte ognuno degli m nodi a jar
         for i in range(0, self.nodes):
@@ -117,16 +116,17 @@ class UPAGraph(Graph):
             jar, extraction = self.RunTrial(m, u, jar)
             for num in extraction:
                 # Setto a 1 entrambe le celle (così sarà una matrice simmetrica) ma conto solo un arco
-                self.adjArr[u][num] = 1
-                self.adjArr[num][u] = 1
-                self.arches.append((u, num))
+                if self.adjArr[u][num] != 1 and u != num and self.adjArr[num][u] != 1: # perchè devo controllare di non contare di nuovo archi dove li ho già nè devo mettere cappi
+                    self.adjArr[u][num] = 1
+                    self.adjArr[num][u] = 1
+                    self.arches.append((u, num))
 
     def RunTrial(self, m, num_node, jar):
         extraction = []
         for i in range(0, m):
-            u = random.randint(0, len(jar)-1)
+            u = np.random.randint(len(jar))
             extraction.append(jar[u])
-        jar.append(num_node)
+        jar.append(self.nodes)  # PSEUDO CODICE SBAGLIATO ?!?!?!?!?!??!!?
         jar.extend(extraction)
         self.nodes += 1
         return jar, extraction

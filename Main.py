@@ -153,17 +153,15 @@ def main():
     #numNodes = 4
 
     p = numEdges / (numNodes**2)
-    m = int(round(numEdges/numNodes))  # numero intero più vicino al grado medio dei vertici della rete reale
+    m = int(round(numEdges*2/numNodes))  # numero intero più vicino al grado medio dei vertici della rete reale
     sys.setrecursionlimit(10000)
     # Genero un grafo con il processo ER
+    '''
     graph_er = ERGraph(numNodes, p)
     graph_er.printG()
     CCEr = graph_er.connectedComponents()
 
-    # Genero un grafo con il processo UPA
-    graph_upa = UPAGraph(numNodes, m)
-    graph_upa.printG()
-    CCUpa = graph_upa.connectedComponents()
+ 
 
     #Genero un grafo dal file
     graph_Dati = DataGraph(numNodes, './as20000102.txt')
@@ -173,6 +171,12 @@ def main():
 
     #graph_Dati = DataGraph(numNodes, './piccolo_esempietto.txt')
     # print(graph_Dati.adjArr)
+    '''
+
+    # Genero un grafo con il processo UPA
+    graph_upa = UPAGraph(numNodes, m)
+    graph_upa.printG()
+    #CCUpa = graph_upa.connectedComponents()
 
 
 
