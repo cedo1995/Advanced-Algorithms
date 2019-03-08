@@ -29,11 +29,6 @@ class Graph:
         self.adjArr[node1][node2] = 1
         self.adjArr[node2][node1] = 1
 
-    #io la farei che non ritorna nulla
-    def removeNode(self,node):
-        ## TODO: elimina tutti gli archi del nodo
-        ## TODO: rimuovi il nodo e diminuisci il self.nodes
-        pass
 
     def DFS_Visited(self, u, visited,idToColor):
         idToColor[u] = Color.Gray
