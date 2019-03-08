@@ -29,6 +29,12 @@ class Graph:
         self.adjArr[node1][node2] = 1
         self.adjArr[node2][node1] = 1
 
+    #io la farei che non ritorna nulla
+    def removeNode(self,node):
+        ## TODO: elimina tutti gli archi del nodo
+        ## TODO: rimuovi il nodo e diminuisci il self.nodes
+        pass
+
     def DFS_Visited(self, u, visited,idToColor):
         idToColor[u] = Color.Gray
         visited.append(u)
@@ -62,9 +68,17 @@ class Graph:
                 CC.append(comp)
         return CC
 
+    #funzione di disattivazione di un nodo dal Grafo
+    def deactivateNode(self, node):
+        self.removeNode(node)
+        #ricalcolo connectedComponents
+
+
+
+
 
 class ERGraph(Graph):
-    def __init__(self, n, p):
+    def __init__(self, n, p, seed):
         """
         :param n: number of nodes
         :param p: probability to generate an edge
@@ -155,7 +169,7 @@ class DataGraph(Graph):
 
         for i in range(len(startingNode)):
 
-            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] != 1:
+            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] != 1:
 
                 #print(startingNode[1]," - ",endingNode[1])
                 #print(IdDictionary[startingNode[1]], " - ", IdDictionary[endingNode[1]])

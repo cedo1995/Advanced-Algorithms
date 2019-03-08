@@ -149,27 +149,35 @@ def main():
     # se decidete che vi piace con le classi fate un po' di pulizia sopra
     numNodes = 6474
     numEdges = 12572
-
-    #numNodes = 4
+    seed=2
+    #numNodes = 2
 
     p = numEdges / (numNodes**2)
-    m = int(round(numEdges/numNodes))  # numero intero più vicino al grado medio dei vertici della rete reale
+    m = int(round(numEdges/numNodes)) #se m=2 il numero di archi risulta giusto, se usiamo invece 2*numEdges/numNodes allora no.
+
+
     sys.setrecursionlimit(10000)
+
     # Genero un grafo con il processo ER
-    graph_er = ERGraph(numNodes, p)
+    print("ERGraph:")
+    graph_er = ERGraph(numNodes, p, seed)
     graph_er.printG()
     CCEr = graph_er.connectedComponents()
+    print(len(CCEr),"\n\n")
 
     # Genero un grafo con il processo UPA
+    print("UPAGraph:")
     graph_upa = UPAGraph(numNodes, m)
     graph_upa.printG()
     CCUpa = graph_upa.connectedComponents()
+    print(len(CCUpa),"\n\n")
 
     #Genero un grafo dal file
+    print("DataGraph:")
     graph_Dati = DataGraph(numNodes, './as20000102.txt')
     graph_Dati.printG()
     CCDati = graph_Dati.connectedComponents()
-    #print(len(CCDati[0]))
+    print(len(CCDati),"\n\n")
 
     #graph_Dati = DataGraph(numNodes, './piccolo_esempietto.txt')
     # print(graph_Dati.adjArr)
