@@ -1,173 +1,94 @@
+from Node import *
 import random as random
 import numpy as np
-np.set_printoptions(threshold=np.inf)
-from enum import Enum
 
 
 
-class Color(Enum):
-    White = int(0)
-    Gray = int(1)
-    Black = int(2)
-
-
-# Classe base da cui derivano le tre classi ERGraph, UPAGraph e DataGraph
 class Graph:
-    def __init__(self):
-        self.nodes = 0
-        self.arches = []  # Contiene le tuple con i vertici collegati SOLO UNA VOLTA dato che parliamo di grafi non orientati
-        self.adjArr = []  # Array di adiacenza, qui entrambe le coppie sono settate a 1 (sta a noi prendere solo metà array)
-
+    def __init__(self, n):
+        self.numNodes = n
+        self.arrNodes = []
+        for i in range(n):
+            self.arrNodes.append( Node(i) )
+        self.numEdges = 0
     def printG(self):
-        print("Grafo con", self.nodes, "nodi e", len(self.arches), "archi.")
-
-    def addNode(self, node):
-        self.nodes += 1
-
-    def addEdge(self, node1, node2):
-        self.arches.append(node1,node2)
-        self.adjArr[node1][node2] = 1
-        self.adjArr[node2][node1] = 1
-
-
-    def DFS_Visited(self, u, visited,idToColor):
-        idToColor[u] = Color.Gray
-        visited.append(u)
-        #print(self.adjArr[u])
-        for i, v in enumerate(self.adjArr[u]):  #ogni v contiene gli ID dei vertici che hanno un arco con u
-
-            if v == 1:
-
-                if idToColor[i] == Color.White:
-
-                    #print(i)
-
-                    self.DFS_Visited(i, visited, idToColor)
-
-
-        idToColor[u] = Color.Black
-
-        return visited
-
-    def connectedComponents(self):
-        idToColor = [Color.White]*self.nodes        #coloro tutti i nodi di bianco
-
-        ## TODO: valutare se mettere CC=vuoto
-        CC= []                                      #array di componenti connesse
-        for v in range(self.nodes):
-            if idToColor[v] == Color.White:
-                #print(v)
-                visited = []
-                comp = self.DFS_Visited(v, visited,idToColor)
-                #print(comp)
-                CC.append(comp)
-        return CC
-
-    #funzione di disattivazione di un nodo dal Grafo
-    def deactivateNode(self, node):
-        self.removeNode(node)
-        #ricalcolo connectedComponents
-
-
-
-
+        print("Grafo con ", self.numNodes, " nodi e ", self.numEdges, " archi.")
 
 class ERGraph(Graph):
+    """
+    :param n: num of nodes
+    :param p: prob to generate a node
+    :param seed: seed of random values
+    """
     def __init__(self, n, p, seed):
-        """
-        :param n: number of nodes
-        :param p: probability to generate an edge
-        """
-        super().__init__()
-        random.seed(2)
-        self.nodes = n
-        self.adjArr = np.zeros((n, n))
-        for row in range(n):
-            for col in range(n):
+        super().__init__(n)
+        random.seed(seed)
+        self.numNodes = n
+        for i in range(self.numNodes):
+            for j in range(self.numNodes):
                 a = random.uniform(0, 1)
-                # FIXME
-                # con G[col][row] != 1 non considero i doppi archi avendo un grafo non orientato
-                if a < p and self.adjArr[col][row] != 1 and row != col:
-                    # Setto a 1 entrambe le celle (così sarà una matrice simmetrica) ma conto solo un arco
-                    self.adjArr[row][col] = 1
-                    self.adjArr[col][row] = 1
-                    self.arches.append((row, col))
-
+                if a < p and i != j and not (self.arrNodes[j].getAdjArr().__contains__(i) and self.arrNodes[i].getAdjArr().__contains__(j) ):
+                    self.arrNodes[i].addNodeToAdj(j)
+                    self.arrNodes[j].addNodeToAdj(i)
+                    self.numEdges += 1
 
 class UPAGraph(Graph):
     def __init__(self, n, m):
         """
-        :param n: number of nodes
-        :param m: 0 <= 1 <= m number of nodes already in the graph
+        :param n: num of nodes
+        :param m: num of nodes already in the jar
         """
-        super().__init__()
-        self.nodes = m
-        self.adjArr = np.zeros((n, n))
+        super().__init__(n)
+        self.numNodes = m
 
-        jar = []  # Urna da cui pescare, sarebbe nodeNumbers del libro ma quel nome mi faceva confusione
+        jar = []    # Attualmente teniamo solo gli ID dei nodi presenti nell'urna
 
-        # Inizializza grafo completo con m nodi
-        for row in range(m):
-            for col in range(row+1, m):
-                self.adjArr[row][col] = 1
-                self.adjArr[col][row] = 1
-        # da valutare se necessario
-                self.arches.append((row, col))
+        for i in range(m):
+            for j in range(i+1, m):
+                self.arrNodes[i].addNodeToAdj(j)
+                self.arrNodes[j].addNodeToAdj(i)
+                self.numEdges += 1
 
-
-        #UPATRIAL:
-        # Aggiunge m volte ognuno degli m nodi a jar
-        for i in range(0, self.nodes):
-            for j in range(0, self.nodes):
+        #UPATrial
+        for i in range(self.numNodes):
+            for j in range(self.numNodes):
                 jar.append(i)
 
-        # Per ogni ulteriore nodo faccio m estrazioni
         for u in range(m, n):
             jar, extraction = self.RunTrial(m, u, jar)
             for num in extraction:
-                # Setto a 1 entrambe le celle (così sarà una matrice simmetrica) ma conto solo un arco
-                self.adjArr[u][num] = 1
-                self.adjArr[num][u] = 1
-                self.arches.append((u, num))
+                #Aggiungo i nodi alle rispettive liste di adj
+                #da valutare se aggiungere if c'è gia un arco fra u e num e il contrario
+                self.arrNodes[u].addNodeToAdj(num)
+                self.arrNodes[num].addNodeToAdj(u)
+                self.numEdges += 1
+
 
     def RunTrial(self, m, num_node, jar):
         extraction = []
-        for i in range(0, m):
-            u = random.randint(0, len(jar)-1)
+        for i in range(m):
+            u = random.randint(0, len(jar) - 1)
             extraction.append(jar[u])
         jar.append(num_node)
         jar.extend(extraction)
-        self.nodes += 1
+        self.numNodes += 1
         return jar, extraction
 
-
-# NB: definisco i numeri che hanno i nodi nel file fornito dal professore come "Old_ID"
-#     mentre i numeri che vanno da 1 a 6474 come gli "ID" dei nodi (che ora voglio aggiungere io)
-
-class DataGraph(Graph):
+class DATAGraph(Graph):
     def __init__(self, n, file):
-        super().__init__()
-        self.nodes = n
-        self.adjArr = np.zeros((n, n))
+        super().__init__(n)
+        self.numNodes = n
         data = np.loadtxt(file, delimiter='\t', dtype=int)
         startingNode = data[:, 0]
         endingNode = data[:, 1]
-        IDtoNumber = set(startingNode)
-        IDtoNumberArr=list(IDtoNumber)      # IDtoNumber contiene tutti i gli Old_ID una presenti una sola volta ciascuno (in totale ha lunghezza 6474)
-        IDtoNumberArr.sort()
-        #print(IDtoNumberArr[2])
-        #print(startingNode)
-        IdDictionary={}
+
+        IdToNumberArr = list(set(startingNode))
+        IdToNumberArr.sort()
+
+        IdDictionary = {}
+
         for i in range(n):
-            IdDictionary[IDtoNumberArr[i]] = i      # dizionario che associa ad ogni valore degli Old_ID il valore ID (intero incrementale da 0 a 6473)
-
-
+            IdDictionary[IdToNumberArr[i]] = i
         for i in range(len(startingNode)):
+            if startingNode[i] != endingNode[i] and not self.arrNodes[IdDictionary[endingNode[i]]].adjArr.__contains__(IdDictionary[startingNode[i]]):
 
-            if startingNode[i] != endingNode[i] and self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] != 1:
-
-                #print(startingNode[1]," - ",endingNode[1])
-                #print(IdDictionary[startingNode[1]], " - ", IdDictionary[endingNode[1]])
-                self.adjArr[IdDictionary[startingNode[i]]][IdDictionary[endingNode[i]]] = 1     # leggendo gli Old_ID utilizzo il dizionario per capire a quale ID si riferiscono cosi da poter associare archi
-                self.adjArr[IdDictionary[endingNode[i]]][IdDictionary[startingNode[i]]] = 1
-                self.arches.append((IdDictionary[startingNode[i]], IdDictionary[endingNode[i]]))
