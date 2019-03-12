@@ -71,12 +71,20 @@ class Graph:
         del self.arrNodes[index_node]
         self.numNodes -= 1
 
+        for i in range(len(self.arrNodes)):
+            for j in range(len(self.arrNodes[i].adjArr)):
+                if self.arrNodes[i].adjArr[j] > index_node:
+                    self.arrNodes[i].adjArr[j] -= 1
+            if self.arrNodes[i].id > index_node:
+                self.arrNodes[i].id -=1
+
+
 
     def getResilience(self):
         CC = self.connectedComponents()
         max = 0
         for index in CC:
-            if len(index)>max:
+            if len(index) > max:
                 max = len(index)
         return max
 
@@ -90,11 +98,12 @@ class Graph:
         while(ok):
         #for i, v in enumerate(deleteOrder):
             index_node = random.randint(0, self.numNodes-1)
-            print("rimuovo ", index_node)
+            #print("rimuovo ", index_node)
             self.removeNode(index_node)  #v è l'indice!!!!!
-            for j in self.arrNodes:
-                print(j.getID(), "\t", j.getAdjArr())
+            #for j in self.arrNodes:
+                #print(j.getID(), "\t", j.getAdjArr())
             resilience.append(self.getResilience())
+            print("numero nodi: ",self.numNodes," resilienza: ", resilience[len(resilience)-1])
             #print(self.getResilience()," ", i)
             i += 1
             if self.numNodes == 0:
