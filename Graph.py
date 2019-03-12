@@ -1,8 +1,12 @@
 from Node import *
 import random as random
 import numpy as np
+from enum import Enum
 
-
+class Color(Enum):
+    White = int(0)
+    Gray = int(1)
+    Black = int(2)
 
 class Graph:
     def __init__(self, n):
@@ -13,6 +17,90 @@ class Graph:
         self.numEdges = 0
     def printG(self):
         print("Grafo con ", self.numNodes, " nodi e ", self.numEdges, " archi.")
+
+    def DFS_Visited(self, u, visited, idToColor):
+        idToColor[u] = Color.Gray
+        visited.append(u)
+        for i in self.arrNodes[u].adjArr:
+            if idToColor[i] == Color.White:
+                self.DFS_Visited(i, visited, idToColor)
+
+        idToColor[u] = Color.Black
+        return visited
+
+    def connectedComponents(self):
+        idToColor = [Color.White]*self.numNodes
+        CC = []
+        for v in range(self.numNodes):
+            if idToColor[v] == Color.White:
+                #print(v)
+
+                visited = []
+                comp = self.DFS_Visited(v, visited, idToColor)
+                CC.append(comp)
+        return CC
+    """
+    def removeNode(self, node):
+        #print(self.arrNodes[0].adjArr)
+        for vertex in range(len(self.arrNodes)):
+            lenArrNodesAdj = len(self.arrNodes[vertex].adjArr)
+            i = 0
+            value = self.arrNodes[vertex].adjArr
+            while(value[i] not in self.arrNodes[vertex].adjArr):
+                if value[i] == node:
+                    del self.arrNodes[vertex].adjArr[i]
+                    self.numEdges -= 1
+                    break
+                else:
+                    i += 1
+        del self.arrNodes[node]
+        self.numNodes -= 1
+        #print(self.arrNodes[0].adjArr)
+    """
+    def removeNode(self, index_node):
+        for vertex in range(len(self.arrNodes)):
+            num1 = len(self.arrNodes[vertex].adjArr)
+            self.arrNodes[vertex].adjArr = [x for x in self.arrNodes[vertex].adjArr if x != index_node]
+            #print(self.arrNodes[vertex].adjArr, " ")
+            num2 = len(self.arrNodes[vertex].adjArr)
+            if num2 < num1:
+                self.numEdges -= 1
+
+
+
+        del self.arrNodes[index_node]
+        self.numNodes -= 1
+
+
+    def getResilience(self):
+        CC = self.connectedComponents()
+        max = 0
+        for index in CC:
+            if len(index)>max:
+                max = len(index)
+        return max
+
+
+    def resilienceCalculator(self, seed):
+        random.seed(seed)
+        resilience = []
+        ok = True
+        i = 0
+
+        while(ok):
+        #for i, v in enumerate(deleteOrder):
+            index_node = random.randint(0, self.numNodes-1)
+            print("rimuovo ", index_node)
+            self.removeNode(index_node)  #v è l'indice!!!!!
+            for j in self.arrNodes:
+                print(j.getID(), "\t", j.getAdjArr())
+            resilience.append(self.getResilience())
+            #print(self.getResilience()," ", i)
+            i += 1
+            if self.numNodes == 0:
+                ok = False
+        return resilience
+
 
 class ERGraph(Graph):
     """
@@ -90,5 +178,8 @@ class DATAGraph(Graph):
         for i in range(n):
             IdDictionary[IdToNumberArr[i]] = i
         for i in range(len(startingNode)):
-            if startingNode[i] != endingNode[i] and not self.arrNodes[IdDictionary[endingNode[i]]].adjArr.__contains__(IdDictionary[startingNode[i]]):
+            if startingNode[i] != endingNode[i] and not self.arrNodes[IdDictionary[endingNode[i]]].adjArr.__contains__(IdDictionary[startingNode[i]]) and not self.arrNodes[IdDictionary[startingNode[i]]].adjArr.__contains__(IdDictionary[endingNode[i]]):
+                self.arrNodes[IdDictionary[startingNode[i]]].addNodeToAdj(IdDictionary[endingNode[i]])
+                self.arrNodes[IdDictionary[endingNode[i]]].addNodeToAdj(IdDictionary[startingNode[i]])
+                self.numEdges += 1
 
