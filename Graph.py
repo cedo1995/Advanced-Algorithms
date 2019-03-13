@@ -76,7 +76,7 @@ class Graph:
                 if self.arrNodes[i].adjArr[j] > index_node:
                     self.arrNodes[i].adjArr[j] -= 1
             if self.arrNodes[i].id > index_node:
-                self.arrNodes[i].id -=1
+                self.arrNodes[i].id -= 1
 
 
 
@@ -103,13 +103,29 @@ class Graph:
             #for j in self.arrNodes:
                 #print(j.getID(), "\t", j.getAdjArr())
             resilience.append(self.getResilience())
-            print("numero nodi: ",self.numNodes," resilienza: ", resilience[len(resilience)-1])
+            #print("numero nodi: ",self.numNodes, "\tresilienza: ", resilience[len(resilience)-1])
             #print(self.getResilience()," ", i)
             i += 1
             if self.numNodes == 0:
                 ok = False
         return resilience
 
+    def intelligentSelectionResilienceCalculator(self):
+        resilience = []
+        while self.numNodes != 0:
+            i = 0
+            max_deg = 0  # grado massimo
+            index_max = 0  # indice del nodo con grado massimo
+            for i in range(len(self.arrNodes)):
+                if max_deg < len(self.arrNodes[i].adjArr):
+                    max_deg = len(self.arrNodes[i].adjArr)
+                    index_max = i
+            #print("rimuovo il nodo con indice:", index_max)
+            self.removeNode(index_max)
+            resilience.append(self.getResilience())
+            #print("numero nodi: ", self.numNodes, "\tresilienza: ", resilience[len(resilience)-1])
+
+        return resilience
 
 class ERGraph(Graph):
     """
@@ -191,4 +207,5 @@ class DATAGraph(Graph):
                 self.arrNodes[IdDictionary[startingNode[i]]].addNodeToAdj(IdDictionary[endingNode[i]])
                 self.arrNodes[IdDictionary[endingNode[i]]].addNodeToAdj(IdDictionary[startingNode[i]])
                 self.numEdges += 1
+
 
