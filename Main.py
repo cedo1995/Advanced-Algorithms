@@ -11,6 +11,7 @@ def main():
     p = numEdges / (numNodes ** 2)
     m = int(round(numEdges / numNodes))
 
+
     print("ER Graph:")
     graph_er = ERGraph(numNodes, p, seed)
     graph_er.printG()
@@ -19,8 +20,8 @@ def main():
     arrResilienceEr = graph_er.resilienceCalculator(seed)
     print("Resilienza random", arrResilienceEr)
     graph_er = ERGraph(numNodes, p, seed)
-    intSelResilienceEr = graph_er.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceEr)
+    # intSelResilienceEr = graph_er.intelligentSelectionResilienceCalculator()
+    # print("Resilienza grado massimo", intSelResilienceEr)
 
     print("UPA Graph:")
     graph_UPA = UPAGraph(numNodes, m)
@@ -30,9 +31,10 @@ def main():
     arrResilienceUPA = graph_UPA.resilienceCalculator(seed)
     print("Resilienza random", arrResilienceUPA)
     graph_UPA = UPAGraph(numNodes, m)
-    intSelResilienceUPA = graph_UPA.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceUPA)
-    
+    # intSelResilienceUPA = graph_UPA.intelligentSelectionResilienceCalculator()
+    # print("Resilienza grado massimo", intSelResilienceUPA)
+
+
     print("DataGraph:")
     data_graph = DATAGraph(numNodes, './as20000102.txt')
     data_graph.printG()
@@ -45,10 +47,10 @@ def main():
     arrResilienceDATA = data_graph.resilienceCalculator(seed)
     print("Resilienza random", arrResilienceDATA)
     data_graph = DATAGraph(numNodes, './as20000102.txt')
-    intSelResilienceDATA = data_graph.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceDATA)
+    # intSelResilienceDATA = data_graph.intelligentSelectionResilienceCalculator()
+    # print("Resilienza grado massimo", intSelResilienceDATA)
 
-
+    printPlotRandom(arrResilienceDATA, arrResilienceEr, arrResilienceUPA, numNodes)
 
 
 

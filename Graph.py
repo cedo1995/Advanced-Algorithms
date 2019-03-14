@@ -3,6 +3,10 @@ import random as random
 import numpy as np
 from enum import Enum
 
+
+import matplotlib
+import matplotlib.pyplot as plt
+
 class Color(Enum):
     White = int(0)
     Gray = int(1)
@@ -77,7 +81,6 @@ class Graph:
                     self.arrNodes[i].adjArr[j] -= 1
             if self.arrNodes[i].id > index_node:
                 self.arrNodes[i].id -= 1
-
 
 
     def getResilience(self):
@@ -209,3 +212,19 @@ class DATAGraph(Graph):
                 self.numEdges += 1
 
 
+def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
+    t = np.linspace(0, numNodes, 6474)
+    print(t)
+    fig, ax = plt.subplots()
+    ax.set(xlabel="Nr. nodi disattivati",
+           ylabel="Dimensione componente connessa più grande",
+           title="Resilienze dopo attacchi casuali")
+
+    ax.plot(t, ArrResilD, "r", label="Grafo dati reali")
+    ax.plot(t, ArrResilER, "b", label="Grafo ER")
+    ax.plot(t, ArrResilUPA, "y", label="Grafo dati reali")
+
+    legend = ax.legend(loc="upper right", shadow=True, fontsize="medium")
+    legend.get_frame().set_facecolor("G0")
+    fig.savefig("resilienze_attacchi_casuali.png")
+    plt.show()
