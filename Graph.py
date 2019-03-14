@@ -213,7 +213,7 @@ class DATAGraph(Graph):
 
 
 def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
-    t = np.linspace(0, numNodes, 6474)
+    t = np.arange(6474)
     print(t)
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
@@ -222,9 +222,9 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
 
     ax.plot(t, ArrResilD, "r", label="Grafo dati reali")
     ax.plot(t, ArrResilER, "b", label="Grafo ER")
-    ax.plot(t, ArrResilUPA, "y", label="Grafo dati reali")
+    ax.plot(t, ArrResilUPA, "g", label="Grafo UPA")
 
     legend = ax.legend(loc="upper right", shadow=True, fontsize="medium")
-    legend.get_frame().set_facecolor("G0")
+   
     fig.savefig("resilienze_attacchi_casuali.png")
     plt.show()
