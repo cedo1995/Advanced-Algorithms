@@ -41,33 +41,14 @@ class Graph:
                 comp = self.DFS_Visited(v, visited, idToColor)
                 CC.append(comp)
         return CC
-    """
-    def removeNode(self, node):
-        #print(self.arrNodes[0].adjArr)
-        for vertex in range(len(self.arrNodes)):
-            lenArrNodesAdj = len(self.arrNodes[vertex].adjArr)
-            i = 0
-            value = self.arrNodes[vertex].adjArr
-            while(value[i] not in self.arrNodes[vertex].adjArr):
-                if value[i] == node:
-                    del self.arrNodes[vertex].adjArr[i]
-                    self.numEdges -= 1
-                    break
-                else:
-                    i += 1
-        del self.arrNodes[node]
-        self.numNodes -= 1
-        #print(self.arrNodes[0].adjArr)
-    """
+
     def removeNode(self, index_node):
         for vertex in range(len(self.arrNodes)):
             num1 = len(self.arrNodes[vertex].adjArr)
             self.arrNodes[vertex].adjArr = [x for x in self.arrNodes[vertex].adjArr if x != index_node]
-            #print(self.arrNodes[vertex].adjArr, " ")
             num2 = len(self.arrNodes[vertex].adjArr)
             if num2 < num1:
                 self.numEdges -= 1
-
 
         del self.arrNodes[index_node]
         self.numNodes -= 1
@@ -78,7 +59,6 @@ class Graph:
                     self.arrNodes[i].adjArr[j] -= 1
             if self.arrNodes[i].id > index_node:
                 self.arrNodes[i].id -= 1
-
 
     def getResilience(self):
         CC = self.connectedComponents()
@@ -100,19 +80,16 @@ class Graph:
     def intelligentSelectionResilienceCalculator(self):
         resilience = []
         while self.numNodes != 0:
-            i = 0
             max_deg = 0  # grado massimo
             index_max = 0  # indice del nodo con grado massimo
             for i in range(len(self.arrNodes)):
                 if max_deg < len(self.arrNodes[i].adjArr):
                     max_deg = len(self.arrNodes[i].adjArr)
                     index_max = i
-            #print("rimuovo il nodo con indice:", index_max)
             self.removeNode(index_max)
             resilience.append(self.getResilience())
-            #print("numero nodi: ", self.numNodes, "\tresilienza: ", resilience[len(resilience)-1])
-
         return resilience
+
 
 class ERGraph(Graph):
     """
@@ -131,6 +108,7 @@ class ERGraph(Graph):
                     self.arrNodes[i].addNodeToAdj(j)
                     self.arrNodes[j].addNodeToAdj(i)
                     self.numEdges += 1
+
 
 class UPAGraph(Graph):
     def __init__(self, n, m):
@@ -163,7 +141,6 @@ class UPAGraph(Graph):
                 self.arrNodes[num].addNodeToAdj(u)
                 self.numEdges += 1
 
-
     def RunTrial(self, m, num_node, jar):
         extraction = []
         for i in range(m):
@@ -173,6 +150,7 @@ class UPAGraph(Graph):
         jar.extend(extraction)
         self.numNodes += 1
         return jar, extraction
+
 
 class DATAGraph(Graph):
     def __init__(self, n, file):
@@ -196,7 +174,7 @@ class DATAGraph(Graph):
                 self.numEdges += 1
 
 
-def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
+def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileName):
     t = np.arange(numNodes)
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
@@ -209,20 +187,20 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
 
     ax.legend(loc="upper right", shadow=True, fontsize="medium")
    
-    fig.savefig("Fig1_resilienze_attacchi_casuali.svg")
+    fig.savefig(fileName)
     plt.show()
 
 
-def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
+def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileName):
     t = np.arange(numNodes)
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
            ylabel="Dimensione componente connessa più grande",
            title="Resilienze dopo attacchi casuali")
 
-    ax.plot(t, ArrResilD, "r", label="Grafo dati reali")
-    ax.plot(t, ArrResilER, "b", label="Grafo ER", linewidth=0.5)
-    ax.plot(t, ArrResilUPA, "g", label="Grafo UPA")
+    ax.plot(t, ArrResilD, "#ff6666", label="Grafo dati reali", linewidth=0.75)
+    ax.plot(t, ArrResilER, "#8080ff", label="Grafo ER", linewidth=0.75)
+    ax.plot(t, ArrResilUPA, "#66ff66", label="Grafo UPA", linewidth=0.75)
 
     ax.legend(loc="upper right", shadow=True, fontsize="medium")
 
@@ -248,12 +226,12 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
             yD.append(i)
             cD += 1
 
-    ax.plot(np.arange(cE), yE, "c", linewidth=0.5)
-    ax.plot(np.arange(cU), yU, "y", linewidth=0.5)
-    ax.plot(np.arange(cD), yD, "m", linewidth=0.5)
+    ax.plot(np.arange(cE), yE, "#000066", linewidth=0.75)
+    ax.plot(np.arange(cU), yU, "#003300", linewidth=0.75)
+    ax.plot(np.arange(cD), yD, "#660000", linewidth=0.75)
 
     ax.axhline(y=y_threshold, linewidth=0.5, color="k")
     ax.axvline(x=x_threshold, linewidth=0.5, color="k")
 
-    fig.savefig("Fig2_resilienze_attacchi_casuali_masked.svg")
+    fig.savefig(fileName)
     plt.show()
