@@ -2,15 +2,14 @@ from Node import *
 import random as random
 import numpy as np
 from enum import Enum
-
-
-import matplotlib
 import matplotlib.pyplot as plt
+
 
 class Color(Enum):
     White = int(0)
     Gray = int(1)
     Black = int(2)
+
 
 class Graph:
     def __init__(self, n):
@@ -19,6 +18,7 @@ class Graph:
         for i in range(n):
             self.arrNodes.append( Node(i) )
         self.numEdges = 0
+
     def printG(self):
         print("Grafo con ", self.numNodes, " nodi e ", self.numEdges, " archi.")
 
@@ -37,8 +37,6 @@ class Graph:
         CC = []
         for v in range(self.numNodes):
             if idToColor[v] == Color.White:
-                #print(v)
-
                 visited = []
                 comp = self.DFS_Visited(v, visited, idToColor)
                 CC.append(comp)
@@ -71,7 +69,6 @@ class Graph:
                 self.numEdges -= 1
 
 
-
         del self.arrNodes[index_node]
         self.numNodes -= 1
 
@@ -91,26 +88,13 @@ class Graph:
                 max = len(index)
         return max
 
-
     def resilienceCalculator(self, seed):
         random.seed(seed)
         resilience = []
-        ok = True
-        i = 0
-
-        while(ok):
-        #for i, v in enumerate(deleteOrder):
+        while self.numNodes != 0:
             index_node = random.randint(0, self.numNodes-1)
-            #print("rimuovo ", index_node)
-            self.removeNode(index_node)  #v è l'indice!!!!!
-            #for j in self.arrNodes:
-                #print(j.getID(), "\t", j.getAdjArr())
+            self.removeNode(index_node)
             resilience.append(self.getResilience())
-            #print("numero nodi: ",self.numNodes, "\tresilienza: ", resilience[len(resilience)-1])
-            #print(self.getResilience()," ", i)
-            i += 1
-            if self.numNodes == 0:
-                ok = False
         return resilience
 
     def intelligentSelectionResilienceCalculator(self):
@@ -213,8 +197,7 @@ class DATAGraph(Graph):
 
 
 def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
-    t = np.arange(6474)
-    print(t)
+    t = np.arange(numNodes)
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
            ylabel="Dimensione componente connessa più grande",
@@ -224,7 +207,53 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
     ax.plot(t, ArrResilER, "b", label="Grafo ER")
     ax.plot(t, ArrResilUPA, "g", label="Grafo UPA")
 
-    legend = ax.legend(loc="upper right", shadow=True, fontsize="medium")
+    ax.legend(loc="upper right", shadow=True, fontsize="medium")
    
-    fig.savefig("resilienze_attacchi_casuali.png")
+    fig.savefig("Fig1_resilienze_attacchi_casuali.svg")
+    plt.show()
+
+
+def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes):
+    t = np.arange(numNodes)
+    fig, ax = plt.subplots()
+    ax.set(xlabel="Nr. nodi disattivati",
+           ylabel="Dimensione componente connessa più grande",
+           title="Resilienze dopo attacchi casuali")
+
+    ax.plot(t, ArrResilD, "r", label="Grafo dati reali")
+    ax.plot(t, ArrResilER, "b", label="Grafo ER", linewidth=0.5)
+    ax.plot(t, ArrResilUPA, "g", label="Grafo UPA")
+
+    ax.legend(loc="upper right", shadow=True, fontsize="medium")
+
+    y_threshold = numNodes*0.75
+    x_threshold = numNodes*0.2
+
+    yE = []
+    yU = []
+    yD = []
+    cE = 0
+    cU = 0
+    cD = 0
+    for i in ArrResilER:
+        if i >= y_threshold:
+            yE.append(i)
+            cE += 1
+    for i in ArrResilUPA:
+        if i >= y_threshold:
+            yU.append(i)
+            cU += 1
+    for i in ArrResilD:
+        if i >= y_threshold:
+            yD.append(i)
+            cD += 1
+
+    ax.plot(np.arange(cE), yE, "c", linewidth=0.5)
+    ax.plot(np.arange(cU), yU, "y", linewidth=0.5)
+    ax.plot(np.arange(cD), yD, "m", linewidth=0.5)
+
+    ax.axhline(y=y_threshold, linewidth=0.5, color="k")
+    ax.axvline(x=x_threshold, linewidth=0.5, color="k")
+
+    fig.savefig("Fig2_resilienze_attacchi_casuali_masked.svg")
     plt.show()
