@@ -3,6 +3,7 @@ import random as random
 import numpy as np
 from enum import Enum
 import matplotlib.pyplot as plt
+import pylab as pylab
 
 
 class Color(Enum):
@@ -16,7 +17,7 @@ class Graph:
         self.numNodes = n
         self.arrNodes = []
         for i in range(n):
-            self.arrNodes.append( Node(i) )
+            self.arrNodes.append(Node(i))
         self.numEdges = 0
 
     def printG(self):
@@ -185,6 +186,7 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileName):
     ax.plot(t, ArrResilER, "b", label="Grafo ER")
     ax.plot(t, ArrResilUPA, "g", label="Grafo UPA")
 
+
     ax.legend(loc="upper right", shadow=True, fontsize="medium")
    
     fig.savefig(fileName)
@@ -203,6 +205,7 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
     ax.plot(t, ArrResilUPA, "#66ff66", label="Grafo UPA", linewidth=0.75)
 
     ax.legend(loc="upper right", shadow=True, fontsize="medium")
+
 
     y_threshold = numNodes*0.75
     x_threshold = numNodes*0.2
