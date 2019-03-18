@@ -180,7 +180,7 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileName):
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
            ylabel="Dimensione componente connessa più grande",
-           title="Resilienze dopo attacchi casuali")
+           title="Resilienze dopo attacchi casuali, valore p=0.0003 m=2")
 
     ax.plot(t, ArrResilD, "r", label="Grafo dati reali")
     ax.plot(t, ArrResilER, "b", label="Grafo ER")
@@ -198,13 +198,14 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
     fig, ax = plt.subplots()
     ax.set(xlabel="Nr. nodi disattivati",
            ylabel="Dimensione componente connessa più grande",
-           title="Resilienze dopo attacchi casuali")
+           title="Resilienze dopo attacchi intelligenti, valore p=0.0003 m=2")
 
     ax.plot(t, ArrResilD, "#ff6666", label="Grafo dati reali", linewidth=0.75)
     ax.plot(t, ArrResilER, "#8080ff", label="Grafo ER", linewidth=0.75)
     ax.plot(t, ArrResilUPA, "#66ff66", label="Grafo UPA", linewidth=0.75)
 
-    ax.legend(loc="upper right", shadow=True, fontsize="medium")
+
+
 
 
     y_threshold = []
@@ -215,6 +216,7 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
 
     ax.plot(y_threshold, linewidth=0.5, color="k")
     ax.axvline(x=x_threshold, linewidth=0.5, color="k")
+
 
     fig.savefig(fileName)
     plt.show()
