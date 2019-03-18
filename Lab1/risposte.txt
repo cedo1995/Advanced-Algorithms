@@ -1,0 +1,1 @@
+2) Attraverso un attacco casuale sono stati rimossi il 20% dei nodi della rete per ciascun tipo di grafo. I grafi che mantengono la proprietà di resilienza sono il grafo ER ed il grafo UPA: la dimensione della componente connessa di massima cardinalità risulta essere superiore al 75% del numero di nodi?????????????????

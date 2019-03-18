@@ -207,33 +207,13 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
     ax.legend(loc="upper right", shadow=True, fontsize="medium")
 
 
-    y_threshold = numNodes*0.75
-    x_threshold = numNodes*0.2
+    y_threshold = []
+    for i in range(numNodes):
+        y_threshold.append((numNodes - i) * 0.75)
 
-    yE = []
-    yU = []
-    yD = []
-    cE = 0
-    cU = 0
-    cD = 0
-    for i in ArrResilER:
-        if i >= y_threshold:
-            yE.append(i)
-            cE += 1
-    for i in ArrResilUPA:
-        if i >= y_threshold:
-            yU.append(i)
-            cU += 1
-    for i in ArrResilD:
-        if i >= y_threshold:
-            yD.append(i)
-            cD += 1
+    x_threshold = numNodes * 0.2
 
-    ax.plot(np.arange(cE), yE, "#000066", linewidth=0.75)
-    ax.plot(np.arange(cU), yU, "#003300", linewidth=0.75)
-    ax.plot(np.arange(cD), yD, "#660000", linewidth=0.75)
-
-    ax.axhline(y=y_threshold, linewidth=0.5, color="k")
+    ax.plot(y_threshold, linewidth=0.5, color="k")
     ax.axvline(x=x_threshold, linewidth=0.5, color="k")
 
     fig.savefig(fileName)
