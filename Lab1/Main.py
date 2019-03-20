@@ -8,7 +8,8 @@ def main():
 
     sys.setrecursionlimit(10000)
     seed = 1
-    p = numEdges / (numNodes ** 2)
+    #p = numEdges / (numNodes ** 2)
+    p = 0.0006
     m = int(round(numEdges / numNodes))
 
     print("ER Graph:")

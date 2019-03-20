@@ -105,7 +105,7 @@ class ERGraph(Graph):
         for i in range(self.numNodes):
             for j in range(self.numNodes):
                 a = random.uniform(0, 1)
-                if a < p and i != j and not (self.arrNodes[j].getAdjArr().__contains__(i) and self.arrNodes[i].getAdjArr().__contains__(j) ):
+                if a < p and i != j and j>i:
                     self.arrNodes[i].addNodeToAdj(j)
                     self.arrNodes[j].addNodeToAdj(i)
                     self.numEdges += 1
@@ -216,6 +216,7 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
 
     ax.plot(y_threshold, linewidth=0.5, color="k")
     ax.axvline(x=x_threshold, linewidth=0.5, color="k")
+    ax.legend(loc="upper right", shadow=True, fontsize="medium")
 
 
     fig.savefig(fileName)
