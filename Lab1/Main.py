@@ -17,18 +17,18 @@ def main():
     graph_er.printG()
     graph_er_copy = copy.deepcopy(graph_er)
     arrResilienceEr = graph_er_copy.resilienceCalculator(seed)
-    print("Resilienza random", arrResilienceEr)
+   
     intSelResilienceEr = graph_er.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceEr)
+    
 
     print("UPA Graph:")
     graph_UPA = UPAGraph(numNodes, m)
     graph_UPA.printG()
     graph_UPA_copy = copy.deepcopy(graph_UPA)
     arrResilienceUPA = graph_UPA_copy.resilienceCalculator(seed)
-    print("Resilienza random", arrResilienceUPA)
+    
     intSelResilienceUPA = graph_UPA.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceUPA)
+    
 
 
     print("DataGraph:")
@@ -36,9 +36,9 @@ def main():
     data_graph.printG()
     data_graph_copy = copy.deepcopy(data_graph)
     arrResilienceDATA = data_graph_copy.resilienceCalculator(seed)
-    print("Resilienza random", arrResilienceDATA)
+    
     intSelResilienceDATA = data_graph.intelligentSelectionResilienceCalculator()
-    print("Resilienza grado massimo", intSelResilienceDATA)
+    
 
     # DOMANDA 1
     printPlotRandom(arrResilienceDATA,
