@@ -3,41 +3,40 @@ import sys
 import copy
 
 def main():
-    numNodes = 6474
-    numEdges = 12572
+    numNodes = 6474     #numero di nodi del grafo
+    numEdges = 12572    #numero di archi del grafo
 
-    sys.setrecursionlimit(10000)
-    seed = 1
-    #p = numEdges / (numNodes ** 2)
-    p = 0.0006
-    m = int(round(numEdges / numNodes))
+    sys.setrecursionlimit(10000)    #settaggio del limite superiore di chiamate ricorsive possibili da un algoritmo
+    seed = 1        #parametro per la generazione dei numeri casuali
+    p = 0.0006      #probabilità utilizzata nella generazione del grafo ER
+    m = int(round(numEdges / numNodes))     #grado medio del grafo
 
     print("ER Graph:")
-    graph_er = ERGraph(numNodes, p, seed)
-    graph_er.printG()
-    graph_er_copy = copy.deepcopy(graph_er)
-    arrResilienceEr = graph_er_copy.resilienceCalculator(seed)
+    graph_er = ERGraph(numNodes, p, seed)       #creazione del grafo tramite l'algoritmo ER
+    graph_er.printG()       #stampa del grafo
+    graph_er_copy = copy.deepcopy(graph_er)     #creazione di una copia del grafo
+    arrResilienceEr = graph_er_copy.resilienceCalculator(seed)      #calcolo della resilienza in seguito ad un attacco casuale
    
-    intSelResilienceEr = graph_er.intelligentSelectionResilienceCalculator()
+    intSelResilienceEr = graph_er.intelligentSelectionResilienceCalculator()    #calcolo della resilienza in seguito ad un attacco con strategia migliorata
     
 
     print("UPA Graph:")
-    graph_UPA = UPAGraph(numNodes, m)
-    graph_UPA.printG()
-    graph_UPA_copy = copy.deepcopy(graph_UPA)
-    arrResilienceUPA = graph_UPA_copy.resilienceCalculator(seed)
+    graph_UPA = UPAGraph(numNodes, m)   #creazione del grafo tramite l'algoritmo UPA
+    graph_UPA.printG()  #stampa del grafo
+    graph_UPA_copy = copy.deepcopy(graph_UPA)   #creazione di una copia del grafo
+    arrResilienceUPA = graph_UPA_copy.resilienceCalculator(seed)    #calcolo della resilienza in seguito ad un attacco casuale
     
-    intSelResilienceUPA = graph_UPA.intelligentSelectionResilienceCalculator()
+    intSelResilienceUPA = graph_UPA.intelligentSelectionResilienceCalculator()  #calcolo della resilienza in seguito ad un attacco con strategia migliorata
     
 
 
     print("DataGraph:")
-    data_graph = DATAGraph(numNodes, './as20000102.txt')
-    data_graph.printG()
-    data_graph_copy = copy.deepcopy(data_graph)
-    arrResilienceDATA = data_graph_copy.resilienceCalculator(seed)
+    data_graph = DATAGraph(numNodes, './as20000102.txt')    #creazione del grafo tramite il file di testo
+    data_graph.printG()     #stampa del grafo
+    data_graph_copy = copy.deepcopy(data_graph)     #creazione di una copia del grafo
+    arrResilienceDATA = data_graph_copy.resilienceCalculator(seed)      #calcolo della resilienza in seguito ad un attacco casuale
     
-    intSelResilienceDATA = data_graph.intelligentSelectionResilienceCalculator()
+    intSelResilienceDATA = data_graph.intelligentSelectionResilienceCalculator()    #calcolo della resilienza in seguito ad un attacco casuale con strategia migliorata
     
 
     # DOMANDA 1
