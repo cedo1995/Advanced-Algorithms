@@ -147,8 +147,6 @@ class UPAGraph(Graph):
         :param n: numero di nodi
         :param m: numero di nodi già presenti nell'urna
         """
-
-        #todo capire perchè si inizializza il costruttore con n invece che con m
         super().__init__(n)     #creo un grafo usando il costruttore di Graph
         self.numNodes = m
 
@@ -196,7 +194,6 @@ class DATAGraph(Graph):
         :param file: percorso in cui si trova il file da leggere
         """
         super().__init__(n)
-        self.numNodes = n   #todo cancellare?
         data = np.loadtxt(file, delimiter='\t', dtype=int)  #carico il file di testo
         startingNode = data[:, 0]   #salvo i nodi di "partenza"
         endingNode = data[:, 1]     #salvo i nodi di "arrivo"
@@ -231,7 +228,7 @@ def printPlotRandom(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileName):
 
     ax.legend(loc="upper right", shadow=True, fontsize="medium")    #impostazioni della legenda
    
-    fig.savefig(fileName)   #todo CAMBIARE??
+
     plt.show()      #visualizzazione del grafico
 
 
@@ -261,5 +258,5 @@ def printPlotRandom_masked(ArrResilD, ArrResilER, ArrResilUPA, numNodes, fileNam
     ax.legend(loc="upper right", shadow=True, fontsize="medium")    #stampa della legenda
 
 
-    fig.savefig(fileName)   #todo CAMBIARE?
+
     plt.show()      #visualizzazione del grafico
