@@ -13,49 +13,56 @@ def main():
     with codecs.open(fileStazioni, encoding='latin-1') as f:
         f.readline()    #salto la prima riga
         line = f.readline()
-        count = 0
-        while(line):
+        count = 0       #contatore delle stazioni
+        while(line):    #finchè il file non finisce
             id_staz = line[0:9]
-            nome_staz = line[14:34]
-            stazioni[id_staz] = [count, nome_staz]
-            line = f.readline()
+            nome_staz = line[14:34]     #salta in tutti i modi la scritta CdT o CtF.. va bene?
+            stazioni[id_staz] = [count, nome_staz]  #se cambio sopra devo mettere nome_staz[0:20]
+
+            line = f.readline()     #passo alla linea successiva
             count += 1
+
     pathLinee = "./Files/Linee/*.LIN"
-    id_corsa = ""
-    id_linea = ""
+
     files = glob.glob(pathLinee)
     i = 0
 
-    for name in files:
+    for name in files:      #per ciascun file presente nella cartella Linee
         i += 1
-        print(name, i)
-        with codecs.open(name, encoding='latin-1') as f:
-            line = f.readline()
-            #print(line)
-            j = 0  # incrementa a 1 se è la fermata successiva a quella di partenza
-            while(line):
+        print("NOME DEL FILE: ",name,"\t File numero",i)      #primo file letto
+        with codecs.open(name, encoding='latin-1') as f:    #FONDAMENTALE la codifica del file
+            line = f.readline()     #leggo la prima riga
+            id_corsa = ""
+            id_linea = ""
+            j = 0           #alla prima fermata sarà a 0, poi sarà un contatore
+
+            while(line):        #finchè non finisce il file
                 #print(line)
-                orario_arrivo = []
-                orario_partenza = []
-                nome_stazione = []
-                id_stazione = []
-                if line.startswith("*Z"):
-                    id_corsa = line[3:8]
+
+                if line.startswith("*Z"):       #identifica le righe che danno informazioni sulla corsa
+                    id_corsa = line[3:8]        #utile per l'arco
                     id_linea = line[9:15]
-                if not line.startswith("*"):        #se è una riga che contiene informazioni riguardo alle fermate
-                    id_stazione[j] = line[0:9]
-                    nome_stazione[j] = line[10:30]
-                    if not line[32:].startswith(" "):
-                        orario_arrivo[j] = line[32:37]  # dovrebbe essere impossibile che j sia 0 in questo caso
-                        if j == 0:
-                            print("OCCHIO CHE C'è un ERRORE!!!")
-                        if not line[39:].startswith(" "):
-                             orario_partenza[j] = line[39:44]
-                    else:
-                        orario_partenza = line[39:44]
-                    if j == 0:          #se si tratta della prima fermata(capolinea)
-                        j += 1
-                print(nome_stazione, id_stazione)
+                if line.startswith("*"):
+                    j = 0
+                    orario_arrivo = []
+                    orario_partenza = []
+                    nome_stazione = []
+                    id_stazione = []
+                else:        #se è una riga che contiene informazioni riguardo alle fermate
+                    print(line[0:9])
+                    id_stazione.append(line[0:9])          #inserisco l'id
+                    print("ID: ", id_stazione[j])
+                    nome_stazione.append(line[10:30])      #inserisco il nome
+                    print("\t", nome_stazione[j])
+                    if not (line[31:].startswith(" ") and line[31:].startswith("-")):
+                        orario_arrivo.append(line[31:36])
+                        print("Orario arrivo: ", str(orario_arrivo[j]))
+
+                    orario_partenza.append(line[37:42])
+                    print("Orario partenza: ", str(orario_partenza[j]))
+
+                    j += 1    #incremento j
+
                 line = f.readline()
 
 

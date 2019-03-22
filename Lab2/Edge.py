@@ -1,6 +1,6 @@
 class Edge:
     pesoTotale = 0
-    def __init__(self, orarioPartenza, orarioArrivo, idCorsa, idLinea):
+    def __init__(self, orarioPartenza, orarioArrivo, idCorsa, idLinea, idStazionePartenza, idStazioneArrivo):
         """
         :param orarioArrivo: quando il bus arriva
         :param orarioPartenza: quando parte
@@ -11,12 +11,14 @@ class Edge:
         self.orarioArrivo = orarioArrivo
         self.idCorsa = idCorsa
         self.idLinea = idLinea
+        self.idStazionePartenza = idStazionePartenza
+        self.idStazioneArrivo = idStazioneArrivo
         self.pesoTotale = minutesCounter(orarioPartenza, orarioArrivo)
 
     def extractTime(self, orario):
         return orario[0:2], orario[2:]
 
-    def minutesCounter(self, orarioArrivo, orarioPartenza):
+    def minutesCounter(self, orarioPartenza, orarioArrivo):
         orarioP= orarioPartenza[1:]
         orarioA = orarioArrivo[1:]
         ore_arrivo, minuti_arrivo = extractTime(orarioA)
