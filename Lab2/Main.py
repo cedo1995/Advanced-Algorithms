@@ -35,7 +35,10 @@ def main():
             id_corsa = ""
             id_linea = ""
             j = 0           #alla prima fermata sarà a 0, poi sarà un contatore
-
+            orario_arrivo = []
+            orario_partenza = []
+            nome_stazione = []
+            id_stazione = []
             while(line):        #finchè non finisce il file
                 #print(line)
 
@@ -44,21 +47,18 @@ def main():
                     id_linea = line[9:15]
                 if line.startswith("*"):
                     j = 0
-                    orario_arrivo = []
-                    orario_partenza = []
-                    nome_stazione = []
-                    id_stazione = []
+
                 else:        #se è una riga che contiene informazioni riguardo alle fermate
                     print(line[0:9])
                     id_stazione.append(line[0:9])          #inserisco l'id
                     print("ID: ", id_stazione[j])
                     nome_stazione.append(line[10:30])      #inserisco il nome
                     print("\t", nome_stazione[j])
-                    if not (line[31:].startswith(" ") and line[31:].startswith("-")):
-                        orario_arrivo.append(line[31:36])
+                    if not (line[32:].startswith(" ") and line[32:].startswith("-")):
+                        orario_arrivo.append(line[32:37])
                         print("Orario arrivo: ", str(orario_arrivo[j]))
 
-                    orario_partenza.append(line[37:42])
+                    orario_partenza.append(line[39:44])
                     print("Orario partenza: ", str(orario_partenza[j]))
 
                     j += 1    #incremento j
