@@ -1,6 +1,7 @@
 import fileinput
 import glob
 import errno
+import codecs
 
 def main():
     pathInfo = "./Files/Info/"      #da vedere il formato del file
@@ -8,11 +9,13 @@ def main():
     id_corsa = ""
     id_linea = ""
     files = glob.glob(pathLinee)
+    i=0
     for name in files:
-        print(name)
-        with open(name) as f:
+        i+=1
+        print(name,i)
+        with codecs.open(name,encoding='latin-1') as f:
             line = f.readline()
-            print(line)
+            #print(line)
             count = 1
             while(line):
                 #print(line)
@@ -31,7 +34,7 @@ def main():
                     else:
                         orario_partenza = line[39:44]
                 count += 1
-                print(f, count)
+                #print(orario_arrivo, count)
                 line = f.readline()
 
 
