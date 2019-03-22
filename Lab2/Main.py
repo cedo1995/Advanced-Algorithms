@@ -2,9 +2,23 @@ import fileinput
 import glob
 import errno
 import codecs
-
+#TODO: creare classe arco con orario arrivo e partenza e id corsa poi ci sarà una matrice delle adiacenze dove in corrispondenza delle stazioni collegate direttamente ci sarà un oggetto lista di archi
 def main():
     pathInfo = "./Files/Info/"      #da vedere il formato del file
+    fileStazioni = pathInfo + "bahnhof"
+    stazioni = {}
+    id_staz=0
+    nome_staz=""
+    with codecs.open(fileStazioni,encoding='latin-1') as f:
+        f.readline() #salto la prima riga
+        line = f.readline()
+        count=0
+        while(line):
+            id_staz=line[0:9]
+            nome_staz = line[14:34]
+            stazioni[id_staz]=[count ,nome_staz]
+            line = f.readline()
+            count+=1
     pathLinee = "./Files/Linee/*.LIN"
     id_corsa = ""
     id_linea = ""
@@ -21,6 +35,8 @@ def main():
                 #print(line)
                 orario_arrivo= ""
                 orario_partenza=""
+                nome_stazione=""
+                id_stazione=""
                 if line.startswith("*Z"):
                     id_corsa = line[3:8]
                     id_linea = line[9:15]
@@ -34,7 +50,7 @@ def main():
                     else:
                         orario_partenza = line[39:44]
                 count += 1
-                #print(orario_arrivo, count)
+                print(nome_stazione,id_stazione)
                 line = f.readline()
 
 
