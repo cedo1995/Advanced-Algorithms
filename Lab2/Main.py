@@ -2,7 +2,10 @@ import fileinput
 import glob
 import errno
 import codecs
-#TODO: creare classe arco con orario arrivo e partenza e id corsa poi ci sarà una matrice delle adiacenze dove in corrispondenza delle stazioni collegate direttamente ci sarà un oggetto lista di archi
+from Graph import Graph
+from Node import Node
+from Edge import Edge
+
 def main():
     pathInfo = "./Files/Info/"      #da vedere il formato del file
     fileStazioni = pathInfo + "bahnhof"
@@ -10,15 +13,16 @@ def main():
     id_staz = 0
     nome_staz = ""
     matrice = []
-    with codecs.open(fileStazioni, encoding='latin-1') as f:
+    grafo = Graph()
+    with codecs.open(fileStazioni, encoding = 'latin-1') as f:
         f.readline()    #salto la prima riga
         line = f.readline()
         count = 0       #contatore delle stazioni
         while(line):    #finchè il file non finisce
             id_staz = line[0:9]
             nome_staz = line[14:34]     #salta in tutti i modi la scritta CdT o CtF.. va bene?
-            stazioni[id_staz] = [count, nome_staz]  #se cambio sopra devo mettere nome_staz[0:20]
-
+            stazioni[id_staz] = [count, nome_staz]
+            grafo.addNode(id_staz, nome_staz, count)
             line = f.readline()     #passo alla linea successiva
             count += 1
 
@@ -29,7 +33,7 @@ def main():
 
     for name in files:      #per ciascun file presente nella cartella Linee
         i += 1
-        print("NOME DEL FILE: ",name,"\t File numero",i)      #primo file letto
+        print("NOME DEL FILE: ", name, "\t File numero", i)      #primo file letto
         with codecs.open(name, encoding='latin-1') as f:    #FONDAMENTALE la codifica del file
             line = f.readline()     #leggo la prima riga
             id_corsa = ""
@@ -60,11 +64,17 @@ def main():
 
                     orario_partenza.append(line[39:44])
                     print("Orario partenza: ", str(orario_partenza[j]))
+                    if int(j) % 2 == 1:
+                        arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, id_stazione[j-1],
+                                    id_stazione[j])
+                        grafo.addEdge(arco)
+
 
                     j += 1    #incremento j
 
                 line = f.readline()
 
+    grafo.printG()
 
 
 
