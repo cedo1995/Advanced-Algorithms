@@ -21,7 +21,7 @@ def main():
         while(line):    #finchè il file non finisce
             id_staz = line[0:9]
             nome_staz = line[14:34]     #salta in tutti i modi la scritta CdT o CtF.. va bene?
-            stazioni[id_staz] = [count, nome_staz]
+            #stazioni[id_staz] = [count, nome_staz]     togliere se usiamo la classe grafo
             grafo.addNode(id_staz, nome_staz, count)
             line = f.readline()     #passo alla linea successiva
             count += 1
@@ -70,7 +70,7 @@ def main():
                         grafo.addEdge(arco)
 
 
-                    j += 1    #incremento j
+                    j += 1    # incremento j
 
                 line = f.readline()
 
