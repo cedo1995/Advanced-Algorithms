@@ -50,7 +50,8 @@ def main():
                     id_corsa = line[3:8]        #utile per l'arco
                     id_linea = line[9:15]
                 if line.startswith("*"):
-                    j = 0
+                    pass
+                    #j = 0
 
                 else:        #se è una riga che contiene informazioni riguardo alle fermate
                     print(line[0:9])
@@ -75,6 +76,9 @@ def main():
                 line = f.readline()
 
     grafo.printG()
+    for i in grafo.arrNodes[2456].adjArr: # prova per controllare id stazione 200415016 che è Hollerich, AVL Porta venga trattato in maniera corretta
+        print("partenza da ",i.idStazionePartenza," alle ",i.orarioPartenza," arrivo a ", i.idStazioneArrivo, " alle ", i.orarioArrivo)
+
 
 
 
