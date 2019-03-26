@@ -33,7 +33,7 @@ def main():
 
     for name in files:      #per ciascun file presente nella cartella Linee
         i += 1
-        print("NOME DEL FILE: ", name, "\t File numero", i)      #primo file letto
+        #print("NOME DEL FILE: ", name, "\t File numero", i)      #primo file letto
         with codecs.open(name, encoding='latin-1') as f:    #FONDAMENTALE la codifica del file
             line = f.readline()     #leggo la prima riga
             id_corsa = ""
@@ -51,20 +51,19 @@ def main():
                     id_linea = line[9:15]
                 if line.startswith("*"):
                     pass
-                    #j = 0
 
                 else:        #se è una riga che contiene informazioni riguardo alle fermate
-                    print(line[0:9])
+                    #print(line[0:9])
                     id_stazione.append(line[0:9])          #inserisco l'id
-                    print("ID: ", id_stazione[j])
+                    #print("ID: ", id_stazione[j])
                     nome_stazione.append(line[10:30])      #inserisco il nome
-                    print("\t", nome_stazione[j])
+                    #print("\t", nome_stazione[j])
                     if not (line[32:].startswith(" ") and line[32:].startswith("-")):
                         orario_arrivo.append(line[32:37])
-                        print("Orario arrivo: ", str(orario_arrivo[j]))
+                        #print("Orario arrivo: ", str(orario_arrivo[j]))
 
                     orario_partenza.append(line[39:44])
-                    print("Orario partenza: ", str(orario_partenza[j]))
+                    #print("Orario partenza: ", str(orario_partenza[j]))
                     if int(j) % 2 == 1:
                         arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, id_stazione[j-1],
                                     id_stazione[j])
@@ -76,9 +75,27 @@ def main():
                 line = f.readline()
 
     grafo.printG()
+    distanze = []
+    predecessori = []
+    distanze, predecessori = grafo.Dijkstra(0)
+    print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
+    #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
+    #print(grafo.arrNodes[2].id)
+    for i,v in enumerate(predecessori):
+        if v == 0:
+            print(i)
+    print("   secondo nodo", grafo.arrNodes[100].id, distanze[100], predecessori[100])
+    '''
     for i in grafo.arrNodes[2456].adjArr: # prova per controllare id stazione 200415016 che è Hollerich, AVL Porta venga trattato in maniera corretta
         print("partenza da ",i.idStazionePartenza," alle ",i.orarioPartenza," arrivo a ", i.idStazioneArrivo, " alle ", i.orarioArrivo)
-
+    distanze = []
+    predecessori = []
+    distanze, predecessori = grafo.Dijkstra(0)
+    for i in distanze:
+        print(i)
+    print("primo nodo", grafo.arrNodes[0].id, distanze[0])
+    print("   secondo nodo", grafo.arrNodes[1].id, distanze[1])
+    '''
 
 
 

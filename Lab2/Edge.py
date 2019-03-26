@@ -21,14 +21,23 @@ class Edge:
         return orario[0:2], orario[2:]
 
     def minutesCounter(self, orarioPartenza, orarioArrivo):
+        #print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
+        minuti = 0
         orarioP= orarioPartenza[1:]
         orarioA = orarioArrivo[1:]
-        ore_arrivo, minuti_arrivo = extractTime(orarioA)
-        ore_partenza, minuti_partenza = extractTime(orarioP)
+        ore_arrivo, minuti_arrivo = self.extractTime(orarioA)
+        ore_partenza, minuti_partenza = self.extractTime(orarioP)
         if ore_partenza < ore_arrivo:   #non posso prendere la coincidenza
-            print("ERRORE!!!!!!!!")
+            #print("ERRORE!!!!!!!!")
+            minuti = abs((int(ore_partenza)-int(ore_arrivo))*60 + (int(minuti_partenza) - int(minuti_arrivo)))
         else:
-            minuti = (ore_partenza-ore_arrivo)*60 + (minuti_partenza - minuti_arrivo)
+            #print(float(ore_partenza),float(ore_arrivo),float(minuti_partenza),float(minuti_arrivo))
+            try:
+                minuti = abs((int(ore_partenza)-int(ore_arrivo))*60 + (int(minuti_partenza) - int(minuti_arrivo)))
+                #print(minuti)
+            except ValueError:
+                pass
+        #print(" minuti ", minuti)
         return minuti
 
 
