@@ -3,15 +3,20 @@ from Edge import Edge
 import sys
 
 class Tupla:
-    def __init__(self,id):
-        self.valore = 99999999
+    def __init__(self,id,valore):
+        self.valore = valore
         self.id = id  # id della stazione a cui corrisponde il nodo
 
 class HeapBinaria:
-    def __init__(self, arrNodi):
+    def __init__(self):
         self.arrVertex = []  #lista di nodi contenuti nella heap binaria ogni elemento è una Tupla (valore, id stazione)
-        for i in arrNodi:
-            self.arrVertex.append(Tupla(i.id))  # inizializzo priority queue con id delle stazioni e distanza infinito
+        #for i in arrNodi:
+            #self.arrVertex.append(Tupla(i.id))  # inizializzo priority queue con id delle stazioni e distanza infinito
+
+    def Add(self, x, valore):
+        self.arrVertex.append(Tupla(x, valore))
+        n = len(self.arrVertex)
+        self.BubbleUp(n-1)
 
     def Left(self, i):
         return (2*i)+1

@@ -64,9 +64,9 @@ def main():
 
                     orario_partenza.append(line[39:44])
                     #print("Orario partenza: ", str(orario_partenza[j]))
-                    if int(j) % 2 == 1:
-                        arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, id_stazione[j-1],
-                                    id_stazione[j])
+                    if int(j) >= 1:
+                        arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, int(id_stazione[j-1]),
+                                    int(id_stazione[j]))
                         grafo.addEdge(arco)
 
 
@@ -77,14 +77,21 @@ def main():
     grafo.printG()
     distanze = []
     predecessori = []
-    distanze, predecessori = grafo.Dijkstra(0)
-    print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
+    distanze, predecessori = grafo.Dijkstra(200415016)
+    #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)
-    for i,v in enumerate(predecessori):
-        if v == 0:
-            print(i)
-    print("   secondo nodo", grafo.arrNodes[100].id, distanze[100], predecessori[100])
+
+    idToNumber = grafo.ReturnidToNumber()
+
+    print(distanze[idToNumber[200417023]])
+    '''
+    for i in grafo.arrNodes:
+        for e in i.adjArr:
+            print("nodo", i.id," arco ad ", e.idStazioneArrivo)
+    '''
+
+    #print("   secondo nodo", grafo.arrNodes[100].id, distanze[100], predecessori[100])
     '''
     for i in grafo.arrNodes[2456].adjArr: # prova per controllare id stazione 200415016 che è Hollerich, AVL Porta venga trattato in maniera corretta
         print("partenza da ",i.idStazionePartenza," alle ",i.orarioPartenza," arrivo a ", i.idStazioneArrivo, " alle ", i.orarioArrivo)
