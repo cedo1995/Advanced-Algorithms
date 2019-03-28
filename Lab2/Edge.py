@@ -21,7 +21,7 @@ class Edge:
         return orario[0:2], orario[2:]
 
     def minutesCounter(self, orarioPartenza, orarioArrivo):
-        print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
+        #print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
         minuti = 0
         orarioP= orarioPartenza[1:]
         orarioA = orarioArrivo[1:]
@@ -30,16 +30,17 @@ class Edge:
         #print("ora partenza ", ore_partenza ," ora arrivo ",ore_arrivo)
         if ore_partenza < ore_arrivo:   #non posso prendere la coincidenza
             #print("ERRORE!!!!!!!!")
-            minuti = abs((int(ore_partenza)-int(ore_arrivo))*60 + (int(minuti_partenza) - int(minuti_arrivo)))
+            minuti = (int(ore_arrivo)-int(ore_partenza))*60 + (int(minuti_arrivo) - int(minuti_partenza))
         else:
             #print(float(ore_partenza),float(ore_arrivo),float(minuti_partenza),float(minuti_arrivo))
             try:
                 #print("ore differenza", ore_partenza, ore_arrivo)
-                minuti = abs((int(ore_partenza)-int(ore_arrivo))*60 + (int(minuti_partenza) - int(minuti_arrivo)))
-                #print(" minuti ", minuti)
+                minuti = (int(ore_arrivo)-int(ore_partenza))*60 + (int(minuti_arrivo) - int(minuti_partenza))
+                print(" minuti ", minuti)
             except ValueError:
                 pass
-
+        
+        
         return minuti
 
 

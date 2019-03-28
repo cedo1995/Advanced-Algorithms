@@ -14,7 +14,7 @@ def main():
     nome_staz = ""
     matrice = []
     grafo = Graph()
-    with codecs.open(fileStazioni, encoding = 'latin-1') as f:
+    with codecs.open(fileStazioni, encoding = 'cp1250') as f:
         f.readline()    #salto la prima riga
         line = f.readline()
         count = 0       #contatore delle stazioni
@@ -34,7 +34,7 @@ def main():
     for name in files:      #per ciascun file presente nella cartella Linee
         i += 1
         #print("NOME DEL FILE: ", name, "\t File numero", i)      #primo file letto
-        with codecs.open(name, encoding='latin-1') as f:    #FONDAMENTALE la codifica del file
+        with codecs.open(name, encoding='cp1250') as f:    #FONDAMENTALE la codifica del file
             line = f.readline()     #leggo la prima riga
             id_corsa = ""
             id_linea = ""
@@ -43,8 +43,10 @@ def main():
             orario_partenza = []
             nome_stazione = []
             id_stazione = []
+            count=0
             while(line):        #finchè non finisce il file
                 #print(line)
+                count+=1
 
                 if line.startswith("*Z"):       #identifica le righe che danno informazioni sulla corsa
                     id_corsa = line[3:8]        #utile per l'arco
@@ -60,10 +62,10 @@ def main():
                     #print("\t", nome_stazione[j])
                     if not (line[32:].startswith(" ") and line[32:].startswith("-")):
                         orario_arrivo.append(line[32:37])
-                        #print("Orario arrivo: ", str(orario_arrivo[j]))
+                        print("Orario arrivo: ", str(orario_arrivo[j])," ",count)
 
                     orario_partenza.append(line[39:44])
-                    #print("Orario partenza: ", str(orario_partenza[j]))
+                    print("Orario partenza: ", str(orario_partenza[j])," ",count)
                     if int(j) >= 1:
                         arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, int(id_stazione[j-1]),
                                     int(id_stazione[j]))

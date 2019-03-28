@@ -53,7 +53,7 @@ class Graph:
             #print(u.id)
             for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
 
-                if distanze[self.idToNumber[u.id]] + arco.minutesCounter(arco.orarioPartenza, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
+                if arco.minutesCounter(arco.orarioPartenza, arco.orarioArrivo)>0 and distanze[self.idToNumber[u.id]] + arco.minutesCounter(arco.orarioPartenza, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
 
                     heap.Add(arco.idStazioneArrivo, arco.minutesCounter(arco.orarioPartenza, arco.orarioArrivo))
                     distanze, predecessori = self.Relax(self.idToNumber[u.id], self.idToNumber[arco.idStazioneArrivo], predecessori, distanze, arco)
