@@ -48,11 +48,11 @@ def main():
                 #print(line)
                 count+=1
 
-                if line.startswith("*Z"):       #identifica le righe che danno informazioni sulla corsa
-                    id_corsa = line[3:8]        #utile per l'arco
-                    id_linea = line[9:15]
                 if line.startswith("*"):
-                    pass
+                    if line.startswith("*Z"):       #identifica le righe che danno informazioni sulla corsa
+                        j = 0
+                        id_corsa = line[3:8]        #utile per l'arco
+                        id_linea = line[9:15]
 
                 else:        #se è una riga che contiene informazioni riguardo alle fermate
                     #print(line[0:9])
@@ -62,13 +62,12 @@ def main():
                     #print("\t", nome_stazione[j])
                     if not (line[32:].startswith(" ") and line[32:].startswith("-")):
                         orario_arrivo.append(line[32:37])
-                        print("Orario arrivo: ", str(orario_arrivo[j])," ",count)
+                        #print("Orario arrivo: ", str(orario_arrivo[j])," ",count)
 
                     orario_partenza.append(line[39:44])
-                    print("Orario partenza: ", str(orario_partenza[j])," ",count)
+                    #print("Orario partenza: ", str(orario_partenza[j])," ",count)
                     if int(j) >= 1:
-                        arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, int(id_stazione[j-1]),
-                                    int(id_stazione[j]))
+                        arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, int(id_stazione[j-1]), int(id_stazione[j]))
                         grafo.addEdge(arco)
 
 
@@ -79,14 +78,26 @@ def main():
     grafo.printG()
     distanze = []
     predecessori = []
-    distanze, predecessori = grafo.Dijkstra(200415016)
+
+    for nodo in grafo.arrNodes:
+        print("Nodo: ",nodo.id)
+        for arco in nodo.adjArr:
+            print("arco da ", arco.idStazionePartenza, " a ", arco.idStazioneArrivo,"\tOrario partenza: ",arco.orarioPartenza,"\tOrario Arrivo: ",arco.orarioArrivo)
+    distanze, predecessori = grafo.Dijkstra(200415016, "00640")
     #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)
 
     idToNumber = grafo.ReturnidToNumber()
 
+    numberToId = grafo.ReturnNumberToId()
+
     print(distanze[idToNumber[200417023]])
+    #print(predecessori[5])
+    cammino = []
+    cammino = ricostruisciPredecessore(predecessori, idToNumber[200417023], idToNumber, cammino, 200415016 )
+    #for _ in cammino:
+        #print(_,"\t",numberToId[_][0],"\t",numberToId[_][1])
     '''
     for i in grafo.arrNodes:
         for e in i.adjArr:
@@ -106,8 +117,20 @@ def main():
     print("   secondo nodo", grafo.arrNodes[1].id, distanze[1])
     '''
 
-
-
+def ricostruisciPredecessore(predecessori, nodo, idToNumber, cammino, start_node):
+    """
+    :param predecessori: array ritornato dall'algoritmo di Dijkstra
+    :param nodo:
+    :param idToNumber: dizionario che associa gli id delle stazioni agli id dei nodi
+    :param cammino: array del cammino minimo
+    :return: array del cammino minimo
+    """
+    if predecessori[nodo] == idToNumber[start_node]:
+        cammino.append(predecessori[nodo])
+        return cammino
+    else:
+        cammino.append(nodo)
+        return ricostruisciPredecessore(predecessori, predecessori[nodo], idToNumber, cammino, start_node)
 
 
 

@@ -36,7 +36,7 @@ class Edge:
             try:
                 #print("ore differenza", ore_partenza, ore_arrivo)
                 minuti = (int(ore_arrivo)-int(ore_partenza))*60 + (int(minuti_arrivo) - int(minuti_partenza))
-                print(" minuti ", minuti)
+                #print(" minuti ", minuti)
             except ValueError:
                 pass
         
