@@ -60,15 +60,21 @@ class Graph:
 
             #print(u.id)
             for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
-
-                if arco.minutesCounter(orario_stazione, arco.orarioArrivo) > 0 and distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario_stazione, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
+                print(arco.idStazionePartenza, arco.idStazioneArrivo, arco.orarioPartenza, arco.orarioArrivo,
+                      arco.minutesCounter(orario_stazione, arco.orarioArrivo),
+                      distanze[self.idToNumber[arco.idStazioneArrivo]])
+                if arco.minutesCounter(orario_stazione, arco.orarioArrivo) >= 0 and distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario_stazione, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
 
                     heap.Add(arco.idStazioneArrivo, arco.minutesCounter(orario_stazione, arco.orarioArrivo))
                     distanze, predecessori = self.Relax(self.idToNumber[u.id], self.idToNumber[arco.idStazioneArrivo], predecessori, distanze, arco, orario_stazione)
+                    print(arco.idStazionePartenza, arco.idStazioneArrivo, arco.orarioPartenza, arco.orarioArrivo,
+                          arco.minutesCounter(orario_stazione, arco.orarioArrivo),
+                          distanze[self.idToNumber[arco.idStazioneArrivo]])
 
-                    #print(arco.idStazionePartenza, arco.idStazioneArrivo, arco.orarioPartenza, arco.orarioArrivo, arco.minutesCounter(arco.orarioPartenza, arco.orarioArrivo))
+
                     if(arco.minutesCounter(orario_stazione, arco.orarioArrivo) < delta_tempo):
                         delta_tempo = arco.minutesCounter(orario_stazione, arco.orarioArrivo)
+                        print("delta tempo ", delta_tempo)
                         arco_temp = arco
                     heap.DecreaseKey(self.idToNumber[arco.idStazioneArrivo], distanze[self.idToNumber[arco.idStazioneArrivo]])
             orario_stazione = arco_temp.orarioArrivo
