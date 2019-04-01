@@ -7,7 +7,7 @@ from Node import Node
 from Edge import Edge
 
 def main():
-    pathInfo = "./Files/Info/"      #da vedere il formato del file
+    pathInfo = "./piccolo_esempio/Files/Info/"      #da vedere il formato del file
     fileStazioni = pathInfo + "bahnhof"
     stazioni = {}
     id_staz = 0
@@ -26,7 +26,7 @@ def main():
             line = f.readline()     #passo alla linea successiva
             count += 1
 
-    pathLinee = "./Files/Linee/*.LIN"
+    pathLinee = "./piccolo_esempio/Files/Linee/*.LIN"
 
     files = glob.glob(pathLinee)
     i = 0
@@ -50,9 +50,9 @@ def main():
 
                 if line.startswith("*"):
                     if line.startswith("*Z"):       #identifica le righe che danno informazioni sulla corsa
-                        j = 0
                         id_corsa = line[3:8]        #utile per l'arco
                         id_linea = line[9:15]
+                    j = 0
 
                 else:        #se è una riga che contiene informazioni riguardo alle fermate
                     #print(line[0:9])
@@ -60,18 +60,18 @@ def main():
                     #print("ID: ", id_stazione[j])
                     nome_stazione.append(line[10:30])      #inserisco il nome
                     #print("\t", nome_stazione[j])
-                    if not (line[32:].startswith(" ") and line[32:].startswith("-")):
+                    if j != 0:
                         orario_arrivo.append(line[32:37])
                         #print("Orario arrivo: ", str(orario_arrivo[j])," ",count)
 
                     orario_partenza.append(line[39:44])
                     #print("Orario partenza: ", str(orario_partenza[j])," ",count)
-                    if int(j) >= 1:
+                    if j >= 1:
                         arco = Edge(orario_partenza[j-1], orario_arrivo[j], id_corsa, id_linea, int(id_stazione[j-1]), int(id_stazione[j]))
                         grafo.addEdge(arco)
+                        j += 1  # incremento j
 
 
-                    j += 1    # incremento j
 
                 line = f.readline()
 
@@ -83,7 +83,7 @@ def main():
         print("Nodo: ",nodo.id)
         for arco in nodo.adjArr:
             print("arco da ", arco.idStazionePartenza, " a ", arco.idStazioneArrivo,"\tOrario partenza: ",arco.orarioPartenza,"\tOrario Arrivo: ",arco.orarioArrivo)
-    distanze, predecessori = grafo.Dijkstra(200415016, "00640")
+    distanze, predecessori = grafo.Dijkstra(200415016, 640)
     #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)

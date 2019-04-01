@@ -32,11 +32,11 @@ class Graph:
         self.arrNodes[i].addEdgeToNode(arco)
 
     def Relax(self, u, v, predecessori, distanze, arco,orario_stazione):  # u e v sono indici dei nodi da rilassare
-        #print("arco ", arco.idStazionePartenza, arco.idStazioneArrivo)
-        #print(arco.orarioPartenza, arco.orarioArrivo)
-        #print(distanze[u], " + ",arco.minutesCounter(orario_stazione, arco.orarioArrivo))
+        print("arco ", arco.idStazionePartenza, arco.idStazioneArrivo)
+        print(arco.orarioPartenza, arco.orarioArrivo)
+        print(distanze[u], " + ",arco.minutesCounter(orario_stazione, arco.orarioArrivo))
         distanze[v] = distanze[u] + arco.minutesCounter(orario_stazione, arco.orarioArrivo)
-        #print(" ",distanze[v])
+        print(" ",distanze[v])
         predecessori[v] = u
         return distanze, predecessori
 
@@ -57,10 +57,13 @@ class Graph:
         while len(heap.arrVertex) > 0:
             u = heap.ExtractMin()
             delta_tempo = 9999
-
+            first = True
+            #TODO Dichiarare arco_temp = qualcosa
             #print(u.id)
             for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
-
+                if first:
+                    arco_temp = arco
+                    first = False
                 if arco.minutesCounter(orario_stazione, arco.orarioArrivo) > 0 and distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario_stazione, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
 
                     heap.Add(arco.idStazioneArrivo, arco.minutesCounter(orario_stazione, arco.orarioArrivo))
@@ -71,8 +74,8 @@ class Graph:
                         delta_tempo = arco.minutesCounter(orario_stazione, arco.orarioArrivo)
                         arco_temp = arco
                     heap.DecreaseKey(self.idToNumber[arco.idStazioneArrivo], distanze[self.idToNumber[arco.idStazioneArrivo]])
-            orario_stazione = arco_temp.orarioArrivo
-
+            orario_stazione = arco_temp.orarioArrivo        #TODO capire come gestire questo assegnamento
+                #print(len(heap.arrVertex))
         return distanze, predecessori
 
 
