@@ -24,14 +24,14 @@ class Graph:
         self.idToNumber[id_stazione] = count
         self.numNodes += 1
         self.arrNodes.append(Node(id_stazione))
-        self.numberToId[count] = (id_stazione, nome_stazione)         ##todo VERIFICARE SE FUNZIONA
+        self.numberToId[count] = id_stazione         ##todo VERIFICARE SE FUNZIONA
 
     def addEdge(self, arco):
         self.numEdges += 1
         i = self.idToNumber[arco.idStazionePartenza]
         self.arrNodes[i].addEdgeToNode(arco)
 
-    def Relax(self, u, v, predecessori, distanze, arco,orario_stazione):  # u e v sono indici dei nodi da rilassare
+    def Relax(self, u, v, predecessori, distanze, arco, orario_stazione):  # u e v sono indici dei nodi da rilassare
         #print("arco ", arco.idStazionePartenza, arco.idStazioneArrivo)
         #print(arco.orarioPartenza, arco.orarioArrivo)
         #print(distanze[u], " + ",arco.minutesCounter(orario_stazione, arco.orarioArrivo))
@@ -41,43 +41,17 @@ class Graph:
         return distanze, predecessori
 
     def Dijkstra(self, startNodeId, orario):
-        predecessori = []
         distanze = []
-        for i in range(len(self.arrNodes)):
-            distanze.append(998999)
-            predecessori.append(-1)
-        distanze[self.idToNumber[startNodeId]] = 0
         heap = HeapBinaria()
-        heap.Add(startNodeId, 0)
-        orario_stazione = orario
+        predecessori = []
+        for i, x in enumerate(self.arrNodes):
+            distanze.append(sys.maxsize)
+            predecessori.append(-1)
+            heap.Add(x.id, distanze[self.idToNumber[x.id]])
+        heap.DecreaseKey(self.idToNumber[startNodeId], 0)       #decremento il valore della heap ad indice idToNumber[startNodeId] a 0 in modo da essere la sorgente
+        
 
 
-
-
-        while len(heap.arrVertex) > 0:
-            u = heap.ExtractMin()
-            delta_tempo = 9999
-
-            #print(u.id)
-            for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
-                print(arco.idStazionePartenza, arco.idStazioneArrivo, arco.orarioPartenza, arco.orarioArrivo,
-                      arco.minutesCounter(orario_stazione, arco.orarioArrivo),
-                      distanze[self.idToNumber[arco.idStazioneArrivo]])
-                if arco.minutesCounter(orario_stazione, arco.orarioArrivo) >= 0 and distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario_stazione, arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
-
-                    heap.Add(arco.idStazioneArrivo, arco.minutesCounter(orario_stazione, arco.orarioArrivo))
-                    distanze, predecessori = self.Relax(self.idToNumber[u.id], self.idToNumber[arco.idStazioneArrivo], predecessori, distanze, arco, orario_stazione)
-                    print(arco.idStazionePartenza, arco.idStazioneArrivo, arco.orarioPartenza, arco.orarioArrivo,
-                          arco.minutesCounter(orario_stazione, arco.orarioArrivo),
-                          distanze[self.idToNumber[arco.idStazioneArrivo]])
-
-
-                    if(arco.minutesCounter(orario_stazione, arco.orarioArrivo) < delta_tempo):
-                        delta_tempo = arco.minutesCounter(orario_stazione, arco.orarioArrivo)
-                        print("delta tempo ", delta_tempo)
-                        arco_temp = arco
-                    heap.DecreaseKey(self.idToNumber[arco.idStazioneArrivo], distanze[self.idToNumber[arco.idStazioneArrivo]])
-            orario_stazione = arco_temp.orarioArrivo
 
         return distanze, predecessori
 

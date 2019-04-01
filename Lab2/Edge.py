@@ -28,19 +28,24 @@ class Edge:
         ore_arrivo, minuti_arrivo = self.extractTime(orarioA)
         ore_partenza, minuti_partenza = self.extractTime(orarioP)
         #print("ora partenza ", ore_partenza ," ora arrivo ",ore_arrivo)
-        if ore_partenza < ore_arrivo:   #non posso prendere la coincidenza
-            #print("ERRORE!!!!!!!!")
-            minuti = (int(ore_arrivo)-int(ore_partenza))*60 + (int(minuti_arrivo) - int(minuti_partenza))
+        if ore_partenza <= ore_arrivo:   #non posso prendere la coincidenza
+            minuti = (int(ore_arrivo)-int(ore_partenza))*60 + int(minuti_arrivo) - int(minuti_partenza)
         else:
             #print(float(ore_partenza),float(ore_arrivo),float(minuti_partenza),float(minuti_arrivo))
-            try:
-                #print("ore differenza", ore_partenza, ore_arrivo)
-                minuti = (int(ore_arrivo)-int(ore_partenza))*60 + (int(minuti_arrivo) - int(minuti_partenza))
-                #print(" minuti ", minuti)
-            except ValueError:
-                pass
-        
-        
+            print("ERRORE!!!!!!!")
+            #print(" minuti ", minuti)
+
+
+
         return minuti
+
+    #TODO Aggiunto metodo per il confronto degli orari
+    def isLaterThan(self, orarioPartenza, orario):
+        oreOrario, minutiOrario = self.extractTime(orario)
+        orePartenza, minutiPartenza = self.extractTime(orarioPartenza)
+        if oreOrario < orePartenza or (oreOrario == orePartenza and minutiOrario <= minutiPartenza):
+            return True
+        else:
+            return False
 
 

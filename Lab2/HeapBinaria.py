@@ -3,7 +3,7 @@ from Edge import Edge
 import sys
 
 class Tupla:
-    def __init__(self,id,valore):
+    def __init__(self,id, valore):
         self.valore = valore
         self.id = id  # id della stazione a cui corrisponde il nodo
 
@@ -17,6 +17,10 @@ class HeapBinaria:
         self.arrVertex.append(Tupla(x, valore))
         n = len(self.arrVertex)
         self.BubbleUp(n-1)
+
+    def BuildHeap(self, n):
+        for i in range(int(n/2)-1, 0, -1):
+            self.TrickleDown(i)
 
     def Left(self, i):
         return (2*i)+1
@@ -36,12 +40,13 @@ class HeapBinaria:
             i = p
             p = self.Parent(i)
 
-    def DecreaseKey(self, i, value):  # sostituisco alla tupla in posizione "i" il valore "value"
-        if len(self.arrVertex) <= i or self.arrVertex[i].valore < value:
-            return False
-        self.arrVertex[i].valore = value #cambio il valore dell'elemento in posizione i della heap
-        self.BubbleUp(i)
-        return True
+    def DecreaseKey(self, nodeId, value):  # sostituisco alla tupla in posizione "i" il valore "value"
+        for i, x in enumerate(self.arrVertex):
+            if x.id == nodeId and self.arrVertex[i].valore > value:
+                self.arrVertex[i].valore = value
+                self.BubbleUp(i)
+                return True
+        return False
 
     def TrickleDown(self, i):
         l = self.Left(i)

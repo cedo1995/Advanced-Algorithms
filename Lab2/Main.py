@@ -7,8 +7,8 @@ from Node import Node
 from Edge import Edge
 
 def main():
-    pathInfo = "./piccolo_esempio/Info/"      #da vedere il formato del file
-    #pathInfo = "./Files/Info/"  # da vedere il formato del file
+    #pathInfo = "./piccolo_esempio/Info/"      #da vedere il formato del file
+    pathInfo = "./Files/Info/"  # da vedere il formato del file
     fileStazioni = pathInfo + "bahnhof"
     stazioni = {}
     id_staz = 0
@@ -27,8 +27,8 @@ def main():
             line = f.readline()     #passo alla linea successiva
             count += 1
 
-    pathLinee = "./piccolo_esempio/Linee/*.LIN"
-    #pathLinee = "./Files/Linee/*.LIN"
+    #pathLinee = "./piccolo_esempio/Linee/*.LIN"
+    pathLinee = "./Files/Linee/*.LIN"
 
     files = glob.glob(pathLinee)
     i = 0
@@ -90,7 +90,7 @@ def main():
         for arco in nodo.adjArr:
             print("arco da ", arco.idStazionePartenza, " a ", arco.idStazioneArrivo,"\tOrario partenza: ",arco.orarioPartenza,"\tOrario Arrivo: ",arco.orarioArrivo)
     '''
-    distanze, predecessori = grafo.Dijkstra(200415009, "00641")
+    distanze, predecessori = grafo.Dijkstra(200415016, "00930")
     #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)
@@ -99,7 +99,7 @@ def main():
 
     numberToId = grafo.ReturnNumberToId()
 
-    print(distanze[idToNumber[200417099]])
+    print(distanze[idToNumber[200405005]])
     #print(predecessori[5])
     cammino = []
     #cammino = ricostruisciPredecessore(predecessori, idToNumber[200417023], idToNumber, cammino, 200415016 )
