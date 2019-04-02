@@ -4,8 +4,8 @@ import sys
 
 class Tupla:
     def __init__(self,id, valore):
-        self.valore = valore
         self.id = id  # id della stazione a cui corrisponde il nodo
+        self.valore = valore
 
 class HeapBinaria:
     def __init__(self):
@@ -13,8 +13,8 @@ class HeapBinaria:
         #for i in arrNodi:
             #self.arrVertex.append(Tupla(i.id))  # inizializzo priority queue con id delle stazioni e distanza infinito
 
-    def Add(self, x, valore):
-        self.arrVertex.append(Tupla(x, valore))
+    def Add(self, id, valore):
+        self.arrVertex.append(Tupla(id, valore))
         n = len(self.arrVertex)
         self.BubbleUp(n-1)
 
@@ -40,7 +40,12 @@ class HeapBinaria:
             i = p
             p = self.Parent(i)
 
-    def DecreaseKey(self, nodeId, value):  # sostituisco alla tupla in posizione "i" il valore "value"
+    def DecreaseKey(self, nodeId, value):
+        """
+        :param nodeId: NON è un IdToNumber
+        :param value: è la distanza dallo starting node al nodo con id = nodeId
+        :return:
+        """
         for i, x in enumerate(self.arrVertex):
             if x.id == nodeId and self.arrVertex[i].valore > value:
                 self.arrVertex[i].valore = value
@@ -53,9 +58,9 @@ class HeapBinaria:
         r = self.Right(i)
         n = len(self.arrVertex)
         smallest = i
-        if l<n and self.arrVertex[l].valore < self.arrVertex[i].valore:
+        if l < n and self.arrVertex[l].valore < self.arrVertex[i].valore:
             smallest = l
-        if r<n and self.arrVertex[r].valore < self.arrVertex[smallest].valore:
+        if r < n and self.arrVertex[r].valore < self.arrVertex[smallest].valore:
             smallest = r
         if smallest != i:
             temp = self.arrVertex[smallest]

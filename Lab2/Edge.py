@@ -1,3 +1,4 @@
+import sys
 class Edge:
     pesoTotale = 0
     def __init__(self, orarioPartenza, orarioArrivo, idCorsa, idLinea, idStazionePartenza, idStazioneArrivo):
@@ -21,21 +22,15 @@ class Edge:
         return orario[0:2], orario[2:]
 
     def minutesCounter(self, orarioPartenza, orarioArrivo):
-        #print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
-        minuti = 0
-        orarioP= orarioPartenza[1:]
-        orarioA = orarioArrivo[1:]
-        ore_arrivo, minuti_arrivo = self.extractTime(orarioA)
-        ore_partenza, minuti_partenza = self.extractTime(orarioP)
-        #print("ora partenza ", ore_partenza ," ora arrivo ",ore_arrivo)
-        if ore_partenza <= ore_arrivo:   #non posso prendere la coincidenza
-            minuti = (int(ore_arrivo)-int(ore_partenza))*60 + int(minuti_arrivo) - int(minuti_partenza)
-        else:
-            #print(float(ore_partenza),float(ore_arrivo),float(minuti_partenza),float(minuti_arrivo))
-            print("ERRORE!!!!!!!")
-            #print(" minuti ", minuti)
-
-
+        # print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
+        minuti = sys.maxsize
+        ore_arrivo, minuti_arrivo = self.extractTime(orarioArrivo[1:])
+        ore_partenza, minuti_partenza = self.extractTime(orarioPartenza[1:])
+        minuti_arrivo = int(ore_arrivo) * 60 + int(minuti_arrivo)
+        minuti_partenza = int(ore_partenza) * 60 + int(minuti_partenza)
+        # print("ora partenza ", ore_partenza ," ora arrivo ",ore_arrivo)
+        if minuti_partenza <= minuti_arrivo:
+            minuti = minuti_arrivo - minuti_partenza
 
         return minuti
 

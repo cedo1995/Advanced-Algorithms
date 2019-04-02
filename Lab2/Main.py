@@ -49,7 +49,7 @@ def main():
             restart = False
             while(line):        #finchè non finisce il file
                 #print(line)
-                count+=1
+                count += 1
 
                 if line.startswith("*"):
                     restart = True
@@ -84,13 +84,13 @@ def main():
     grafo.printG()
     distanze = []
     predecessori = []
-    '''
+    """
     for nodo in grafo.arrNodes:
         print("Nodo: ",nodo.id)
         for arco in nodo.adjArr:
             print("arco da ", arco.idStazionePartenza, " a ", arco.idStazioneArrivo,"\tOrario partenza: ",arco.orarioPartenza,"\tOrario Arrivo: ",arco.orarioArrivo)
-    '''
-    distanze, predecessori = grafo.Dijkstra(200415016, "00930")
+    """
+    distanze, predecessori = grafo.Dijkstra(200415016, "00931")
     #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)
