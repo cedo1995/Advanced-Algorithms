@@ -90,7 +90,7 @@ def main():
         for arco in nodo.adjArr:
             print("arco da ", arco.idStazionePartenza, " a ", arco.idStazioneArrivo,"\tOrario partenza: ",arco.orarioPartenza,"\tOrario Arrivo: ",arco.orarioArrivo)
     """
-    distanze, predecessori = grafo.Dijkstra(200415016, "00931")
+    distanze, predecessori, orario = grafo.Dijkstra(200417051, "02355")
     #print("primo nodo", grafo.arrNodes[0].id, distanze[0], predecessori[0])
     #print("   secondo nodo", grafo.arrNodes[1].id, distanze[1], predecessori[1])
     #print(grafo.arrNodes[2].id)
@@ -99,12 +99,12 @@ def main():
 
     numberToId = grafo.ReturnNumberToId()
 
-    print(distanze[idToNumber[200405005]])
+    print(distanze[idToNumber[140701016]])
     #print(predecessori[5])
     cammino = []
-    #cammino = ricostruisciPredecessore(predecessori, idToNumber[200417023], idToNumber, cammino, 200415016 )
-    #for _ in cammino:
-        #print(_,"\t",numberToId[_][0],"\t",numberToId[_][1])
+    cammino = ricostruisciPredecessore(predecessori, idToNumber[140701016], idToNumber, cammino, 200417051 )
+    for i in cammino:
+        print(i,"\t",numberToId[i],"\t",idToNumber[numberToId[i]],"\t",orario[i])
     '''
     for i in grafo.arrNodes:
         for e in i.adjArr:
@@ -127,9 +127,10 @@ def main():
 def ricostruisciPredecessore(predecessori, nodo, idToNumber, cammino, start_node):
     """
     :param predecessori: array ritornato dall'algoritmo di Dijkstra
-    :param nodo:
-    :param idToNumber: dizionario che associa gli id delle stazioni agli id dei nodi
+    :param nodo: nodo destinazione
+    :param idToNumber: dizionario originale che associa gli id delle stazioni agli id dei nodi
     :param cammino: array del cammino minimo
+    :param start_node: id del nodo di partenza
     :return: array del cammino minimo
     """
     if predecessori[nodo] == idToNumber[start_node]:

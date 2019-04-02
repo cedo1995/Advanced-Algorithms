@@ -54,17 +54,14 @@ class Graph:
         while len(heap.arrVertex) > 0:
             u = heap.ExtractMin()
             if orario[self.idToNumber[u.id]] != "-1":
-                print(u.id)
                 for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
-                    #print(u.id, self.idToNumber[u.id], arco.idStazioneArrivo)
                     if distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario[self.idToNumber[u.id]], arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
-
                         distanze, predecessori, orario = self.Relax(self.idToNumber[u.id], self.idToNumber[arco.idStazioneArrivo], predecessori, distanze, arco, orario)
                         heap.DecreaseKey(arco.idStazioneArrivo, distanze[self.idToNumber[arco.idStazioneArrivo]])
 
 
 
-        return distanze, predecessori
+        return distanze, predecessori, orario
 
 
 
