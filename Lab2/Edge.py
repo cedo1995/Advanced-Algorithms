@@ -1,46 +1,34 @@
 import sys
 class Edge:
     pesoTotale = 0
-    def __init__(self, orarioPartenza, orarioArrivo, idCorsa, idLinea, idStazionePartenza, idStazioneArrivo):
+    def __init__(self, departure_time, arrival_time, run_id, id_line, id_departure_station, id_arrival_station):
         """
-        :param orarioPartenza: quando parte
-        :param orarioArrivo: quando il bus arriva
-        :param idCorsa: 01031
-        :param idLinea: AVL
-        :param idStazionePartenza: stazione di partenza del bus
-        :param idStazioneArrivo: stazione in cui il bus arriva
+        :param departure_time: quando parte
+        :param arrival_time: quando il bus arriva
+        :param run_id: 01031
+        :param id_line: AVL
+        :param id_departure_station: stazione di partenza del bus
+        :param id_arrival_station: stazione in cui il bus arriva
         """
-        self.orarioPartenza = orarioPartenza
-        self.orarioArrivo = orarioArrivo
-        self.idCorsa = idCorsa
-        self.idLinea = idLinea
-        self.idStazionePartenza = idStazionePartenza
-        self.idStazioneArrivo = idStazioneArrivo
-        #self.pesoTotale = minutesCounter(orarioPartenza, orarioArrivo)
+        self.departure_time = departure_time
+        self.arrival_time = arrival_time
+        self.run_id = run_id
+        self.id_line = id_line
+        self.id_departure_station = id_departure_station
+        self.id_arrival_station = id_arrival_station
 
-    def extractTime(self, orario):
+    def ExtractTime(self, orario):
         return orario[0:2], orario[2:]
 
-    def minutesCounter(self, orarioPartenza, orarioArrivo):
-        # print("orario partenza ",orarioPartenza, " orario arrivo ", orarioArrivo )
-        minuti = sys.maxsize
-        ore_arrivo, minuti_arrivo = self.extractTime(orarioArrivo[1:])
-        ore_partenza, minuti_partenza = self.extractTime(orarioPartenza[1:])
-        minuti_arrivo = int(ore_arrivo) * 60 + int(minuti_arrivo)
-        minuti_partenza = int(ore_partenza) * 60 + int(minuti_partenza)
-        # print("ora partenza ", ore_partenza ," ora arrivo ",ore_arrivo)
-        if minuti_partenza <= minuti_arrivo:
-            minuti = minuti_arrivo - minuti_partenza
+    def MinutesCounter(self, departure_time, arrival_time):
+        # print("orario partenza ",departure_time, " orario arrivo ", arrival_time )
+        minutes = sys.maxsize
+        arrival_hours, arrival_minutes = self.ExtractTime(arrival_time[1:])
+        departure_hours, departure_minutes = self.ExtractTime(departure_time[1:])
+        arrival_minutes = int(arrival_hours) * 60 + int(arrival_minutes)
+        departure_minutes = int(departure_hours) * 60 + int(departure_minutes)
 
-        return minuti
+        if departure_minutes <= arrival_minutes:
+            minutes = arrival_minutes - departure_minutes
 
-    #TODO Aggiunto metodo per il confronto degli orari
-    def isLaterThan(self, orarioPartenza, orario):
-        oreOrario, minutiOrario = self.extractTime(orario)
-        orePartenza, minutiPartenza = self.extractTime(orarioPartenza)
-        if oreOrario < orePartenza or (oreOrario == orePartenza and minutiOrario <= minutiPartenza):
-            return True
-        else:
-            return False
-
-
+        return minutes

@@ -1,67 +1,67 @@
 from Node import Node
 from Edge import Edge
-from HeapBinaria import HeapBinaria
+from BinaryHeap import BinaryHeap
 import sys
 
 class Graph:
     def __init__(self):
-        self.idToNumber = {}
-        self.numNodes = 0
-        self.arrNodes = []  #lista di nodi contenuti nel grafo
-        self.numEdges = 0       #contatore degli archi
-        self.numberToId = {}    #associa il count all'id_stazione e al suo nome
-    def ReturnidToNumber(self):
-        return self.idToNumber
+        self.id_to_number = {}
+        self.nodes_number = 0
+        self.nodes_list = []  #lista di nodi contenuti nel grafo
+        self.edges_number = 0       #contatore degli archi
+        self.number_to_id = {}    #associa il count all'id_stazione e al suo nome
+
+    def ReturnIdToNumber(self):
+        return self.id_to_number
 
     def ReturnNumberToId(self):
-        return self.numberToId
+        return self.number_to_id
 
-    def printG(self):   #stampa le informazioni principali del grafo
-        print("Grafo con ", self.numNodes, " nodi e ", self.numEdges, " archi.")
+    def PrintG(self):   #stampa le informazioni principali del grafo
+        print("Grafo con ", self.nodes_number, " nodi e ", self.edges_number, " archi.")
 
-    def addNode(self, id_stazione, nome_stazione, count ):
-        id_stazione = int(id_stazione)
-        self.idToNumber[id_stazione] = count
-        self.numNodes += 1
-        self.arrNodes.append(Node(id_stazione))
-        self.numberToId[count] = id_stazione         ##todo VERIFICARE SE FUNZIONA
+    def AddNode(self, id_station, name_station, count):
+        id_station = int(id_station)
+        self.id_to_number[id_station] = count
+        self.nodes_number += 1
+        self.nodes_list.append(Node(id_station))
+        self.number_to_id[count] = id_station
 
-    def addEdge(self, arco):
-        self.numEdges += 1
-        i = self.idToNumber[arco.idStazionePartenza]
-        self.arrNodes[i].addEdgeToNode(arco)
+    def AddEdge(self, edge):
+        self.edges_number += 1
+        i = self.id_to_number[edge.id_departure_station]
+        self.nodes_list[i].AddEdgeToNode(edge)
 
-    def Relax(self, u, v, predecessori, distanze, arco, orario):  # u e v sono indici dei nodi da rilassare
-        orario[v] = arco.orarioArrivo
-        distanze[v] = distanze[u] + arco.minutesCounter(orario[u], arco.orarioArrivo)
-        #print(" ",distanze[v])
-        predecessori[v] = u
-        return distanze, predecessori, orario
+    def Relax(self, u, v, previous_nodes, distances, edge, timetables):  # u e v sono indici dei nodi da rilassare
+        timetables[v] = edge.arrival_time
+        distances[v] = distances[u] + edge.MinutesCounter(timetables[u], edge.arrival_time)
+        previous_nodes[v] = u
+        return distances, previous_nodes, timetables
 
-    def Dijkstra(self, startNodeId, orario_minima_partenza):
-        distanze = []
-        heap = HeapBinaria()
-        predecessori = []
-        orario = []
-        for i, x in enumerate(self.arrNodes):
-            distanze.append(sys.maxsize)
-            predecessori.append(-1)
-            orario.append("-1")
-            heap.Add(x.id, distanze[self.idToNumber[x.id]])
-        distanze[self.idToNumber[startNodeId]] = 0
-        orario[self.idToNumber[startNodeId]] = orario_minima_partenza
-        heap.DecreaseKey(startNodeId, 0)       #decremento il valore della heap ad indice idToNumber[startNodeId] a 0 in modo da essere la sorgente
-        while len(heap.arrVertex) > 0:
+    def Dijkstra(self, id_start_node, min_departure_time):
+        distances = []
+        heap = BinaryHeap()
+        previous_nodes = []
+        timetables = []
+        for i, x in enumerate(self.nodes_list):
+            distances.append(sys.maxsize)
+            previous_nodes.append(-1)
+            timetables.append("-1")
+            heap.Add(x.id, distances[self.id_to_number[x.id]])
+        distances[self.id_to_number[id_start_node]] = 0
+        timetables[self.id_to_number[id_start_node]] = min_departure_time
+        heap.DecreaseKey(id_start_node, 0)       #decremento il valore della heap ad indice idToNumber[startNodeId] a 0 in modo da essere la sorgente
+        while len(heap.list_vertices) > 0:
             u = heap.ExtractMin()
-            if orario[self.idToNumber[u.id]] != "-1":
-                for arco in self.arrNodes[self.idToNumber[u.id]].adjArr:
-                    if distanze[self.idToNumber[u.id]] + arco.minutesCounter(orario[self.idToNumber[u.id]], arco.orarioArrivo) < distanze[self.idToNumber[arco.idStazioneArrivo]]:
-                        distanze, predecessori, orario = self.Relax(self.idToNumber[u.id], self.idToNumber[arco.idStazioneArrivo], predecessori, distanze, arco, orario)
-                        heap.DecreaseKey(arco.idStazioneArrivo, distanze[self.idToNumber[arco.idStazioneArrivo]])
+            if timetables[self.id_to_number[u.id]] != "-1":
+                for edge in self.nodes_list[self.id_to_number[u.id]].adj_arr:
+                    if distances[self.id_to_number[u.id]] + edge.MinutesCounter(timetables[self.id_to_number[u.id]], edge.arrival_time) < distances[self.id_to_number[edge.id_arrival_station]]:
+                        distances, previous_nodes, timetables = self.Relax(self.id_to_number[u.id], self.id_to_number[edge.id_arrival_station], previous_nodes, distances, edge, timetables)
+                        heap.DecreaseKey(edge.id_arrival_station, distances[self.id_to_number[edge.id_arrival_station]])
 
 
 
-        return distanze, predecessori, orario
+        return distances, previous_nodes, timetables
 
 
 
