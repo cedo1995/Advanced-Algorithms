@@ -73,16 +73,23 @@ def main():
     graph.PrintG()
     distances = []
     previous_nodes = []
+    '''
+    for nodo in graph.nodes_list:
+        print("Nodo: ", nodo.id)
+        for arco in nodo.adj_arr:
+            print("arco da ", arco.id_departure_station, " a ", arco.id_arrival_station, "\tOrario partenza: ",
+                  arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
+    '''
 
-    distances, previous_nodes, timetables = graph.Dijkstra(200417051, "02355")
+    distances, previous_nodes, timetables = graph.Dijkstra(500000079, "01346")
 
     id_to_number = graph.ReturnIdToNumber()
     number_to_id = graph.ReturnNumberToId()
 
-    print(distances[id_to_number[140701016]])
+    print(distances[id_to_number[300000044]])
 
     previous_path = []
-    previous_path = RebuildPreviousNodes(previous_nodes, id_to_number[140701016], id_to_number, previous_path, 200417051 )
+    previous_path = RebuildPreviousNodes(previous_nodes, id_to_number[300000044], id_to_number, previous_path, 500000079)
     for i in previous_path:
         print(i, "\t", number_to_id[i], "\t", timetables[i])
 
@@ -96,8 +103,8 @@ def RebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, star
     :param start_node: id del nodo di partenza
     :return previous_path: array del cammino minimo
     """
-    if previous_nodes[node] == id_to_number[start_node]:
-        previous_path.append(previous_nodes[node])
+    if node == id_to_number[start_node]:
+        previous_path.append(node)
         return previous_path
     else:
         previous_path.append(node)
