@@ -55,7 +55,7 @@ class Graph:
             u = heap.ExtractMin()
             if timetables[self.id_to_number[u.id]] != "-1":
                 for edge in self.nodes_list[self.id_to_number[u.id]].adj_arr:
-                    if distances[self.id_to_number[u.id]] + edge.MinutesCounter(timetables[self.id_to_number[u.id]], edge.arrival_time) < distances[self.id_to_number[edge.id_arrival_station]]:
+                    if int(edge.departure_time) >= int(timetables[self.id_to_number[u.id]]) and distances[self.id_to_number[u.id]] + edge.MinutesCounter(timetables[self.id_to_number[u.id]], edge.arrival_time) < distances[self.id_to_number[edge.id_arrival_station]]:  # poichè la partenza da una stazione deve essere dopo l'orario di arrivo nella stazione precedente cioè se arrivo alle 13 non posso partire alle 12.55
                         distances, previous_nodes, timetables = self.Relax(self.id_to_number[u.id], self.id_to_number[edge.id_arrival_station], previous_nodes, distances, edge, timetables)
                         heap.DecreaseKey(edge.id_arrival_station, distances[self.id_to_number[edge.id_arrival_station]])
 

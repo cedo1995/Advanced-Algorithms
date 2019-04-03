@@ -81,7 +81,7 @@ def main():
                   arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
     '''
 
-    distances, previous_nodes, timetables = graph.Dijkstra(500000079, "01346")
+    distances, previous_nodes, timetables = graph.Dijkstra(500000079, "01300")
 
     id_to_number = graph.ReturnIdToNumber()
     number_to_id = graph.ReturnNumberToId()
