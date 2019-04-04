@@ -3,5 +3,5 @@ class Node:
         self.id = id
         self.adj_arr = [] # lista di archi
 
-    def AddEdgeToNode(self, arco):
+    def addEdgeToNode(self, arco):
         self.adj_arr.append(arco)

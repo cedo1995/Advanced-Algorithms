@@ -1,6 +1,5 @@
 import sys
 class Edge:
-    pesoTotale = 0
     def __init__(self, departure_time, arrival_time, run_id, id_line, id_departure_station, id_arrival_station):
         """
         :param departure_time: quando parte
@@ -17,14 +16,14 @@ class Edge:
         self.id_departure_station = id_departure_station
         self.id_arrival_station = id_arrival_station
 
-    def ExtractTime(self, orario):
+    def extractTime(self, orario):
         return orario[0:2], orario[2:]
 
-    def MinutesCounter(self, departure_time, arrival_time):
+    def minutesCounter(self, departure_time, arrival_time):
         # print("orario partenza ",departure_time, " orario arrivo ", arrival_time )
         minutes = sys.maxsize
-        arrival_hours, arrival_minutes = self.ExtractTime(arrival_time[1:])
-        departure_hours, departure_minutes = self.ExtractTime(departure_time[1:])
+        arrival_hours, arrival_minutes = self.extractTime(arrival_time[1:])
+        departure_hours, departure_minutes = self.extractTime(departure_time[1:])
         arrival_minutes = int(arrival_hours) * 60 + int(arrival_minutes)
         departure_minutes = int(departure_hours) * 60 + int(departure_minutes)
 
