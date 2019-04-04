@@ -32,25 +32,32 @@ class Graph:
         i = self.id_to_number[edge.id_departure_station]
         self.nodes_list[i].addEdgeToNode(edge)
 
-    def relax(self, u, v, previous_nodes, distances, edge, timetables, run_id_list):  # u e v sono indici dei nodi da rilassare
+    def relax(self, u, v, previous_nodes, distances, edge, timetables, run_id_list, line_id_list, time_departures):  # u e v sono indici dei nodi da rilassare
         timetables[v] = edge.arrival_time
         distances[v] = distances[u] + edge.minutesCounter(timetables[u], edge.arrival_time)
-        run_id_list[u] = edge.run_id
+        run_id_list[v] = edge.run_id
+        line_id_list[v] = edge.id_line
         previous_nodes[v] = u
-        return distances, previous_nodes, timetables, run_id_list
+        time_departures[v] = edge.departure_time
+        return distances, previous_nodes, timetables, run_id_list, line_id_list, time_departures
 
     def dijkstra(self, id_start_node, min_departure_time):
         distances = []
         heap = BinaryHeap()
         previous_nodes = []
         timetables = []
-        #todo creare un array di run
+        time_departures = []
+
         run_id_list = []
+        line_id_list = []
+
         for i, x in enumerate(self.nodes_list):
             distances.append(sys.maxsize)
             previous_nodes.append(-1)
             timetables.append("-1")
             run_id_list.append("-1")
+            line_id_list.append("-1")
+            time_departures.append("-1")
             heap.add(x.id, distances[self.id_to_number[x.id]])
         distances[self.id_to_number[id_start_node]] = 0
         timetables[self.id_to_number[id_start_node]] = min_departure_time
@@ -60,12 +67,12 @@ class Graph:
             if timetables[self.id_to_number[u.id]] != "-1":
                 for edge in self.nodes_list[self.id_to_number[u.id]].adj_arr:
                     if int(edge.departure_time) >= int(timetables[self.id_to_number[u.id]]) and distances[self.id_to_number[u.id]] + edge.minutesCounter(timetables[self.id_to_number[u.id]], edge.arrival_time) < distances[self.id_to_number[edge.id_arrival_station]]:  # poichè la partenza da una stazione deve essere dopo l'orario di arrivo nella stazione precedente cioè se arrivo alle 13 non posso partire alle 12.55
-                        distances, previous_nodes, timetables, run_id_list = self.relax(self.id_to_number[u.id], self.id_to_number[edge.id_arrival_station], previous_nodes, distances, edge, timetables, run_id_list)
+                        distances, previous_nodes, timetables, run_id_list, line_id_list, time_departures = self.relax(self.id_to_number[u.id], self.id_to_number[edge.id_arrival_station], previous_nodes, distances, edge, timetables, run_id_list, line_id_list, time_departures)
                         heap.decreaseKey(edge.id_arrival_station, distances[self.id_to_number[edge.id_arrival_station]])
 
 
 
-        return distances, previous_nodes, timetables, run_id_list
+        return distances, previous_nodes, timetables, run_id_list, line_id_list, time_departures
 
 
 
