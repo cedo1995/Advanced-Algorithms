@@ -21,7 +21,8 @@ class Edge:
 
     def minutesCounter(self, departure_time, arrival_time):
         # print("orario partenza ",departure_time, " orario arrivo ", arrival_time )
-        minutes = sys.maxsize
+        self.maxsize = sys.maxsize
+        minutes = self.maxsize
         arrival_hours, arrival_minutes = self.extractTime(arrival_time[1:])
         departure_hours, departure_minutes = self.extractTime(departure_time[1:])
         arrival_minutes = int(arrival_hours) * 60 + int(arrival_minutes)

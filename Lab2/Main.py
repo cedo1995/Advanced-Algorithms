@@ -18,7 +18,7 @@ def main():
         f.readline()            #salto la prima riga
         line = f.readline()
         count = 0               #contatore delle stazioni
-        while line:    #finchè il file non finisce
+        while line:    #finchè il file non finisce;
             id_station = line[0:9]      #trovo l'id della stazione
             name_station = line[14:34]  #trovo il nome della stazione
             graph.addNode(id_station, name_station, count)      #aggiungo la stazione al grafo
@@ -89,8 +89,10 @@ def main():
         (200415016, 200405005, "00930"),
         (300000032, 400000122, "00530"),
         (210602003, 300000030, "00630"),
-        (200417051, 140701016, "01200")
+        (200417051, 140701016, "01200"),
+        (200417051, 140701016, "02355")
         ]
+
 
     #TODO SISTEMARE perchè non va l'ultimo test
     #array = [(200417051, 140701016, "02355")]
