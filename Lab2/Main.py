@@ -94,8 +94,6 @@ def main():
         ]
 
 
-    #TODO SISTEMARE perchè non va l'ultimo test
-    #array = [(200417051, 140701016, "02355")]
 
     for dep_node, arr_node, time_dep in array:
 
