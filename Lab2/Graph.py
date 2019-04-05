@@ -85,8 +85,8 @@ class Graph:
         arriving_time_minutes = int(arriving_hours) * 60 + int(arriving_minutes)
         departure_time_minutes = int(departure_hours) * 60 + int(departure_minutes)
 
-        if arriving_time_minutes >= 24*60:
-            arriving_time_minutes = abs(24*60 - arriving_time_minutes)
+        if arriving_time_minutes >= 24 * 60:
+            arriving_time_minutes = abs(24 * 60 - arriving_time_minutes)
 
         if departure_time_minutes >= 24 * 60:
             departure_time_minutes = abs(24 * 60 - arriving_time_minutes)

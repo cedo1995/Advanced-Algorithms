@@ -1,4 +1,3 @@
-import sys
 class Edge:
     def __init__(self, departure_time, arrival_time, run_id, id_line, id_departure_station, id_arrival_station):
         """

@@ -6,11 +6,13 @@ import sys
 from Graph import Graph
 from Node import Node
 from Edge import Edge
+import matplotlib.pyplot as plt
 
 def main():
     #sys.setrecursionlimit(sys.maxsize)
     path_info = "./Files/Info/"
     file_stations = path_info + "bahnhof"       #percorso in cui vi è il file delle stazioni
+
     id_station = 0          #inizializzazione dell'id e del nome della stazione
     name_station = ""
     graph = Graph()         #creazione del grafo
@@ -24,6 +26,25 @@ def main():
             graph.addNode(id_station, name_station, count)      #aggiungo la stazione al grafo
             line = f.readline()     #passo alla linea successiva
             count += 1              #incremento il contatore delle stazioni che corrisponderà ad un nuovo id
+
+    file_coordinates = path_info + "bfkoord"
+    with codecs.open(file_coordinates, encoding='cp1250') as f:
+        f.readline()
+        f.readline()
+        line = f.readline()
+        count = 0
+        while line:
+            id_station = line[0:9]
+            latitude = line[12:20]
+            longitude = line[22:31]
+            graph.nodes_list[count].setCoordinates(float(latitude), float(longitude))
+            count += 1
+            line = f.readline()
+
+    for i in graph.nodes_list:
+        print(i.id, i.posX, i.posY)
+
+
 
     path_lines = "./Files/Linee/*.LIN"      #mi posiziono sulle linee
 
@@ -84,14 +105,13 @@ def main():
             print("arco da ", arco.id_departure_station, " a ", arco.id_arrival_station, "\tOrario partenza: ",
                   arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
     '''
-    array = [
-        (500000079, 300000044, "01300"),
-        (200415016, 200405005, "00930"),
-        (300000032, 400000122, "00530"),
-        (210602003, 300000030, "00630"),
-        (200417051, 140701016, "01200"),
-        (200417051, 140701016, "02355")
-        ]
+    #array = [(500000079, 300000044, "01300")]
+    #array = [(200415016, 200405005, "00930")]
+    #array = [(300000032, 400000122, "00530")]
+    #array = [(210602003, 300000030, "00630")]
+    #array = [(200417051, 140701016, "01200")]
+    array = [(200417051, 140701016, "02355")]
+
 
 
 
@@ -144,7 +164,7 @@ def main():
                               line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
                         j = val
 
-
+    plotPath(previous_path, graph)
 
 def rebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, start_node):
     """
@@ -161,6 +181,29 @@ def rebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, star
     else:
         previous_path.append(node)
         return rebuildPreviousNodes(previous_nodes, previous_nodes[node], id_to_number, previous_path, start_node)
+
+def plotPath(previous_path, graph):
+    latitude = []
+    longitude = []
+    for i in graph.nodes_list:
+        if i.posX != 0 and i.posY != 0:
+            latitude.append(i.posX/6)
+            longitude.append(i.posY/49.5)
+    plt.scatter(latitude, longitude, marker='.', c='r', s=0.1)
+    j = previous_path[-1]
+
+    for i, val in enumerate(reversed(previous_path)):
+        if i != j:
+            x1, y1 = graph.nodes_list[val].posX/6, graph.nodes_list[val].posY/49.5
+            x2, y2 = graph.nodes_list[j].posX/6, graph.nodes_list[j].posY/49.5
+            plt.xticks([x1, x2], [x1 * 6, x2 * 6])
+            plt.yticks([y1, y2], [y1 * 49.5, y2 * 49.5])
+            plt.plot([x1, x2], [y1, y2], 'ro-')
+            j = val
+    plt.savefig("200417051 to 140701016 night.png")
+    plt.show()
+
+
 
 
 
