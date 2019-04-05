@@ -34,7 +34,7 @@ class Graph:
 
     def relax(self, u, v, previous_nodes, distances, edge, timetables, run_id_list, line_id_list, time_departures):  # u e v sono indici dei nodi da rilassare
         timetables[v] = edge.arrival_time
-        distances[v] = distances[u] + (self.attendanceTime(timetables[u], edge.arrival_time) + (self.time(edge.arrival_time) - self.time(edge.departure_time)))
+        distances[v] = distances[u] + (self.attendanceTime(timetables[u], edge.departure_time) + (self.time(edge.arrival_time) - self.time(edge.departure_time)))
         run_id_list[v] = edge.run_id
         line_id_list[v] = edge.id_line
         previous_nodes[v] = u
@@ -89,7 +89,7 @@ class Graph:
             arriving_time_minutes = abs(24 * 60 - arriving_time_minutes)
 
         if departure_time_minutes >= 24 * 60:
-            departure_time_minutes = abs(24 * 60 - arriving_time_minutes)
+            departure_time_minutes = abs(24 * 60 - departure_time_minutes)
 
         if departure_time_minutes - arriving_time_minutes >= 0:
             return departure_time_minutes - arriving_time_minutes
