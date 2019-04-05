@@ -105,12 +105,12 @@ def main():
             print("arco da ", arco.id_departure_station, " a ", arco.id_arrival_station, "\tOrario partenza: ",
                   arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
     '''
-    #array = [(500000079, 300000044, "01300")]
+    array = [(500000079, 300000044, "01300")]
     #array = [(200415016, 200405005, "00930")]
     #array = [(300000032, 400000122, "00530")]
     #array = [(210602003, 300000030, "00630")]
     #array = [(200417051, 140701016, "01200")]
-    array = [(200417051, 140701016, "02355")]
+    #array = [(200417051, 140701016, "02355")]
 
 
 
@@ -189,18 +189,17 @@ def plotPath(previous_path, graph):
         if i.posX != 0 and i.posY != 0:
             latitude.append(i.posX/6)
             longitude.append(i.posY/49.5)
-    plt.scatter(latitude, longitude, marker='.', c='r', s=0.1)
+    plt.scatter(latitude, longitude, marker='.', c='r', s=0.5)
     j = previous_path[-1]
 
     for i, val in enumerate(reversed(previous_path)):
         if i != j:
             x1, y1 = graph.nodes_list[val].posX/6, graph.nodes_list[val].posY/49.5
             x2, y2 = graph.nodes_list[j].posX/6, graph.nodes_list[j].posY/49.5
-            plt.xticks([x1, x2], [x1 * 6, x2 * 6])
-            plt.yticks([y1, y2], [y1 * 49.5, y2 * 49.5])
+            plt.xticks([x1, x2], "" )
+            plt.yticks([y1, y2], "")
             plt.plot([x1, x2], [y1, y2], 'ro-')
             j = val
-    plt.savefig("200417051 to 140701016 night.png")
     plt.show()
 
 
