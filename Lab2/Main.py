@@ -138,7 +138,7 @@ def main():
                 pass
             else:
                 if onlyOneLine(previous_path[i-1:], run_id_list, num_time):
-                    #print("NuOVO")
+                    print("NuOVO")
                     print(time_departures[val][1:3]+":" + time_departures[val][3:] + ": corsa", run_id_list[val], " ",
                           line_id_list[val], "da", number_to_id[j], "a", number_to_id[previous_path[-1]])
                     num_time += 1
@@ -148,7 +148,7 @@ def main():
                     else:
                         #1 caso: corse diverse
                         if run_id_list[val] != run_id_list[previous_path[i-1]] and not same_run:
-                            #print("UNO!")
+                            print("UNO!")
                             print(time_departures[val][1:3] + ":" + time_departures[val][3:] +": corsa", run_id_list[val], " ",
                                   line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
                             j = val
@@ -160,22 +160,22 @@ def main():
                                 id_repeated_dep = number_to_id[j]
                                 time_repeated_dep = time_departures[val]
                                 j = val
-                                #print("DUE")
+                                print("DUE")
 
                         # 3 caso
                         if run_id_list[val] != run_id_list[previous_path[i-1]] and same_run:
                             same_run = False
-                            #print("TRE!!!")
+                            print("TRE!!!")
                             print(time_repeated_dep[1:3] + ":" + time_repeated_dep[3:] + ": corsa", run_id_list[val],
                                   " ", line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
                             j = val
 
 
-                #print("CICLATO")
+                print("CICLATO")
     #for i in previous_path:
     #    print(run_id_list[i])
 
-    plotPath(previous_path, graph)
+    #plotPath(previous_path, graph)
 
 def rebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, start_node):
     """
