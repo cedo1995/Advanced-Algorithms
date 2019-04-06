@@ -105,16 +105,16 @@ def main():
             print("arco da ", arco.id_departure_station, " a ", arco.id_arrival_station, "\tOrario partenza: ",
                   arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
     '''
-    array = [(500000079, 300000044, "01300")]
+    #array = [(500000079, 300000044, "01300")]
     #array = [(200415016, 200405005, "00930")]
     #array = [(300000032, 400000122, "00530")]
     #array = [(210602003, 300000030, "00630")]
-    #array = [(200417051, 140701016, "01200")]
+    array = [(200417051, 140701016, "01200")]
     #array = [(200417051, 140701016, "02355")]
 
 
 
-
+    print("Viaggio da ",array[0][0],"a", array[0][1])
     for dep_node, arr_node, time_dep in array:
 
         distances, previous_nodes, timetables, run_id_list, line_id_list, time_departures = graph.dijkstra(dep_node, time_dep)
@@ -127,42 +127,52 @@ def main():
         print("ora di partenza:", timetables[id_to_number[dep_node]][1:3]+":"+timetables[id_to_number[dep_node]][3:])
         print("Ora di arrivo:", timetables[id_to_number[arr_node]][1:3]+":"+timetables[id_to_number[arr_node]][3:])
         j = previous_path[-1]
+
         id_repeated_dep = ""
         time_repeated_dep = ""
-        boolean = False
-        for i, val in enumerate(reversed(previous_path)):
+        same_run = False
+        previous_path = previous_path[::-1]
+        num_time = 0
+        for i, val in enumerate(previous_path):
             if i == 0:
                 pass
             else:
-                if len(previous_path)-i-2 < 0:
-
-                    if number_to_id[j] != time_repeated_dep:
-                        print(time_departures[j][1:3] + ":" + time_departures[j][3:] + ": corsa", run_id_list[val], " ",
-                          line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
-                    else:
-                        print(time_departures[j][1:3] + ":" + time_departures[j][3:] + ": corsa", run_id_list[val], " ",
-                              line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
+                if onlyOneLine(previous_path[i:], run_id_list, num_time):
+                    print(time_departures[val][1:3]+":"+ time_departures[val][3:] + ": corsa", run_id_list[val], " ",
+                          line_id_list[val], "da", number_to_id[j], "a", number_to_id[previous_path[-1]])
+                    num_time += 1
                 else:
-                    #1 caso
-                    if run_id_list[val] != run_id_list[previous_path[len(previous_path)-i-2]] and not boolean:
-                        print(time_departures[val][1:3] + ":" + time_departures[val][3:] + ": corsa", run_id_list[val], " ",
-                              line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
-                        j = val
+                    if num_time == 1:
+                        pass
+                    else:
+                        #1 caso: corse diverse
+                        if run_id_list[val] != run_id_list[previous_path[i-1]] and not same_run:
+                            #print("UNO!")
+                            print(time_departures[val][1:3] + ":" + time_departures[val][3:] +": corsa", run_id_list[val], " ",
+                                  line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
+                            j = val
 
 
-                    #2 caso
-                    if run_id_list[val] == run_id_list[previous_path[len(previous_path)-i-2]] and not boolean:
-                        boolean = True
-                        id_repeated_dep = number_to_id[j]
-                        time_repeated_dep = time_departures[val]
-                        j = val
+                        #2 caso: la corsa successiva è sulla stessa linea e la precedente è su un'altra linea
+                        if run_id_list[val] == run_id_list[previous_path[i-1]] and not same_run:
+                                same_run = True
+                                id_repeated_dep = number_to_id[j]
+                                time_repeated_dep = time_departures[val]
+                                j = val
+                                #print("DUE")
 
-                    #3 caso
-                    if run_id_list[val] != run_id_list[previous_path[len(previous_path)-i-2]] and boolean:
-                        boolean = False
-                        print(time_repeated_dep[1:3] + ":" + time_repeated_dep[3:] + ": corsa", run_id_list[val], " ",
-                              line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
-                        j = val
+                        # 3 caso
+                        if run_id_list[val] != run_id_list[previous_path[i-1]] and same_run:
+                            same_run = False
+                            #print("TRE!!!")
+                            print(time_repeated_dep[1:3] + ":" + time_repeated_dep[3:] + ": corsa", run_id_list[val],
+                                  " ", line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
+                            j = val
+
+
+                #print("CICLATO")
+    #for i in previous_path:
+    #    print(run_id_list[i])
 
     plotPath(previous_path, graph)
 
@@ -181,6 +191,7 @@ def rebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, star
     else:
         previous_path.append(node)
         return rebuildPreviousNodes(previous_nodes, previous_nodes[node], id_to_number, previous_path, start_node)
+
 
 def plotPath(previous_path, graph):
     latitude = []
@@ -203,6 +214,17 @@ def plotPath(previous_path, graph):
     plt.show()
 
 
+def onlyOneLine(previous_path, run_id_list, num_time):
+    if num_time > 0:
+        return False
+    run_id = 0
+    for i, value in enumerate(previous_path):
+        if i == 0:
+            run_id = run_id_list[value]
+        else:
+            if run_id != run_id_list[value]:
+                return False
+    return True
 
 
 

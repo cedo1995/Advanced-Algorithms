@@ -67,9 +67,9 @@ class BinaryHeap:
             self.trickleDown(smallest)
 
     def extractMin(self):
-        min = self.list_vertices[0]
+        minimum = self.list_vertices[0]
         n = len(self.list_vertices)
         self.list_vertices[0] = self.list_vertices[n - 1]
         self.list_vertices.pop(n - 1)  # elimina l'elemento copiato in cima (duplicato)
         self.trickleDown(0)
-        return min
+        return minimum
