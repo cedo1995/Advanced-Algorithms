@@ -109,8 +109,8 @@ def main():
     #array = [(200415016, 200405005, "00930")]
     #array = [(300000032, 400000122, "00530")]
     #array = [(210602003, 300000030, "00630")]
-    array = [(200417051, 140701016, "01200")]
-    #array = [(200417051, 140701016, "02355")]
+    #array = [(200417051, 140701016, "01200")]
+    array = [(200417051, 140701016, "02355")]
 
 
 
@@ -137,8 +137,9 @@ def main():
             if i == 0:
                 pass
             else:
-                if onlyOneLine(previous_path[i:], run_id_list, num_time):
-                    print(time_departures[val][1:3]+":"+ time_departures[val][3:] + ": corsa", run_id_list[val], " ",
+                if onlyOneLine(previous_path[i-1:], run_id_list, num_time):
+                    #print("NuOVO")
+                    print(time_departures[val][1:3]+":" + time_departures[val][3:] + ": corsa", run_id_list[val], " ",
                           line_id_list[val], "da", number_to_id[j], "a", number_to_id[previous_path[-1]])
                     num_time += 1
                 else:
