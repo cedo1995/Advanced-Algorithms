@@ -41,8 +41,8 @@ def main():
             count += 1
             line = f.readline()
 
-    for i in graph.nodes_list:
-        print(i.id, i.posX, i.posY)
+    #for i in graph.nodes_list:
+    #    print(i.id, i.posX, i.posY)
 
 
 
@@ -137,41 +137,49 @@ def main():
             if i == 0:
                 pass
             else:
-                if onlyOneLine(previous_path[i-1:], run_id_list, num_time):
-                    print("NuOVO")
-                    print(time_departures[val][1:3]+":" + time_departures[val][3:] + ": corsa", run_id_list[val], " ",
-                          line_id_list[val], "da", number_to_id[j], "a", number_to_id[previous_path[-1]])
-                    num_time += 1
+                if num_time == 1:
+                    break
                 else:
-                    if num_time == 1:
-                        pass
-                    else:
-                        #1 caso: corse diverse
-                        if run_id_list[val] != run_id_list[previous_path[i-1]] and not same_run:
-                            print("UNO!")
+                    #1 caso: corse diverse
+                    if run_id_list[val] != run_id_list[previous_path[i-1]] and not same_run:
+                        #print("UNO!")
+                        if not onlyOneLine(previous_path[i:], run_id_list, num_time):
                             print(time_departures[val][1:3] + ":" + time_departures[val][3:] +": corsa", run_id_list[val], " ",
-                                  line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
+                                    line_id_list[val], "da", number_to_id[j], "a", number_to_id[val])
                             j = val
 
 
-                        #2 caso: la corsa successiva è sulla stessa linea e la precedente è su un'altra linea
-                        if run_id_list[val] == run_id_list[previous_path[i-1]] and not same_run:
-                                same_run = True
-                                id_repeated_dep = number_to_id[j]
-                                time_repeated_dep = time_departures[val]
-                                j = val
-                                print("DUE")
+                    #2 caso: la corsa successiva è sulla stessa linea e la precedente è su un'altra linea
+                    if run_id_list[val] == run_id_list[previous_path[i-1]] and not same_run:
+                            same_run = True
+                            id_repeated_dep = number_to_id[j]
+                            time_repeated_dep = time_departures[val]
+                            j = val
+                            #print("DUE")
 
-                        # 3 caso
-                        if run_id_list[val] != run_id_list[previous_path[i-1]] and same_run:
-                            same_run = False
-                            print("TRE!!!")
-                            print(time_repeated_dep[1:3] + ":" + time_repeated_dep[3:] + ": corsa", run_id_list[val],
+                    if onlyOneLine(previous_path[i:], run_id_list, num_time):
+                        #print("NuOVO")
+                        if same_run:
+                            print(time_departures[val][1:3] + ":" + time_departures[val][3:] + ": corsa",
+                                  run_id_list[val], " ",
+                                  line_id_list[val], "da", id_repeated_dep, "a", number_to_id[previous_path[-1]])
+                        else:
+                            print(time_departures[val][1:3] + ":" + time_departures[val][3:] + ": corsa",
+                                  run_id_list[val], " ",
+                                  line_id_list[val], "da", number_to_id[j], "a", number_to_id[previous_path[-1]])
+                        num_time += 1
+                        break
+
+                    # 3 caso
+                    if run_id_list[val] != run_id_list[previous_path[i-1]] and same_run:
+                        same_run = False
+                        #print("TRE!!!")
+                        print(time_repeated_dep[1:3] + ":" + time_repeated_dep[3:] + ": corsa", run_id_list[val],
                                   " ", line_id_list[val], "da", id_repeated_dep, "a", number_to_id[val])
-                            j = val
+                        j = val
 
 
-                print("CICLATO")
+                #print("CICLATO")
     #for i in previous_path:
     #    print(run_id_list[i])
 
@@ -210,7 +218,7 @@ def plotPath(previous_path, graph):
             x2, y2 = graph.nodes_list[j].posX/6, graph.nodes_list[j].posY/49.5
             plt.xticks([x1, x2], "" )
             plt.yticks([y1, y2], "")
-            plt.plot([x1, x2], [y1, y2], 'ro-')
+            plt.plot([x1, x2], [y1, y2], 'go-')
             j = val
     plt.show()
 
