@@ -1,12 +1,12 @@
 class Edge:
     def __init__(self, departure_time, arrival_time, run_id, id_line, id_departure_station, id_arrival_station):
         """
-        :param departure_time: quando parte
-        :param arrival_time: quando il bus arriva
-        :param run_id: 01031
-        :param id_line: AVL
-        :param id_departure_station: stazione di partenza del bus
-        :param id_arrival_station: stazione in cui il bus arriva
+        :param departure_time: quando parte la corsa
+        :param arrival_time: quando arriva la corsa
+        :param run_id: identificativo della corsa
+        :param id_line: identificativo della linea
+        :param id_departure_station: identificativo della stazione di partenza
+        :param id_arrival_station: identificativo della stazione di arrivo
         """
         self.departure_time = departure_time
         self.arrival_time = arrival_time

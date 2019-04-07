@@ -4,12 +4,12 @@ import sys
 
 class Tuple:
     def __init__(self, id, value):
-        self.id = id  # id della stazione a cui corrisponde il nodo
+        self.id = id  #  id della stazione a cui corrisponde il nodo
         self.value = value
 
 class BinaryHeap:
     def __init__(self):
-        self.list_vertices = []  #lista di nodi contenuti nella heap binaria ogni elemento è una Tupla (valore, id stazione)
+        self.list_vertices = []  # lista di nodi contenuti nella heap binaria ogni elemento è una Tupla (valore, id stazione)
 
     def add(self, id, value):
         self.list_vertices.append(Tuple(id, value))
@@ -34,7 +34,7 @@ class BinaryHeap:
         while i > 0 and self.list_vertices[i].value < self.list_vertices[p].value:
             temp = self.list_vertices[p]
             self.list_vertices[p] = self.list_vertices[i]
-            self.list_vertices[i] = temp  # scambio A[i] con A[p]
+            self.list_vertices[i] = temp  #  scambio A[i] con A[p]
             i = p
             p = self.parent(i)
 
@@ -70,6 +70,6 @@ class BinaryHeap:
         minimum = self.list_vertices[0]
         n = len(self.list_vertices)
         self.list_vertices[0] = self.list_vertices[n - 1]
-        self.list_vertices.pop(n - 1)  # elimina l'elemento copiato in cima (duplicato)
+        self.list_vertices.pop(n - 1)  #  elimina l'elemento copiato in cima (duplicato)
         self.trickleDown(0)
         return minimum
