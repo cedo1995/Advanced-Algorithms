@@ -105,12 +105,16 @@ def main():
             print("arco da ", arco.id_departure_station, " a ", arco.id_arrival_station, "\tOrario partenza: ",
                   arco.departure_time, "\tOrario Arrivo: ", arco.arrival_time)
     '''
-    # array = [(500000079, 300000044, "01300")]      # corse da effettuare
+    # array = [(500000079, 300000044, "01300")]      # corsa di prova
     # array = [(200415016, 200405005, "00930")]
     # array = [(300000032, 400000122, "00530")]
     # array = [(210602003, 300000030, "00630")]
-    # array = [(200417051, 140701016, "01200")]      # todo AGGIUNGERNE 3 A PIACIMENTO
-    array = [(200417051, 140701016, "02355")]
+    # array = [(200417051, 140701016, "01200")]
+    #array = [(200417051, 140701016, "02355")]
+    #array = [(120904001, 120103002, "01055")]
+    array = [(150303001, 130107002, "00755")]
+    #array = [(300000032, 150104001, "00320")]
+
 
     print("Viaggio da", array[0][0], "a", array[0][1])
     for dep_node, arr_node, time_dep in array:
@@ -178,7 +182,7 @@ def main():
     # for i in previous_path:
     #     print(run_id_list[i])
 
-    # plotPath(previous_path, graph)      # plot del grafo
+    plotPath(previous_path, graph)      # plot del grafo
 
 def rebuildPreviousNodes(previous_nodes, node, id_to_number, previous_path, start_node):
     """
