@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+
+import numpy as np
 import codecs
 from Graph import Graph
 import math
@@ -40,7 +40,7 @@ def main():
 
                     else:
                         deg = int(float(a[1]))
-                        print(deg)
+                        #print(deg)
                         min = float(a[1]) - deg
                         radX = math.pi * (deg + 5.0 * min / 3.0) / 180.0
 
