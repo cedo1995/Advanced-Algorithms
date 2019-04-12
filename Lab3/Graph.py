@@ -1,5 +1,7 @@
 import math
 import numpy as np
+import sys
+
 
 class Graph:
     def __init__(self, name, dimension, coord_type, coordinates):
@@ -45,3 +47,42 @@ class Graph:
             q2 = math.cos(coordinates1[0] - coordinates2[0])
             q3 = math.cos(coordinates1[0] + coordinates2[0])
             return round(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
+
+    def hkVisit(self, v, subset_nodes, distances, previous):
+        """
+        :param v: nodo destinazione
+        :param subset_nodes: sottoinsieme di nodi in cui viene calcolato il peso del cammino minimo
+        :return: peso del cammino minimo da 0 a v che visita tutti i vertici in subset_nodes
+        """
+        if len(subset_nodes) == 1 and subset_nodes[0] == v:
+            return self.matr_adj[0, v], distances, previous
+        elif (v, subset_nodes) in distances:
+            return distances[(v, subset_nodes)], distances, previous
+        else:
+            min_dist = sys.maxsize
+            min_prec = None
+            subset_nodes.remove(v)
+            for vertex in subset_nodes:
+                dist = self.hkVisit(vertex, subset_nodes, distances, previous)
+                if dist + self.matr_adj[vertex][v] < min_dist:
+                    min_dist = dist + self.matr_adj[vertex][v]
+                    min_prec = vertex
+            distances[(v, subset_nodes)] = min_dist
+            previous[(v, subset_nodes)] = min_prec
+
+            return min_dist, distances, previous
+
+
+
+    def hkTsp(self):
+        distances = {}          # dizionario in cui la chiave è una tupla con associato il peso della distanza
+        previous = {}           # dizionario in cui la chiave è una tupla con associato il predecessore di v
+        vertices = [x for x in range(self.num_nodes)]
+        return self.hkVisit(0, vertices, distances, previous)
+
+
+
+
+
+
+

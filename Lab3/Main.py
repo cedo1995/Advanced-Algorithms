@@ -8,6 +8,7 @@ import sys
 def main():
     path_info = ["./Files/burma14.tsp", "./Files/d493.tsp", "./Files/dsj1000.tsp", "./Files/eil51.tsp",
                  "./Files/gr229.tsp", "./Files/kroD100.tsp", "./Files/ulysses22.tsp"]
+    path_info = ["./Files/burma14.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
@@ -35,7 +36,7 @@ def main():
                 else:
                     a = line.split(" ")     # divido la linea rispetto agli spazi
                     a = [i for i in a if i != ""]
-                    if coord_type == "EUC_2D":      # se sono euclidee
+                    if coord_type == "EUC_2D\n":      # se sono euclidee
                         coordinates.append((float(a[1]), float(a[2][:-1])))      # float gestisce la codifica numerica esponenziale
 
                     else:
@@ -53,7 +54,11 @@ def main():
                 line = f.readline()     # passo alla linea successiva
 
             graph = Graph(name, dimension, coord_type, coordinates)   # todo da decidere se tenere count_to_coord qui o crearlo in Graph
-            graph.printG()
+            #graph.printG()
+            distances={}
+            previous={}
+            min_dist, distances, previous = graph.hkTsp()
+            print(min_dist)
 
 if __name__ == '__main__':
         main()
