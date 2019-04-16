@@ -5,6 +5,7 @@ from Graph import Graph
 import math
 import sys
 
+
 def main():
     path_info = ["./Files/burma14.tsp", "./Files/d493.tsp", "./Files/dsj1000.tsp", "./Files/eil51.tsp",
                  "./Files/gr229.tsp", "./Files/kroD100.tsp", "./Files/ulysses22.tsp"]
@@ -59,6 +60,11 @@ def main():
             previous={}
             min_dist, distances, previous = graph.hkTsp()
             print(min_dist)
+            for i in distances:
+                if i != -1:
+                    print(i.id_vertex)
+            graph.printG()
+
 
 if __name__ == '__main__':
         main()
