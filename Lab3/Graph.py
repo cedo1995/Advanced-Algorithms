@@ -2,6 +2,7 @@ import math
 import numpy as np
 import sys
 import copy
+import time
 
 from Distance import Distance
 
@@ -51,29 +52,32 @@ class Graph:
             q3 = math.cos(coordinates1[0] + coordinates2[0])
             return round(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
 
-    def hkVisit(self, v, subset_nodes, distances, previous):
+    def hkVisit(self, v, subset_nodes, distances, previous, start_time, stop):
         """
         :param v: nodo destinazione
         :param subset_nodes: sottoinsieme di nodi in cui viene calcolato il peso del cammino minimo
         :return: peso del cammino minimo da 0 a v che visita tutti i vertici in subset_nodes
         """
-        print("HK_VISIT", v, subset_nodes)
+        #print("HK_VISIT", v, subset_nodes)
+
         if len(subset_nodes) == 1 and subset_nodes[0] == v:
             if distances[v] == -1:  # se distances in v non è ancora definito
-                print("entrato nel caso in cui ho un solo elemento in subset_nodes")
+                #print("entrato nel caso in cui ho un solo elemento in subset_nodes")
                 distances[v] = Distance(v, subset_nodes, self.matr_adj[0][v])  # creo l'istanza di Distance con un distance item con il valore minimo trovato
             #print(self.matr_adj[0][v], v)
             #print(subset_nodes)
-            return self.matr_adj[0][v], distances, previous
+            return self.matr_adj[0][v], distances, previous, stop
 
         elif distances[v] != -1 and distances[v].has_subset_items(subset_nodes)[0]:
-            print("SCR>i", v, subset_nodes)
-            return distances[v].value, distances, previous
+            #print("SCR>i", v, subset_nodes)
+            return distances[v].value, distances, previous, stop
         else:
+
             min_dist = sys.maxsize
             min_prec = None
             subset = copy.copy(subset_nodes)
             subset.remove(v)
+            """
             print("SUBSET:")
             for i in subset:
                 print(i)
@@ -81,12 +85,21 @@ class Graph:
             for i in subset_nodes:
                 print(i)
             #print("SUBSET=", subset_nodes)
+            """
+
             for vertex in subset_nodes:
+                if stop:
+                    break
+
                 if vertex != v:
-                    dist, distances, previous = self.hkVisit(vertex, subset, distances, previous)
+                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, previous, start_time, stop)
+
                     if dist + self.matr_adj[vertex][v] < min_dist:
                         min_dist = dist + self.matr_adj[vertex][v]
                         min_prec = vertex
+            if time.time() - start_time > 60:
+                stop = True
+                return min_dist, distances, previous, stop
 
             if distances[v] == -1:        # se distances in v non è ancora definito
                 distances[v] = Distance(v, subset_nodes, min_dist)        # creo l'istanza di Distance con un distance item con il valore minimo trovato
@@ -98,15 +111,15 @@ class Graph:
 
             #previous[(v, subset_nodes)] = min_prec
 
-            return min_dist, distances, previous
+            return min_dist, distances, previous, stop
 
 
 
-    def hkTsp(self):
+    def hkTsp(self, start_time):
         distances = [-1 for x in range(self.num_nodes)]          # lista di Distance in cui ogni elemento è un DistanceItem con valore la distanza
         previous = []           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
         vertices = [x for x in range(self.num_nodes)]
-        return self.hkVisit(0, vertices, distances, previous)
+        return self.hkVisit(0, vertices, distances, previous, start_time, False)
 
 
 
