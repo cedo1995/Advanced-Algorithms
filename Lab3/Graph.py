@@ -74,7 +74,7 @@ class Graph:
         else:
 
             min_dist = sys.maxsize
-            min_prec = None
+            min_prec = -1
             subset = copy.copy(subset_nodes)
             subset.remove(v)
             """
@@ -97,19 +97,27 @@ class Graph:
                     if dist + self.matr_adj[vertex][v] < min_dist:
                         min_dist = dist + self.matr_adj[vertex][v]
                         min_prec = vertex
-            if time.time() - start_time > 60:
+            if time.time() - start_time > 20:
                 stop = True
                 return min_dist, distances, previous, stop
 
+
             if distances[v] == -1:        # se distances in v non è ancora definito
                 distances[v] = Distance(v, subset_nodes, min_dist)        # creo l'istanza di Distance con un distance item con il valore minimo trovato
+
+            if previous[v] == -1:        # se previous in v non è ancora definito
+                previous[v] = Distance(v, subset_nodes, min_prec)        # creo il predecessore di v rispetto
+
 
             if distances[v].has_subset_items(subset_nodes)[0]:
                 distances[v].value = min_dist
             else:
                 distances[v].addDistanceItem(subset_nodes, min_dist)
 
-            #previous[(v, subset_nodes)] = min_prec
+            if previous[v].has_subset_items(subset_nodes)[0]:
+                previous[v].value = min_prec
+            else:
+                previous[v].addDistanceItem(subset_nodes, min_prec)
 
             return min_dist, distances, previous, stop
 
@@ -117,7 +125,7 @@ class Graph:
 
     def hkTsp(self, start_time):
         distances = [-1 for x in range(self.num_nodes)]          # lista di Distance in cui ogni elemento è un DistanceItem con valore la distanza
-        previous = []           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
+        previous = [-1 for x in range(self.num_nodes)]           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
         vertices = [x for x in range(self.num_nodes)]
         return self.hkVisit(0, vertices, distances, previous, start_time, False)
 
