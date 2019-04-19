@@ -1,7 +1,7 @@
 import sys
 
 class Distance:
-    id_vertex = 0
+
     subset_nodes = []
     value = sys.maxsize
 
