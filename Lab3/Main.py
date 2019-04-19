@@ -13,7 +13,7 @@ def main():
 
     path_info = ["./Files/piccolo_esempio.tsp"]
 
-    path_info = ["./Files/burma14.tsp"]
+    #path_info = ["./Files/burma14.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
@@ -67,9 +67,12 @@ def main():
             min_dist, distances, previous, stop = graph.hkTsp(start_time)
             print(min_dist)
 
+            """
             for i in distances:
                 if i != -1:
                     print(i.id_vertex)
+            """
+
             graph.printG()
 
 
