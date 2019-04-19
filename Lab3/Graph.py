@@ -52,7 +52,7 @@ class Graph:
             q3 = math.cos(coordinates1[0] + coordinates2[0])
             return round(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
 
-    def hkVisit(self, v, subset_nodes, distances, previous, start_time, stop, mymap):
+    def hkVisit(self, v, subset_nodes, distances, previous, start_time, stop, mymap, count):
         """
         :param v: nodo destinazione
         :param subset_nodes: sottoinsieme di nodi in cui viene calcolato il peso del cammino minimo
@@ -60,35 +60,34 @@ class Graph:
         """
         #print("HK_VISIT", v, subset_nodes)
         if len(subset_nodes) == 1 and subset_nodes[0] == v:
-            return self.matr_adj[0][v], distances, previous, stop
+            count += 1
+            return self.matr_adj[0][v], distances, previous, stop, count
 
         elif distances[v][mymap[tuple(subset_nodes)]] != -1:
             # print("ENTRATO!")
-            return distances[v][mymap[tuple(subset_nodes)]], distances, previous, stop
+            return distances[v][mymap[tuple(subset_nodes)]], distances, previous, stop, count
         else:
             min_dist = sys.maxsize
             min_prec = -1
             subset = copy.deepcopy(subset_nodes)
             subset.remove(v)
 
-            for vertex in subset_nodes:
+            for vertex in subset:
                 if stop:
                     break
+                dist, distances, previous, stop, count = self.hkVisit(vertex, subset, distances, previous, start_time, stop, mymap, count )
 
-                if vertex != v:
-                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, previous, start_time, stop, mymap)
-
-                    if dist + self.matr_adj[vertex][v] < min_dist:
-                        min_dist = dist + self.matr_adj[vertex][v]
-                        min_prec = vertex
-            if time.time() - start_time > 20:
+                if dist + self.matr_adj[vertex][v] < min_dist:
+                    min_dist = dist + self.matr_adj[vertex][v]
+                    min_prec = vertex
+            if time.time() - start_time > 180:
                 stop = True
-                return min_dist, distances, previous, stop
+                return min_dist, distances, previous, stop, count
 
             distances[v][mymap[tuple(subset_nodes)]] = min_dist
 
-
-            return min_dist, distances, previous, stop
+            #print(count)
+            return min_dist, distances, previous, stop, count
 
 
 
@@ -114,7 +113,8 @@ class Graph:
 
         previous = [-1 for x in range(self.num_nodes)]           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
         vertices = [x for x in range(self.num_nodes)]
-        return self.hkVisit(0, vertices, distances, previous, start_time, False, mymap)
+        count = 0
+        return self.hkVisit(0, vertices, distances, previous, start_time, False, mymap, count)
 
 
 
