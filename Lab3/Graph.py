@@ -50,7 +50,7 @@ class Graph:
             q1 = math.cos(coordinates1[1] - coordinates2[1])
             q2 = math.cos(coordinates1[0] - coordinates2[0])
             q3 = math.cos(coordinates1[0] + coordinates2[0])
-            return round(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
+            return int(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
 
     def hkVisit(self, v, subset_nodes, distances, previous, start_time, stop, mymap, count):
         """
