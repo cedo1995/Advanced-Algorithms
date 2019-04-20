@@ -5,7 +5,7 @@ import copy
 import time
 
 from Distance import Distance
-
+sys.setrecursionlimit(10000)
 
 class Graph:
     def __init__(self, name, dimension, coord_type, coordinates):
@@ -59,12 +59,14 @@ class Graph:
         :return: peso del cammino minimo da 0 a v che visita tutti i vertici in subset_nodes
         """
         #print("HK_VISIT", v, subset_nodes)
+        g = tuple(subset_nodes)
+
         if len(subset_nodes) == 1 and subset_nodes[0] == v:
             return self.matr_adj[0][v], distances, previous, stop
 
-        elif distances[v][mymap[tuple(subset_nodes)]] != -1:
-            # print("ENTRATO!")
-            return distances[v][mymap[tuple(subset_nodes)]], distances, previous, stop
+        elif (v, g) in distances:
+            #print("ENTRATO!",distances[v][g])
+            return distances[v, g], distances, previous, stop
         else:
             min_dist = sys.maxsize
             min_prec = -1
@@ -81,12 +83,17 @@ class Graph:
                     if dist + self.matr_adj[vertex][v] < min_dist:
                         min_dist = dist + self.matr_adj[vertex][v]
                         min_prec = vertex
-            if time.time() - start_time > 20:
+            if time.time() - start_time > 30*60:
                 stop = True
                 return min_dist, distances, previous, stop
 
-            distances[v][mymap[tuple(subset_nodes)]] = min_dist
+            # distances[0][tuple(subset_nodes)] = 10
 
+            distances.update({(v, g): min_dist})
+            #print(v, g)
+            #print(distances[v,g])
+
+            #distances[v][tuple(subset_nodes)] = min_dist
 
             return min_dist, distances, previous, stop
 
@@ -96,6 +103,7 @@ class Graph:
         column = []  # lista di Distance in cui ogni elemento è un DistanceItem con valore la distanza
         mymap = {}
         counter = 0
+        """
         for i in range(self.num_nodes):
             column_copia = copy.deepcopy(column)
             #print(column_copia)
@@ -111,7 +119,8 @@ class Graph:
                 counter += 1
         #print(column)
         distances = np.full((self.num_nodes, len(column)), -1, dtype=float)
-
+        """
+        distances = {}
         previous = [-1 for x in range(self.num_nodes)]           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
         vertices = [x for x in range(self.num_nodes)]
         return self.hkVisit(0, vertices, distances, previous, start_time, False, mymap)
