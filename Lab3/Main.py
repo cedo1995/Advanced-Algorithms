@@ -11,10 +11,9 @@ def main():
     path_info = ["./Files/burma14.tsp", "./Files/d493.tsp", "./Files/dsj1000.tsp", "./Files/eil51.tsp",
                  "./Files/gr229.tsp", "./Files/kroD100.tsp", "./Files/ulysses22.tsp"]
 
-    path_info = ["./Files/piccolo_esempio.tsp"]
+    #path_info = ["./Files/piccolo_esempio.tsp"]
 
-    path_info = ["./Files/eil51.tsp"]
-
+    path_info = ["./Files/ulysses22.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
@@ -59,15 +58,16 @@ def main():
                         coordinates.append((radX, radY))    # aggiungo le coordinate alla lista
 
                 line = f.readline()     # passo alla linea successiva
-            #print(coordinates)
+
             graph = Graph(name, dimension, coord_type, coordinates)   # todo da decidere se tenere count_to_coord qui o crearlo in Graph
             #graph.printG()
             distances = {}
             previous = {}
             start_time = time.time()
-            min_dist, distances, previous, stop, count = graph.hkTsp(start_time)
-            #print(distances.shape)
+            min_dist, distances, previous, stop = graph.hkTsp(start_time)
             print(min_dist)
+            if stop == True:
+                print("Stoppato")
 
             """
             for i in distances:

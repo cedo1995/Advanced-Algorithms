@@ -32,3 +32,4 @@ class Distance:
             if val != subset_node[i]:
                 return False, i
         return True, -1
+
