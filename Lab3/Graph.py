@@ -36,6 +36,7 @@ class Graph:
 
     def printG(self):
         print("Il grafo", self.name, "ha ", self.num_nodes, "nodi e ", self.num_edges, "archi")
+
         print(self.matr_adj)
 
 
@@ -125,6 +126,28 @@ class Graph:
         vertices = [x for x in range(self.num_nodes)]
         return self.hkVisit(0, vertices, distances, previous, start_time, False, mymap)
 
+
+    def nearestNeighbor(self):
+        circuit = []
+        total_circuit_length = 0
+        circuit.append(0)
+        visited_nodes = [False for x in range(self.num_nodes)]
+        visited_nodes[0] = True
+        for i in range(1, self.num_nodes):
+            min_dist = sys.maxsize
+            choosen_index = -1
+            for index, val in enumerate(self.matr_adj[circuit[-1]]):
+                if val < min_dist and not visited_nodes[index]:
+                    min_dist = val
+                    choosen_index = index
+
+            circuit.append(choosen_index)
+            visited_nodes[choosen_index] = True
+            total_circuit_length += min_dist
+
+        total_circuit_length += self.matr_adj[0][circuit[-1]]       #aggiungo la distanza fra l'ultimo nodo trovato e il nodo sorgente
+        circuit.append(0)
+        return circuit, total_circuit_length        # Todo Togliere il ritorno di circuit che non serve
 
 
 
