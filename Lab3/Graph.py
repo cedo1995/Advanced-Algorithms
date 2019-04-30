@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import copy
 import time
-
+from Tree import Tree
 from Distance import Distance
 sys.setrecursionlimit(10000)
 
@@ -148,6 +148,32 @@ class Graph:
         total_circuit_length += self.matr_adj[0][circuit[-1]]       #aggiungo la distanza fra l'ultimo nodo trovato e il nodo sorgente
         circuit.append(0)
         return circuit, total_circuit_length        # Todo Togliere il ritorno di circuit che non serve
+
+    def createArraysOfEdges(self):
+        res = [(self.matr_adj[i][j], i, j)
+               for i in range(self.num_nodes - 1)
+               for j in range(i+1, self.num_nodes)]
+
+        res = [sorted(res, key=lambda t: t[0])]
+        return res
+
+    def kruskalMST(self):
+        couples = []
+        arr_sets = []
+        set_tree = Tree(self.num_nodes)
+        for i in range(self.num_nodes):
+            set_tree.makeSet(i)
+        edges = self.createArraysOfEdges()  # todo crea la funzione che crea gli archi ordinati di peso crescente
+        for val in edges:
+            if set_tree.findSet(val[1]) != set_tree.findSet(val[2]):
+                couples.append((val[1], val[2]))
+                set_tree.union(val[1], val[2])
+        return couples              # todo da valutare se ha senso tornare un array invece che un grafo/dizionario/grafo_adiacenze
+
+
+
+
+
 
 
 
