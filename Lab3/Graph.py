@@ -157,7 +157,7 @@ class Graph:
                for j in range(i+1, self.num_nodes)]
 
         res = sorted(res, key=lambda t: t[0])
-        print(len(res))
+
         return res
 
     def kruskalMST(self):

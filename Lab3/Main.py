@@ -10,7 +10,7 @@ def main():
 
     #path_info = ["./Files/piccolo_esempio.tsp"]
 
-    path_info = ["./Files/dsj1000.tsp"]
+    path_info = ["./Files/gr229.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
@@ -61,11 +61,14 @@ def main():
             previous = {}
             start_time = time.time()
             #min_dist, distances, previous, stop = graph.hkTsp(start_time)
-            #circuit, min_dist = graph.nearestNeighbor()
-            #print("Minima distanza = ", min_dist)
-            #print("tempo =", time.time() - start_time)
+            circuit, min_dist = graph.nearestNeighbor()
+            print("Minima distanza euristica nearestNeighbor = ", min_dist)
+            print("tempo nearestNeighbor =", time.time() - start_time)
+
+            start_time = time.time()
             dist = graph.kruskalMST()
-            print(dist)
+            print("Minima distanza 2 approssimata = ", dist)
+            print("tempo 2 approssimata =", time.time() - start_time)
             """
             if stop:
                 print("Stoppato")
