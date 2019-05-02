@@ -10,7 +10,7 @@ def main():
 
     #path_info = ["./Files/piccolo_esempio.tsp"]
 
-    path_info = ["./Files/gr229.tsp"]
+    path_info = ["./Files/ulysses22.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
@@ -60,7 +60,11 @@ def main():
             distances = {}
             previous = {}
             start_time = time.time()
-            #min_dist, distances, previous, stop = graph.hkTsp(start_time)
+            min_dist, distances, previous, stop = graph.hkTsp(start_time)
+            print("Minima distanza esatto = ", min_dist)
+            print("tempo lgoritmo esatto =", time.time() - start_time)
+
+            start_time = time.time()
             circuit, min_dist = graph.nearestNeighbor()
             print("Minima distanza euristica nearestNeighbor = ", min_dist)
             print("tempo nearestNeighbor =", time.time() - start_time)
