@@ -157,6 +157,7 @@ class Graph:
                for j in range(i+1, self.num_nodes)]
 
         res = sorted(res, key=lambda t: t[0])
+        print(len(res))
         return res
 
     def kruskalMST(self):
@@ -168,12 +169,15 @@ class Graph:
         for i in range(self.num_nodes):
             set_tree.makeSet(i)
         edges = self.createArraysOfEdges()  # todo crea la funzione che crea gli archi ordinati di peso crescente
+        #print("uscito")
         for val in edges:
+            #print(val[0])
             if set_tree.findSet(val[1]) != set_tree.findSet(val[2]):
+                #print("entrato")
                 couples[val[1]].addEdgeToNode(Edge(val[1], val[2], val[0]))
                 couples[val[2]].addEdgeToNode(Edge(val[2], val[1], val[0]))
                 set_tree.union(val[1], val[2])
-        #return couples              # ritorno un grafo
+
         already_inserted = [False for x in range(self.num_nodes)]
         dictionary = {}
         counter = 0
@@ -191,6 +195,7 @@ class Graph:
         :param start_node: nodo di partenzaarr_sets = []
         :return: dict finale
         """
+        #print("deptFirstSearch")
         dictionary[counter] = start_node.id
         already_inserted[start_node.id] = True
         counter += 1
@@ -203,6 +208,7 @@ class Graph:
 
     def calculate_distance_MST(self, graph_enumeration):
         dist = 0
+        #print("calculate_distance_MST")
         for i in range(self.num_nodes):
             dist += self.matr_adj[graph_enumeration[i]][graph_enumeration[i+1]]
         return dist

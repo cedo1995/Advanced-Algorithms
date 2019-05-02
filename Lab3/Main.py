@@ -10,7 +10,7 @@ def main():
 
     #path_info = ["./Files/piccolo_esempio.tsp"]
 
-    path_info = ["./Files/burma14.tsp"]
+    path_info = ["./Files/dsj1000.tsp"]
     for i in range(len(path_info)):
         name = ""       # nome del grafo
         dimension = -1      # numero dei nodi
