@@ -5,6 +5,8 @@ import copy
 import time
 from Tree import Tree
 from Distance import Distance
+from Node import Node
+from Edge import Edge
 sys.setrecursionlimit(10000)
 
 class Graph:
@@ -149,26 +151,64 @@ class Graph:
         circuit.append(0)
         return circuit, total_circuit_length        # Todo Togliere il ritorno di circuit che non serve
 
-    def createArraysOfEdges(self):
+    def createArraysOfEdges(self):      # Controllato, ritorna un array di due dimensioni in cui ciascuna riga è una tupla di 3 valori ordinata secondo il primo valore
         res = [(self.matr_adj[i][j], i, j)
                for i in range(self.num_nodes - 1)
                for j in range(i+1, self.num_nodes)]
 
-        res = [sorted(res, key=lambda t: t[0])]
+        res = sorted(res, key=lambda t: t[0])
         return res
 
     def kruskalMST(self):
         couples = []
-        arr_sets = []
+        for i in range(self.num_nodes):
+            couples.append(Node(i))
+        #arr_sets = []
         set_tree = Tree(self.num_nodes)
         for i in range(self.num_nodes):
             set_tree.makeSet(i)
         edges = self.createArraysOfEdges()  # todo crea la funzione che crea gli archi ordinati di peso crescente
         for val in edges:
             if set_tree.findSet(val[1]) != set_tree.findSet(val[2]):
-                couples.append((val[1], val[2]))
+                couples[val[1]].addEdgeToNode(Edge(val[1], val[2], val[0]))
+                couples[val[2]].addEdgeToNode(Edge(val[2], val[1], val[0]))
                 set_tree.union(val[1], val[2])
-        return couples              # todo da valutare se ha senso tornare un array invece che un grafo/dizionario/grafo_adiacenze
+        #return couples              # ritorno un grafo
+        already_inserted = [False for x in range(self.num_nodes)]
+        dictionary = {}
+        counter = 0
+        start_node = couples[0]
+        counter, graph_enumeration = self.deptFirstSearch(couples, counter, dictionary, start_node, already_inserted)
+        graph_enumeration[counter] = couples[0].id
+        dist = self.calculate_distance_MST(graph_enumeration)
+        return dist
+
+    def deptFirstSearch(self, couples, counter, dictionary, start_node, already_inserted):
+        """
+        :param couples: array di nodi con la lista di adiacenza per ciascun nodo
+        :param counter: contatore per la numerazione dei nodi
+        :param dictionary: dizionario che associa la numerazione dei nodi all'id del nodo nel grafo originale(self)
+        :param start_node: nodo di partenzaarr_sets = []
+        :return: dict finale
+        """
+        dictionary[counter] = start_node.id
+        already_inserted[start_node.id] = True
+        counter += 1
+        for edge in start_node.adj_arr:
+            if not already_inserted[edge.arrival_node]:
+                counter, dictionary = self.deptFirstSearch(couples, counter, dictionary, couples[edge.arrival_node],
+                                                           already_inserted)
+
+        return counter, dictionary
+
+    def calculate_distance_MST(self, graph_enumeration):
+        dist = 0
+        for i in range(self.num_nodes):
+            dist += self.matr_adj[graph_enumeration[i]][graph_enumeration[i+1]]
+        return dist
+
+
+
 
 
 

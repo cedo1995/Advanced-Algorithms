@@ -1,4 +1,3 @@
-
 class Tree:
     leader = []
     next = []
