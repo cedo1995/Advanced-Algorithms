@@ -86,7 +86,7 @@ class Graph:
                     if dist + self.matr_adj[vertex][v] < min_dist:
                         min_dist = dist + self.matr_adj[vertex][v]
                         min_prec = vertex
-            if time.time() - start_time > 15*60:
+            if time.time() - start_time > 20*60:
                 stop = True
                 return min_dist, distances, previous, stop
 
