@@ -1,7 +1,7 @@
 import sys
 
-class Distance:
 
+class Distance:
     subset_nodes = []
     value = sys.maxsize
 
@@ -27,7 +27,7 @@ class Distance:
 
     def has_subset_items(self, subset_node):  # controlla se la lista di distance_items e uguale
         if len(subset_node) != len(self.subset_nodes):
-            return False,-1
+            return False, -1
         for i, val in enumerate(self.subset_nodes):
             if val != subset_node[i]:
                 return False, i
