@@ -69,7 +69,7 @@ def main():
         print("tempo Nearest Neighbor =", time.time() - start_time)     # stampo il tempo impiegato
 
         start_time = time.time()        # faccio partire il timer
-        dist = graph.kruskalMST()       # eseguo l'euristica 2-approssimata
+        dist = graph.Tsp2_approx()       # eseguo l'euristica 2-approssimata
         print("Minima distanza 2 approssimata = ", dist)    # stampo il cammino minimo trovato
         print("tempo euristica 2-approssimata = ", time.time() - start_time)    # stampo il tempo impiegato
 

@@ -15,7 +15,6 @@ class Tree:
         :param x: indice del nodo di cui si vuole creare l'insieme
         """
         self.leader[x] = x      # il leader del nodo ad indice x è sè stesso
-        self.next[x] = -1       # todo FORSE si può eliminare perchè già settato nel costruttore
 
     def findSet(self, x):
         """

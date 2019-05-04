@@ -4,7 +4,6 @@ import sys
 import copy
 import time
 from Tree import Tree
-from Distance import Distance
 from Node import Node
 from Edge import Edge
 sys.setrecursionlimit(10000)
@@ -65,29 +64,27 @@ class Graph:
         :param my_map: todo da completare
         :return: peso del cammino minimo da 0 a v che visita tutti i vertici in subset_nodes
         """
-        g = tuple(subset_nodes)
+        g = tuple(subset_nodes) # creo la tupla immutabile che rappresenta il subset corrente
 
-        if len(subset_nodes) == 1 and subset_nodes[0] == v:
+        if len(subset_nodes) == 1 and subset_nodes[0] == v:  # caso base: se il subset contiene solo il nodo corrente da visitare v
             return self.matr_adj[0][v], distances, previous, stop
 
-        elif (v, g) in distances:
+        elif (v, g) in distances:  # caso base: se esiste già il subset g associato al nodo v
             return distances[v, g], distances, previous, stop
         else:
             min_dist = sys.maxsize
-            min_prec = -1
-            subset = copy.deepcopy(subset_nodes)
+            subset = copy.deepcopy(subset_nodes)  # effettuo una copia profonda del subset per poi eliminarci il nodo v senza avere side effect su subset nodes
             subset.remove(v)
             for vertex in subset_nodes:
                 if stop:
                     break
 
                 if vertex != v:
-                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, previous, start_time, stop, my_map)
+                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, previous, start_time, stop, my_map)  # chiamata ricorsiva
                     if dist + self.matr_adj[vertex][v] < min_dist:
                         min_dist = dist + self.matr_adj[vertex][v]
-                        min_prec = vertex
 
-            if time.time() - start_time > 20*60:
+            if time.time() - start_time > 20*60:  # se scade il countdown allora ritorno
                 stop = True
                 return min_dist, distances, previous, stop
 
@@ -95,13 +92,20 @@ class Graph:
             return min_dist, distances, previous, stop
 
     def hkTsp(self, start_time):
+        '''
+        :param start_time: tempo di avvio della funzione, serve per capire quando fermarmi
+        :return: la minima distanza esatta oppure se termina il tempo a disposizione la migliore distanza trovata fin'ora
+        '''
         my_map = {}
         distances = {}
-        previous = [-1 for x in range(self.num_nodes)]           # lista di Distance in cui ogni elemento è un DistanceItem con valore dell'id del predecessore
+        previous = [-1 for x in range(self.num_nodes)]           # inizializzo i vettori di distanze e predecessori
         vertices = [x for x in range(self.num_nodes)]
         return self.hkVisit(0, vertices, distances, previous, start_time, False, my_map)
 
     def nearestNeighbor(self):
+        '''
+        :return: ritorna la distanza del circuito secondo l'euristica nearest neighbor
+        '''
         circuit = []        # inizializzo il circuito vuoto
         total_circuit_length = 0        # inizializzo la lunghezza del circuito a 0
         visited_nodes = [False for x in range(self.num_nodes)]  # inizializzo un array che per ciascun nodo tiene traccia se è stato aggiunto al circuito o no
@@ -132,12 +136,29 @@ class Graph:
         """
         res = [(self.matr_adj[i][j], i, j)
                for i in range(self.num_nodes - 1)
-               for j in range(i+1, self.num_nodes)]
+               for j in range(i+1, self.num_nodes)]  # creo una lista di oggetti in cui il primo campo di ogni oggetto è il peso dell'arco, il secondo è in nodo di partenza dell'arco e il terzo è il nodo di arrivo dell'arco
 
-        res = sorted(res, key=lambda t: t[0])
+        res = sorted(res, key=lambda t: t[0])  # ordino la lista in base al primo campo di ogni oggetto
         return res
 
+    def Tsp2_approx(self):
+        '''
+        :return: la distanza secondo tsp 2-approssimato
+        '''
+        graphMST = self.kruskalMST()
+        already_inserted = [False for x in range(self.num_nodes)]  # struttura dati che serve per la ricerca in profondità per non visitare nuovamente nodi già visitati
+        dictionary = {}
+        counter = 0
+        start_node = graphMST[0]
+        counter, graph_enumeration = self.deptFirstSearch(graphMST, counter, dictionary, start_node, already_inserted)  # ricerca in profondità
+        graph_enumeration[counter] = graphMST[0].id  # completo il ciclo sapendo che l'ultimo nodo viene collegato con il primo
+        dist = self.calculate_distance_MST(graph_enumeration)  # calcola la distanza secondo tsp 2-approssimato
+        return dist
+
     def kruskalMST(self):
+        '''
+        :return: il minimum spanning tree, cioè l'albero di copertura minimo del grafo in questione
+        '''
         couples = []    # array di nodi
         for i in range(self.num_nodes):
             couples.append(Node(i))     # aggiunge n nodi a couples
@@ -151,14 +172,7 @@ class Graph:
                 couples[val[2]].addEdgeToNode(Edge(val[2], val[1], val[0]))     # aggiungo un arco fra il secondo ed il primo nodo
                 set_tree.union(val[1], val[2])              # faccio l'unione degli alberi
 
-        already_inserted = [False for x in range(self.num_nodes)]
-        dictionary = {}
-        counter = 0
-        start_node = couples[0]
-        counter, graph_enumeration = self.deptFirstSearch(couples, counter, dictionary, start_node, already_inserted)
-        graph_enumeration[counter] = couples[0].id
-        dist = self.calculate_distance_MST(graph_enumeration)
-        return dist
+        return couples
 
     def deptFirstSearch(self, couples, counter, dictionary, start_node, already_inserted):
         """
@@ -179,6 +193,10 @@ class Graph:
         return counter, dictionary
 
     def calculate_distance_MST(self, graph_enumeration):
+        '''
+        :param graph_enumeration: dizionario che associa la numerazione all'id del nodo
+        :return: la distanza rispetto alla numerazione di graph_enumeration
+        '''
         dist = 0
         for i in range(self.num_nodes):
             dist += self.matr_adj[graph_enumeration[i]][graph_enumeration[i+1]]
