@@ -53,54 +53,50 @@ class Graph:
             q3 = math.cos(coordinates1[0] + coordinates2[0])
             return int(RRR * math.acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0)
 
-    def hkVisit(self, v, subset_nodes, distances, previous, start_time, stop, my_map):   # todo Da commentare
+    def hkVisit(self, v, subset_nodes, distances, start_time, stop):
         """
         :param v: nodo destinazione
         :param subset_nodes: sottoinsieme di nodi in cui viene calcolato il peso del cammino minimo
-        :param distances: todo da completare
-        :param previous: todo da completare
+        :param distances: struttura dati che rappresenta la migliore distanza trovata fino a quel nodo passando per tutti i vertici di quel preciso subset
         :param start_time: tempo di inizio
         :param stop: tempo di fine del timer
-        :param my_map: todo da completare
         :return: peso del cammino minimo da 0 a v che visita tutti i vertici in subset_nodes
         """
         g = tuple(subset_nodes) # creo la tupla immutabile che rappresenta il subset corrente
 
         if len(subset_nodes) == 1 and subset_nodes[0] == v:  # caso base: se il subset contiene solo il nodo corrente da visitare v
-            return self.matr_adj[0][v], distances, previous, stop
+            return self.matr_adj[0][v], distances, stop
 
         elif (v, g) in distances:  # caso base: se esiste già il subset g associato al nodo v
-            return distances[v, g], distances, previous, stop
+            return distances[v, g], distances, stop
         else:
             min_dist = sys.maxsize
             subset = copy.deepcopy(subset_nodes)  # effettuo una copia profonda del subset per poi eliminarci il nodo v senza avere side effect su subset nodes
             subset.remove(v)
-            for vertex in subset_nodes:
-                if stop:
+            for vertex in subset_nodes:  # per ogni vertice nel subset
+                if stop:  # se è scaduto il tempo
                     break
 
-                if vertex != v:
-                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, previous, start_time, stop, my_map)  # chiamata ricorsiva
-                    if dist + self.matr_adj[vertex][v] < min_dist:
-                        min_dist = dist + self.matr_adj[vertex][v]
+                if vertex != v:  # per tutti i vertici tranne quello appena rimosso
+                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, start_time, stop)  # chiamata ricorsiva
+                    if dist + self.matr_adj[vertex][v] < min_dist:  # se la distanza trovata più l'arco considerato è minore della distanza trovata fin'ora (al più infinita)
+                        min_dist = dist + self.matr_adj[vertex][v]  # aggiorna la minima distanza
 
             if time.time() - start_time > 20*60:  # se scade il countdown allora ritorno
                 stop = True
-                return min_dist, distances, previous, stop
+                return min_dist, distances, stop
 
-            distances.update({(v, g): min_dist})
-            return min_dist, distances, previous, stop
+            distances.update({(v, g): min_dist})  # aggiorno la struttura dati distances con il vertice v e il subset corrente con la minima distanza trovata fin'ora
+            return min_dist, distances, stop
 
     def hkTsp(self, start_time):
         '''
         :param start_time: tempo di avvio della funzione, serve per capire quando fermarmi
         :return: la minima distanza esatta oppure se termina il tempo a disposizione la migliore distanza trovata fin'ora
         '''
-        my_map = {}
-        distances = {}
-        previous = [-1 for x in range(self.num_nodes)]           # inizializzo i vettori di distanze e predecessori
-        vertices = [x for x in range(self.num_nodes)]
-        return self.hkVisit(0, vertices, distances, previous, start_time, False, my_map)
+        distances = {}  # creo la struttura dati delle distanze
+        vertices = [x for x in range(self.num_nodes)]  # inizializzo l'array che contiene gli id dei vertici di tutti i nodi del grafo
+        return self.hkVisit(0, vertices, distances, start_time, False)
 
     def nearestNeighbor(self):
         '''
