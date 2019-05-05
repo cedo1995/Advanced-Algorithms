@@ -90,18 +90,18 @@ class Graph:
             return min_dist, distances, stop
 
     def hkTsp(self, start_time):
-        '''
+        """
         :param start_time: tempo di avvio della funzione, serve per capire quando fermarmi
         :return: la minima distanza esatta oppure se termina il tempo a disposizione la migliore distanza trovata fin'ora
-        '''
+        """
         distances = {}  # creo la struttura dati delle distanze
         vertices = [x for x in range(self.num_nodes)]  # inizializzo l'array che contiene gli id dei vertici di tutti i nodi del grafo
         return self.hkVisit(0, vertices, distances, start_time, False)
 
     def nearestNeighbor(self):
-        '''
+        """
         :return: ritorna la distanza del circuito secondo l'euristica nearest neighbor
-        '''
+        """
         circuit = []        # inizializzo il circuito vuoto
         total_circuit_length = 0        # inizializzo la lunghezza del circuito a 0
         visited_nodes = [False for x in range(self.num_nodes)]  # inizializzo un array che per ciascun nodo tiene traccia se è stato aggiunto al circuito o no
@@ -138,9 +138,9 @@ class Graph:
         return res
 
     def Tsp2_approx(self):
-        '''
+        """
         :return: la distanza secondo tsp 2-approssimato
-        '''
+        """
         graphMST = self.kruskalMST()
         already_inserted = [False for x in range(self.num_nodes)]  # struttura dati che serve per la ricerca in profondità per non visitare nuovamente nodi già visitati
         dictionary = {}
@@ -152,9 +152,9 @@ class Graph:
         return dist
 
     def kruskalMST(self):
-        '''
+        """
         :return: il minimum spanning tree, cioè l'albero di copertura minimo del grafo in questione
-        '''
+        """
         couples = []    # array di nodi
         for i in range(self.num_nodes):
             couples.append(Node(i))     # aggiunge n nodi a couples
@@ -189,10 +189,10 @@ class Graph:
         return counter, dictionary
 
     def calculate_distance_MST(self, graph_enumeration):
-        '''
+        """
         :param graph_enumeration: dizionario che associa la numerazione all'id del nodo
         :return: la distanza rispetto alla numerazione di graph_enumeration
-        '''
+        """
         dist = 0
         for i in range(self.num_nodes):
             dist += self.matr_adj[graph_enumeration[i]][graph_enumeration[i+1]]
