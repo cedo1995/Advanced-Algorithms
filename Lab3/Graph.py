@@ -78,7 +78,7 @@ class Graph:
                     break
 
                 if vertex != v:  # per tutti i vertici tranne quello appena rimosso
-                    dist, distances, previous, stop = self.hkVisit(vertex, subset, distances, start_time, stop)  # chiamata ricorsiva
+                    dist, distances, stop = self.hkVisit(vertex, subset, distances, start_time, stop)  # chiamata ricorsiva
                     if dist + self.matr_adj[vertex][v] < min_dist:  # se la distanza trovata più l'arco considerato è minore della distanza trovata fin'ora (al più infinita)
                         min_dist = dist + self.matr_adj[vertex][v]  # aggiorna la minima distanza
 

@@ -59,7 +59,7 @@ def main():
     for graph in graph_list:        # per ciascun grafo
         print(graph.name)
         start_time = time.time()        # faccio partire il timer
-        min_dist, distances, previous, stop = graph.hkTsp(start_time)   # eseguo Held-Karp
+        min_dist, distances, stop = graph.hkTsp(start_time)   # eseguo Held-Karp
         print("Minima distanza algoritmo esatto = ", min_dist)      # stampo il cammino minimo trovato
         print("tempo algoritmo esatto =", time.time() - start_time)     # stampo il tempo impiegato
 

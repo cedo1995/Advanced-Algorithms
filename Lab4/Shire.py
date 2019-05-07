@@ -1,4 +1,4 @@
-class County:
+class Shire:
 
     def __init__(self, id, posX, posY, population, cancer_risk):
         self.id = id
