@@ -6,7 +6,7 @@ import csv
 def main():
     path_file = ["./unifiedCancerData_212.csv", "./unifiedCancerData_562.csv", "./unifiedCancerData_1041.csv",
                  "./unifiedCancerData_3108.csv"]
-    path_file = ["unifiedCancerData_212.csv"]
+    #path_file = ["unifiedCancerData_212.csv"]
     for file in path_file:
         shire_list = []  # contiene tutte le contee presenti nel file
         with open(file) as csv_file:
