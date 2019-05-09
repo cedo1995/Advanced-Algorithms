@@ -18,25 +18,32 @@ class Graph:
         :return: un insieme di k cluster che partizionano le contee
         """
         n = self.number_of_shires
+
         cluster = []    # lista di cluster
         for i in range(n):      # aggiungo gli n cluster, ciascuno contenente solo il centroide
             cluster.append(Cluster(self.shires[i]))    # costruttore con l'elemento completo
-
+        #print(cluster)
         distances = self.createDistanceMatrix(cluster)
+
         ordered_distances = self.searchMinimumDistance(distances)
-        print(ordered_distances[0], ordered_distances[1])
-        minimum = []
+
         while len(cluster) > k:         # todo Controllare se si riesce ad eseguire la ricerca del minimo solo una volta e non per ogni ciclo, O(n) ogni ciclo
             # ordered_distances = self.searchMinimumDistance(distances)      # tripla della forma (distance, i, j) in cui è minima la distanza tra il cluster[i] e il  cluster[j]
             minimum = ordered_distances[0]
+            print(" minimum ", minimum)
+
             cluster[minimum[1]].unionCluster(cluster[minimum[2]])
             cluster.pop(minimum[2])     # rimuovo il cluster con indice j perchè già stato unito a quello con indice i
+            print("distances prima \n", distances)
             distances = self.updateDistanceMatrix(distances, cluster, minimum[1], minimum[2])
+            print(" distances dopo \n", distances)
+            print("ordered distances prima \n", ordered_distances)
             ordered_distances = self.updateMinimumDistance(cluster, distances, ordered_distances, minimum)
+            print("ordered distances dopo\n ", ordered_distances)
         return cluster      # ritorno la lista dei cluster
 
     def createDistanceMatrix(self, cluster):
-        distances = np.ones((len(cluster), len(cluster)))*sys.maxsize
+        distances = np.ones((len(cluster), len(cluster)))*0
         for i in range(len(cluster) - 1):
             for j in range(i + 1, len(cluster)):
                 distances[i][j] = cluster[i].distanceBetweenCluster(cluster[j])  # calcolo la distanza fra due cluster
@@ -47,9 +54,9 @@ class Graph:
         distances = np.delete(distances, int(row_to_remove), 0)     # np.delete rimuove dall'oggetto distances gli elementi della riga(per questo lo zero alla fine) con indice row_to_remove
         distances = np.delete(distances, int(row_to_remove), 1)     # rimuove da distances gli elementi della colonna(per questo l' 1 alla fine) con indice row_to_distances
         for i in range(len(cluster)):
-            if row_to_keep != i:     # se non sto calcolando la distanza fra il cluster e sè stesso
-                distances[i][row_to_keep] = cluster[i].distanceBetweenCluster(cluster[row_to_keep])     # aggiorno la matrice distances con i valori aggiornati
-                distances[row_to_keep][i] = distances[i][row_to_keep]           # aggiorno distances con i valori corretti
+            #if row_to_keep != i:     # se non sto calcolando la distanza fra il cluster e sè stesso
+            distances[i][row_to_keep] = cluster[i].distanceBetweenCluster(cluster[row_to_keep])     # aggiorno la matrice distances con i valori aggiornati
+            distances[row_to_keep][i] = distances[i][row_to_keep]           # aggiorno distances con i valori corretti
         return distances
 
     def searchMinimumDistance(self, distances):     #todo: valutare se tenere come range len(distances) oppure mettere len(cluster)
@@ -64,12 +71,17 @@ class Graph:
         :param minimum: tripla della forma (distanza, i, j), rappresenta l'istanza con minima distanza trovata
         :return: ordered_distances aggiornata con i nuovi valori in seguito all'unione fra i cluster
         """
+        to_delete = []
         for i, val in enumerate(ordered_distances):
             if val[1] == minimum[1] or val[2] == minimum[2] or val[1] == minimum[2] or val[2] == minimum[1]:
-                ordered_distances.pop(i)
+                to_delete.append(val)       #ordered_distances.pop(i)
 
+        for val in to_delete:
+            ordered_distances.remove(val)
+            
         for i in range(len(cluster)):
-            ordered_distances.append((distances[i][minimum[1]], i, minimum[1]))
+            if i != minimum[1]:
+                ordered_distances.append((distances[i][minimum[1]], i, minimum[1]))
         ordered_distances = sorted(ordered_distances, key=lambda t: t[0])
         return ordered_distances
 
