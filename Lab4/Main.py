@@ -6,7 +6,7 @@ import csv
 def main():
     path_file = ["./unifiedCancerData_212.csv", "./unifiedCancerData_562.csv", "./unifiedCancerData_1041.csv",
                  "./unifiedCancerData_3108.csv"]
-    #path_file = ["unifiedCancerData_212.csv"]
+    path_file = ["piccolo_esempietto.csv"]
     for file in path_file:
         shire_list = []  # contiene tutte le contee presenti nel file
         with open(file) as csv_file:
@@ -18,7 +18,7 @@ def main():
                 shire_list.append(shire)
         # print(shire_list[0].posX, shire_list[0].posY)
         graph = Graph(len(shire_list), shire_list)
-        cluster = graph.hierarchicalClustering(15)
+        cluster = graph.hierarchicalClustering(2)
         for cl in cluster:
             cl.printCluster()
 
