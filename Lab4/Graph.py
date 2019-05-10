@@ -77,7 +77,24 @@ class Graph:
                 dist[2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
         return min_list
 
+    def kMeansClustering(self, k, iter):
+        """
+        :param k: numero di cluster richiesti
+        :param iter: numero di iterazioni da effettuare
+        :return: un insieme di k cluster che partizionano le contee
+        """
 
+        n = self.number_of_shires
 
+        ordered_shire = sorted(self.shires, reverse=True, key=self.sortSecond)
+        top_shires = ordered_shire[0:k] # k contee con popolazione più elevata
 
+        clusters = {}  # lista di cluster
+        for i in range(k):  # aggiungo k cluster, ciascuno con una delle k contee con più popolazione
+            cluster = Cluster(top_shires[i])
+            clusters[cluster.id] = cluster
 
+        # for i in range(iter):
+
+    def sortSecond(self, val):
+        return int(val.population)
