@@ -5,14 +5,14 @@ import sys
 import copy
 import time
 
+
 class Graph:
 
     def __init__(self, number_of_shires, shires):
         self.number_of_shires = number_of_shires
         self.shires = shires
-        #for i in range(number_of_shires):
+        # for i in range(number_of_shires):
         #    self.shires.append(Shire(shires[i].id, shires[i].posX, shires[i].posY, shires[i].population, shires[i].cancer_risk))
-
 
     def hierarchicalClustering(self, k):
         """
@@ -21,78 +21,62 @@ class Graph:
         """
         n = self.number_of_shires
 
-        cluster = {}   # lista di cluster
-        for i in range(n):      # aggiungo gli n cluster, ciascuno contenente solo il centroide
-            #cluster.append(Cluster(self.shires[i]))    # costruttore con l'elemento completo
-            cluster[Cluster(self.shires[i]).centroid] = Cluster(self.shires[i])
-        #print(cluster)
-        #distances = self.createDistanceMatrix(cluster)
+        clusters = {}   # lista di cluster
+        for i in range(n):      # aggiungo gli n cluster, ciascuno contenente solo il centroide,  nella mappa
+            cluster = Cluster(self.shires[i])
+            clusters[cluster.id] = cluster
 
-        ordered_distances = self.createMinList(cluster)
+        min_list = self.createMinList(clusters)
 
-        while len(cluster) > k:         # todo Controllare se si riesce ad eseguire la ricerca del minimo solo una volta e non per ogni ciclo, O(n) ogni ciclo
-            # ordered_distances = self.searchMinimumDistance(distances)      # tripla della forma (distance, i, j) in cui è minima la distanza tra il cluster[i] e il  cluster[j]
-            print(len(cluster))
-            minimum = self.findMinimum(ordered_distances)
-            #print(" minimum ", minimum)
+        while len(clusters) > k:  # TODO: Controllare se si riesce ad eseguire la ricerca del minimo solo una volta e non per ogni ciclo, O(n) ogni ciclo
+            print(len(clusters))
+            minimum = self.findMinimum(min_list)
 
-            cluster[minimum[0]].unionCluster(cluster[minimum[1]])
-            new_key = cluster[minimum[0]].centroid
-            ora = time.time()
-            #cluster.pop(minimum[1])     # rimuovo il cluster con indice j perchè già stato unito a quello con indice i
-            del cluster[minimum[1]]
-            cluster[new_key] = cluster[minimum[0]]
-            del cluster[minimum[0]]
-            print(time.time()-ora)
-            #print("distances prima \n", distances)
-            #distances = self.updateDistanceMatrix(distances, cluster, minimum[1], minimum[2])
-            #print(" distances dopo \n", distances)
-            #print("ordered distances prima \n", ordered_distances)
-            ordered_distances = self.updateDistanceList(distances)
-            #print("ordered distances dopo\n ", ordered_distances)
-        return cluster      # ritorno la lista dei cluster
+            newCluster = minimum[0]
+            delCluster = minimum[1]
 
-    def findMinimum(self, res):
+            clusters[newCluster].unionCluster(clusters[delCluster])
+
+            min_list = self.updateDistanceList(min_list, clusters, newCluster, delCluster)
+            del clusters[delCluster]
+
+        return clusters      # ritorno la lista dei cluster
+
+    def createMinList(self, clusters):
+        minList = []
+        tempClusters = copy.deepcopy(clusters)
+        for id1 in clusters:
+            for id2 in tempClusters:
+                if id1 != id2:
+                    minList.append([id1, id2, clusters[id1].distanceBetweenCluster(clusters[id2])])
+            del tempClusters[id1]
+        return minList
+
+    def findMinimum(self, list):
         min_item = [None, None, sys.maxsize]
-        for i in res:
-            if i[1]<min_item[2]:
+        for i in list:
+            if i[2] < min_item[2]:
                 min_item = i
         return min_item
 
-
-
-
-    def createMinList(self, cluster):     #todo: valutare se tenere come range len(distances) oppure mettere len(cluster)
-
-        res = []
-        tempCluster = cluster
-        for key in cluster:
-            for chiave in tempCluster:
-                if chiave != key:
-                    res.append([key, chiave, cluster[key].distanceBetweenCluster(cluster[chiave])])
-                #res[cluster[i].centroid] = [cluster[j].centroid, cluster[i].distanceBetweenCluster(cluster[j])
-            del tempCluster[key]
-
-
-
-        #res = sorted(res, key=lambda t: t[0])
-        return res
-
-    def updateDistanceList(self, cluster, distances, ordered_distances, minimum):
+    def updateDistanceList(self, min_list, clusters, new_cluster, del_cluster):
         """
-        :param distances: matrice delle distanze
-        :param ordered_distances: lista di triple (distanza, i, j) ove i, j sono gli indici dei cluster e distanza è la distanza fra il cluster i e il cluster j
-        :param minimum: tripla della forma (distanza, i, j), rappresenta l'istanza con minima distanza trovata
+        :param min_list:  lista di triple (i, j, distanza) dove i, j sono gli id dei cluster e distanza è la distanza fra il cluster i e il cluster j
+        :param clusters: mappa dei cluster
+        :param new_cluster: id del Cluster unione
+        :param del_cluster: id del Cluster da eliminare
         :return: ordered_distances aggiornata con i nuovi valori in seguito all'unione fra i cluster
         """
-        for key in res:
-            if key == index_to_delete or res[key][0] == index_to_delete or key == index_to_modify or res[key][0] == index_to_modify:
-                del res[key]
+        list = copy.deepcopy(min_list)
+        for dist in list:
+            if (del_cluster == dist[0]) | (del_cluster == dist[1]):
+                min_list.remove(dist)
+            if new_cluster == dist[0]:
+                dist[2] = clusters[dist[0]].distanceBetweenCluster(clusters[dist[1]])
+            if new_cluster == dist[1]:
+                dist[2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
+        return min_list
 
-        for key in cluster:
-            if key != new_index:
-                res[new_index] = cluster[new_index].distanceBetweenCluster(cluster[res[key][0]])
-                res[key][1] = cluster[key].distanceBetweenCluster(cluster[res[key][0]])
 
 
 

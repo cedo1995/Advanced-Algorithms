@@ -3,23 +3,19 @@ from Shire import Shire
 
 class Cluster:
 
-    def __init__(self, centroid):
+    def __init__(self, node):
         """
         :param centroid: tuple of 2 coordinates(x,y)
         """
-        self.pos_x = centroid.posX
-        self.pos_y = centroid.posY
-        self.centroid = []
-        self.setCentroid(self.pos_x, self.pos_y)
+        self.id = node.id
+        self.pos_x = node.posX
+        self.pos_y = node.posY
         self.elements = []
-        self.addElementToCluster(centroid)
 
-    def setCentroid(self, pos_x, pos_y):
-        self.centroid = [pos_x, pos_y]
-
+        self.addElementToCluster(node)
 
     def printCluster(self):
-        print("Cluster con centroide in posizione ", self.centroid[0], self.centroid[1], "con elementi:")
+        print("Cluster in posizione " + str(self.pos_x) + str(self.pos_y) + "con elementi:")
         for el in self.elements:
             print(el.id)
 
@@ -27,16 +23,18 @@ class Cluster:
         self.elements.append(el)     # todo da togliere gli elementi dal cluster shire
 
     def unionCluster(self, cluster):
-        self.calculateNewCentroid(self.pos_x, self.pos_y, cluster.pos_x, cluster.pos_y)   # a livello teorico non devo neanche eliminare la posizione vecchia del centroide
-        #print("Sto per aggiungere gli elementi al cluster ", self.centroid)
+        # Inserisce le contee del cluster da unire in questo
         for el in cluster.elements:
-            #print(el)
             self.addElementToCluster(el)
 
-    def calculateNewCentroid(self, pos_x, pos_y, pos2_x, pos2_y):
-        new_pos_x = float(abs(float(pos2_x) - float(pos_x)) / 2)
-        new_pos_y = float(abs(float(pos2_y) - float(pos_y)) / 2)
-        self.setCentroid(new_pos_x, new_pos_y)
+        # Calcolo la nuova x e y come baricentro tra tutti i nodi
+        sum_x = 0
+        sum_y = 0
+        for el in self.elements:
+            sum_x += el.posX
+            sum_y += el.posY
+        self.pos_x = sum_x / len(self.elements)
+        self.pos_y = sum_y / len(self.elements)
 
     def distanceBetweenCluster(self, cluster_2):
         """
