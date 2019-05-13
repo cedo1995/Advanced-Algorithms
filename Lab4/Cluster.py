@@ -14,8 +14,9 @@ class Cluster:
 
         self.addElementToCluster(node)
 
+
     def printCluster(self):
-        print("Cluster in posizione " + str(self.pos_x) + str(self.pos_y) + "con elementi:")
+        print("Cluster in posizione " + str(self.pos_x) + " " + str(self.pos_y) + " con elementi:")
         for el in self.elements:
             print(el.id)
 
@@ -28,13 +29,7 @@ class Cluster:
             self.addElementToCluster(el)
 
         # Calcolo la nuova x e y come baricentro tra tutti i nodi
-        sum_x = 0
-        sum_y = 0
-        for el in self.elements:
-            sum_x += el.posX
-            sum_y += el.posY
-        self.pos_x = sum_x / len(self.elements)
-        self.pos_y = sum_y / len(self.elements)
+        self.updateCentroids()
 
     def distanceBetweenCluster(self, cluster_2):
         """
@@ -43,4 +38,14 @@ class Cluster:
         """
         return float(float(float(float(self.pos_x) - float(cluster_2.pos_x))**2 +
                            float(float(self.pos_y) - float(cluster_2.pos_y))**2) ** 0.5)
+
+    def updateCentroids(self):
+        sum_x = 0
+        sum_y = 0
+        for el in self.elements:
+            sum_x += el.posX
+            sum_y += el.posY
+        self.pos_x = sum_x / len(self.elements)
+        self.pos_y = sum_y / len(self.elements)
+
 

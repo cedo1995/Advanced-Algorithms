@@ -77,24 +77,56 @@ class Graph:
                 dist[2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
         return min_list
 
-    def kMeansClustering(self, k, iter):
+    def kMeansClustering(self, k, iter, points):
         """
         :param k: numero di cluster richiesti
         :param iter: numero di iterazioni da effettuare
+        :param points: lista di contee
         :return: un insieme di k cluster che partizionano le contee
         """
 
         n = self.number_of_shires
 
         ordered_shire = sorted(self.shires, reverse=True, key=self.sortSecond)
-        top_shires = ordered_shire[0:k] # k contee con popolazione più elevata
+        top_shires = ordered_shire[0:k]  # k contee con popolazione più elevata
+        centroids = []
+        for i in range(k):          # creo i k centroidi iniziali
+            centroids.append([top_shires[i].posX, top_shires[i].posY])
 
-        clusters = {}  # lista di cluster
-        for i in range(k):  # aggiungo k cluster, ciascuno con una delle k contee con più popolazione
-            cluster = Cluster(top_shires[i])
-            clusters[cluster.id] = cluster
+        for i in range(iter):   # aggiungo k cluster, ciascuno con una delle k contee con più popolazione
+            clusters = {}           # lista di cluster in del tipo (id_cluster: cluster) TODO LASCIAMOLO DENTRO
+            #cluster = Cluster(top_shires[i])  # creo l'istanza di cluster corrente
+            #clusters[cluster.id] = cluster     TODO Forse non servono
+            for j in range(n):
+                minimum = sys.maxsize
 
-        # for i in range(iter):
+                for f in range(k):
+                    if minimum > self.distanceBetweenPoints(centroids[f], [points[j].posX, points[j].posY]):
+                        minimum = self.distanceBetweenPoints(centroids[f], [points[j].posX, points[j].posY])
+                        l = f       # assegno l'indice del centroide avente distanza minima dal punto
+
+                if l not in clusters.keys():
+
+                    clusters[l] = Cluster(points[j])
+                else:
+
+                    clusters[l].addElementToCluster(points[j])        # aggiungo al cluster con indice l il punto j
+            for index in range(k):
+                clusters[index].updateCentroids()
+                centroids[index] = [clusters[index].pos_x, clusters[index].pos_y]
+                #print(centroids[index])
+
+
+        return clusters
+
 
     def sortSecond(self, val):
         return int(val.population)
+
+    def distanceBetweenPoints(self, centroid, point):
+        """
+        :param centroid: punto di partenza iniziale nella forma [posX, posY]
+        :param point: punto di arrivo nella forma [posX, posY]
+        :return :
+        """
+        return float(((centroid[0] - point[0])**2 + (centroid[1] - point[1])**2)**0.5)
