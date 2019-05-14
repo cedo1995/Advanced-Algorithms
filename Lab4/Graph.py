@@ -35,7 +35,7 @@ class Graph:
             newCluster = minimum[0]
             delCluster = minimum[1]
 
-            clusters[newCluster].unionCluster(clusters[delCluster])
+            clusters[newCluster].unionCluster(clusters[delCluster])     # unisco i due cluster mettendo tutti gli elementi di clusters[delCluster] in clusters[newCluster]
 
             min_list = self.updateDistanceList(min_list, clusters, newCluster, delCluster)
             del clusters[delCluster]
@@ -43,6 +43,10 @@ class Graph:
         return clusters      # ritorno la lista dei cluster
 
     def createMinList(self, clusters):
+        '''
+        :param clusters: Lista di cluster
+        :return: Lista senza duplicati contentente triple nel formato indice cluster partenza, indice cluster arrivo, distanza tra i due cluster
+        '''
         minList = []
         tempClusters = copy.deepcopy(clusters)
         for id1 in clusters:
@@ -53,13 +57,17 @@ class Graph:
         return minList
 
     def findMinimum(self, list):
+        '''
+        :param list: lista di triple indice cluster partenza, indice cluster arrivo, distanza tra i due cluster
+        :return: Tripla con distanza minima
+        '''
         min_item = [None, None, sys.maxsize]
         for i in list:
             if i[2] < min_item[2]:
                 min_item = i
         return min_item
 
-    def updateDistanceList(self, min_list, clusters, new_cluster, del_cluster):
+    def updateDistanceList(self, min_list, clusters, new_cluster, del_cluster):     #FIXME: Correggimi pls!!
         """
         :param min_list:  lista di triple (i, j, distanza) dove i, j sono gli id dei cluster e distanza è la distanza fra il cluster i e il cluster j
         :param clusters: mappa dei cluster
@@ -69,12 +77,17 @@ class Graph:
         """
         list = copy.deepcopy(min_list)
         for dist in list:
+
             if (del_cluster == dist[0]) | (del_cluster == dist[1]):
+
                 min_list.remove(dist)
-            if new_cluster == dist[0]:
-                dist[2] = clusters[dist[0]].distanceBetweenCluster(clusters[dist[1]])
-            if new_cluster == dist[1]:
-                dist[2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
+
+            else:
+
+                if new_cluster == dist[0]:
+                    min_list[2] = clusters[dist[0]].distanceBetweenCluster(clusters[dist[1]])
+                if new_cluster == dist[1]:
+                    min_list[2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
         return min_list
 
     def kMeansClustering(self, k, iter, points):
