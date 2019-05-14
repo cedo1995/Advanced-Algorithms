@@ -11,7 +11,6 @@ class Cluster:
         self.pos_x = node.posX
         self.pos_y = node.posY
         self.elements = []
-
         self.addElementToCluster(node)
 
 

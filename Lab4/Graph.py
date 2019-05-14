@@ -29,7 +29,7 @@ class Graph:
         min_list = self.createMinList(clusters)
 
         while len(clusters) > k:  # TODO: Controllare se si riesce ad eseguire la ricerca del minimo solo una volta e non per ogni ciclo, O(n) ogni ciclo
-            print(len(clusters))
+            #print(len(clusters))
             minimum = self.findMinimum(min_list)
 
             newCluster = minimum[0]
