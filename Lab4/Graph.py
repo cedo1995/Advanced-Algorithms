@@ -20,27 +20,34 @@ class Graph:
         :return: un insieme di k cluster che partizionano le contee
         """
 
-        P = points[points[:, 0].argsort()]
-        S = points[points[:, 1].argsort()]
+        P = points[points[:, 1].argsort()]
+        S = points[points[:, 2].argsort()]
         #print(P)
-        clusters = [Cluster(i[0], i[1], k) for k, i in enumerate(P)]
+        clusters = [Cluster(i[1], i[2], i[0]) for k, i in enumerate(P)]
         #print(clusters)
+        idToCluster = {}
+        for cl in clusters:
+            idToCluster[cl.id] = cl
 
 
-        while len(clusters) > k:
-            print(len(clusters))
+        while len(idToCluster) > k:
+            print(len(idToCluster))
 
-            minimum = self.fastClosestPair(P, S)
+            minimum = self.fastClosestPair(P, S, idToCluster)
             #print(minimum)
             #print("ciao")
             newCluster = minimum[1]
             delCluster = minimum[2]     # l'indice corrisponde all'id del cluster
 
-            clusters[newCluster].unionCluster(clusters[delCluster])     # unisco i due cluster mettendo tutti gli elementi di clusters[delCluster] in clusters[newCluster]
-            clusters.pop(delCluster)
-            np.delete(P, delCluster, axis=0)
-            for i, cl in enumerate(clusters):
-                P[i] = [cl.pos_x, cl.pos_y]
+
+
+            idToCluster[newCluster].unionCluster(idToCluster[delCluster])     # unisco i due cluster mettendo tutti gli elementi di clusters[delCluster] in clusters[newCluster]
+            del idToCluster[delCluster]
+            P = np.empty([len(idToCluster), 3])
+            i = 0
+            for key in idToCluster:
+                P[i] = [key, idToCluster[key].pos_x, idToCluster[key].pos_y]
+                i += 1
             P = P[P[:, 0].argsort()]
             S = P[P[:, 1].argsort()]
 
@@ -49,9 +56,9 @@ class Graph:
 
 
 
-        return clusters      # ritorno la lista dei cluster
+        return idToCluster      # ritorno la lista dei cluster
 
-    def fastClosestPair(self, P, S):
+    def fastClosestPair(self, P, S, idToCluster):
         '''
         :param P: lista di n cluster in cui ogni cluster ha un id e una coppia x,y ordinati per x crescente
         :param S: lista di indici dei punti P ordinati per y crescente
@@ -66,20 +73,20 @@ class Graph:
             P_l = P[0:m]    # filtro i valori di P con la condizione che ogni elemento sia in range(m)
             P_r = P[m:]    #     filtro i valori di P con la condizione che ogni elemento sia in range(m, n)
             S_l, S_r = self.split(S, P_l, P_r)
-            tripla_minima_l = self.fastClosestPair(P_l, S_l)
-            tripla_minima_r = self.fastClosestPair(P_r, S_r)
+            tripla_minima_l = self.fastClosestPair(P_l, S_l, idToCluster)
+            tripla_minima_r = self.fastClosestPair(P_r, S_r, idToCluster)
             if tripla_minima_l[0] <= tripla_minima_r[0]:
                 tripla_minima = tripla_minima_l
             else:
                 tripla_minima = tripla_minima_r
             mid = 0.5 * (P[m-1][0] + P[m][0])
-            if tripla_minima[0] <= self.closestPairStrip(S, mid, tripla_minima[0], P)[0]:
+            if tripla_minima[0] <= self.closestPairStrip(S, mid, tripla_minima[0], P, idToCluster)[0]:
                 return tripla_minima
             else:
-                return self.closestPairStrip(S, mid, tripla_minima[0], P)
+                return self.closestPairStrip(S, mid, tripla_minima[0], P, idToCluster)
 
 
-    def closestPairStrip(self, S, mid, d, P):
+    def closestPairStrip(self, S, mid, d, P, idToCluster):
         '''
         :param S: lista di n indici di punti ordinati per y crescente
         :param mid: valore reale
@@ -92,8 +99,8 @@ class Graph:
         k = 0
 
         for i in range(n):
-            if abs(S[i][0] - mid) < d:
-                S_.append(S[i])
+            if abs(S[i][1] - mid) < d:
+                S_.append(S[i][0])
                 k += 1
         tripla_minima = [sys.maxsize, -1, -1]
 
@@ -102,8 +109,8 @@ class Graph:
             for v in range(u+1, min(u + 5, n - 1) + 1 ):
                 #print(S_)
 
-                if v < len(S_) and tripla_minima[0] > self.distanceBetweenPoints(S_[u], S_[v]):
-                    tripla_minima = [self.distanceBetweenPoints(S_[u], S_[v]), u, v]
+                if v < len(S_) and tripla_minima[0] > self.distanceBetweenPoints(idToCluster[S_[u]], idToCluster[S_[v]]):
+                    tripla_minima = [self.distanceBetweenPoints(idToCluster[S_[u]], idToCluster[S_[v]]), S_[u], S_[v]]
         return tripla_minima
 
     def slowClosestPair(self, clusters):
@@ -116,8 +123,8 @@ class Graph:
             for j, p_v in enumerate(clusters):
                 if j > i:    # cioè considero la matrice triangolare superiore
                     min_dist = tripla_minima[0]
-                    if self.distanceBetweenPoints(p_u, p_v) < min_dist:
-                        tripla_minima = [self.distanceBetweenPoints(p_u, p_v), i, j]
+                    if self.distanceBetweenPoints(p_u[1:], p_v[1:]) < min_dist:
+                        tripla_minima = [self.distanceBetweenPoints(p_u[1:], p_v[1:]), p_u[0], p_v[0]]
         return tripla_minima
 
 
@@ -142,40 +149,6 @@ class Graph:
 
 
 
-    def updateDistanceList(self, min_list, clusters, new_cluster, del_cluster):     #FIXME: mettimi a posto i commenti
-        """
-        :param min_list:  lista di triple (i, j, distanza) dove i, j sono gli id dei cluster e distanza è la distanza fra il cluster i e il cluster j
-        :param clusters: mappa dei cluster
-        :param new_cluster: id del Cluster unione
-        :param del_cluster: id del Cluster da eliminare
-        :return: ordered_distances aggiornata con i nuovi valori in seguito all'unione fra i cluster
-        """
-        #list = copy.deepcopy(min_list)
-        ora = time.time()
-        for i, dist in enumerate(min_list):
-
-            if new_cluster == dist[0]:
-                min_list[i][2] = clusters[dist[0]].distanceBetweenCluster(clusters[dist[1]])
-
-            if new_cluster == dist[1]:
-                min_list[i][2] = clusters[dist[1]].distanceBetweenCluster(clusters[dist[0]])
-
-        print("tempo primo ciclo -> ", time.time() - ora)
-
-        list = copy.deepcopy(min_list)
-
-        ora = time.time()
-        print(len(list))
-        counter = 0
-        for dist in list:   # FIXME: O(n^2)
-            if (del_cluster == dist[0]) or (del_cluster == dist[1]):
-                counter += 1
-                #print("->", dist)
-                min_list.remove(dist)   # FIXME: O(n)
-        print("ho rimosso ",counter, " elementi")
-        print("tempo secondo ciclo -> ", time.time() - ora)
-
-        return min_list
 
     def kMeansClustering(self, k, iter, points):
         """

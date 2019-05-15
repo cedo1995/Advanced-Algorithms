@@ -8,11 +8,11 @@ import matplotlib.cm
 
 def main():
     path_file = ["./unifiedCancerData_212.csv", "./unifiedCancerData_562.csv", "./unifiedCancerData_1041.csv",
-                 "./unifiedCancerData_3108.csv"]
+                 "./unifiedCancerData_3108.csv", "./piccolo_esempietto.csv"]
     #path_file = ["./unifiedCancerData_3108.csv"]
     #path_file = ["./unifiedCancerData_562.csv"]
     #path_file = ["./piccolo_esempietto.csv"]
-    points = np.loadtxt(path_file[1], delimiter=",", usecols=(1, 2))
+    points = np.loadtxt(path_file[2], delimiter=",", usecols=(0, 1, 2))
     for file in path_file:
         shire_list = []  # contiene tutte le contee presenti nel file
         with open(file) as csv_file:
@@ -38,8 +38,9 @@ def main():
         colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
         i = 0
         for cl in clusters:
-            shires_x = [x[0] for x in cl.elements]
-            shires_y = [x[1] for x in cl.elements]
+            print(cl)
+            shires_x = [x[0] for x in clusters[cl].elements]
+            shires_y = [x[1] for x in clusters[cl].elements]
             plt.scatter(shires_x, shires_y, c=colors[i], s=1, marker="o")
             i += 1
         plt.gca().invert_yaxis()
