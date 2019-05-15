@@ -14,40 +14,40 @@ class Graph:
         # for i in range(number_of_shires):
         #    self.shires.append(Shire(shires[i].id, shires[i].posX, shires[i].posY, shires[i].population, shires[i].cancer_risk))
 
-    def hierarchicalClustering(self, k):
+    def hierarchicalClustering(self, points, k):
         """
         :param k: numero di cluster richiesti
         :return: un insieme di k cluster che partizionano le contee
         """
-        n = self.number_of_shires
 
-        clusters = []   # lista di cluster
-        for i in range(n):      # aggiungo gli n cluster, ciascuno contenente solo il centroide,  nella mappa con id intero incrementale suo indice
-            cluster = Cluster(self.shires[i], i)
-            clusters.append(cluster)
-        clusters = sorted(clusters, key=lambda t: t.pos_x)
-
-        S = [x.id for x in sorted(clusters, key=lambda t: t.pos_y)]
+        P = points[points[:, 0].argsort()]
+        S = points[points[:, 1].argsort()]
+        #print(P)
+        clusters = [Cluster(i[0], i[1], k) for k, i in enumerate(P)]
+        #print(clusters)
 
 
-        while len(clusters) > k:  #
-            #print(len(clusters))
-            ora = time.time()
-            minimum = self.fastClosestPair(clusters, S)
-            print("tempo findMinimum -> ", time.time()-ora)
+        while len(clusters) > k:
+            print(len(clusters))
 
-
+            minimum = self.fastClosestPair(P, S)
+            #print(minimum)
+            #print("ciao")
             newCluster = minimum[1]
             delCluster = minimum[2]     # l'indice corrisponde all'id del cluster
 
             clusters[newCluster].unionCluster(clusters[delCluster])     # unisco i due cluster mettendo tutti gli elementi di clusters[delCluster] in clusters[newCluster]
             clusters.pop(delCluster)
-            ora = time.time()
-            #S.remove(delCluster)
-            clusters = sorted(clusters, key=lambda t: t.pos_x)
-            S = [x.id for x in sorted(clusters, key=lambda t: t.pos_y)]
+            np.delete(P, delCluster, axis=0)
+            for i, cl in enumerate(clusters):
+                P[i] = [cl.pos_x, cl.pos_y]
+            P = P[P[:, 0].argsort()]
+            S = P[P[:, 1].argsort()]
 
-            print("tempo findMinimum -> ", time.time() - ora)
+
+
+
+
 
         return clusters      # ritorno la lista dei cluster
 
@@ -63,8 +63,8 @@ class Graph:
             return self.slowClosestPair(P)
         else:
             m = int(n/2)
-            P_l = list(filter(lambda x : x.id in range(m), P))    # filtro i valori di P con la condizione che ogni elemento sia in range(m)
-            P_r = list(filter(lambda x: x.id in range(m, n), P))    #     filtro i valori di P con la condizione che ogni elemento sia in range(m, n)
+            P_l = P[0:m]    # filtro i valori di P con la condizione che ogni elemento sia in range(m)
+            P_r = P[m:]    #     filtro i valori di P con la condizione che ogni elemento sia in range(m, n)
             S_l, S_r = self.split(S, P_l, P_r)
             tripla_minima_l = self.fastClosestPair(P_l, S_l)
             tripla_minima_r = self.fastClosestPair(P_r, S_r)
@@ -72,8 +72,8 @@ class Graph:
                 tripla_minima = tripla_minima_l
             else:
                 tripla_minima = tripla_minima_r
-            mid = 0.5 * (P[m-1].pos_x + P[m].pos_x)
-            if tripla_minima[0] <= self.closestPairStrip(S, mid, tripla_minima[0], P):
+            mid = 0.5 * (P[m-1][0] + P[m][0])
+            if tripla_minima[0] <= self.closestPairStrip(S, mid, tripla_minima[0], P)[0]:
                 return tripla_minima
             else:
                 return self.closestPairStrip(S, mid, tripla_minima[0], P)
@@ -91,21 +91,19 @@ class Graph:
         S_ = []
         k = 0
 
-
         for i in range(n):
-            if abs(P[S[i]].pos_x - mid) < d:
+            if abs(S[i][0] - mid) < d:
                 S_.append(S[i])
                 k += 1
         tripla_minima = [sys.maxsize, -1, -1]
-        print(S_,k)
+
         for u in range(k-1):         #TODO: CONTROLLAMI L'intervallo
-            print("u", u, "range = ", range(u+1, min(u + 5, n - 1) ))
-            for v in range(u+1, min(u + 5, n - 1) ):
-                print("v", v)
-                print(S_[v])
-                #print(P[S_[v]])
-                if tripla_minima[0] > P[S_[u]].distanceBetweenCluster(P[S_[v]]):
-                    tripla_minima = [P[S_[u]].distanceBetweenCluster(P[S_[v]]), S_[u], S_[v]]
+
+            for v in range(u+1, min(u + 5, n - 1) + 1 ):
+                #print(S_)
+
+                if v < len(S_) and tripla_minima[0] > self.distanceBetweenPoints(S_[u], S_[v]):
+                    tripla_minima = [self.distanceBetweenPoints(S_[u], S_[v]), u, v]
         return tripla_minima
 
     def slowClosestPair(self, clusters):
@@ -114,12 +112,12 @@ class Graph:
         :return:
         '''
         tripla_minima = [sys.maxsize, -1, -1]
-        for p_u in clusters:
-            for p_v in clusters:
-                if p_v.id > p_u.id:    # cioè considero la matrice triangolare superiore
+        for i, p_u in enumerate(clusters):
+            for j, p_v in enumerate(clusters):
+                if j > i:    # cioè considero la matrice triangolare superiore
                     min_dist = tripla_minima[0]
-                    if p_u.distanceBetweenCluster(p_v) < min_dist:
-                        tripla_minima = [p_u.distanceBetweenCluster(p_v), p_u.id, p_v.id]
+                    if self.distanceBetweenPoints(p_u, p_v) < min_dist:
+                        tripla_minima = [self.distanceBetweenPoints(p_u, p_v), i, j]
         return tripla_minima
 
 
@@ -134,7 +132,7 @@ class Graph:
         S_l, S_r = [], []
         j, k = 0, 0
         for i in range(n):
-            if S[i] in [i.id for i in P_l]:
+            if S[i] in P_l:
                 S_l.append(S[i])
                 j += 1
             else:
