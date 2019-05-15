@@ -11,6 +11,7 @@ def main():
                  "./unifiedCancerData_3108.csv"]
     path_file = ["./unifiedCancerData_3108.csv"]
     #path_file = ["./unifiedCancerData_562.csv"]
+    path_file = ["./piccolo_esempietto.csv"]
     
     for file in path_file:
         shire_list = []  # contiene tutte le contee presenti nel file
@@ -24,9 +25,9 @@ def main():
 
         graph = Graph(len(shire_list), shire_list)
 
-        #clusters = graph.hierarchicalClustering(15)
+        clusters = graph.hierarchicalClustering(3)
 
-        clusters = graph.kMeansClustering(15, 5, shire_list)
+        #clusters = graph.kMeansClustering(15, 5, shire_list)
 
         """
         for cl in clusters:

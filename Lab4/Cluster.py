@@ -3,11 +3,11 @@ from Shire import Shire
 
 class Cluster:
 
-    def __init__(self, node):
+    def __init__(self, node, id):
         """
         :param centroid: tuple of 2 coordinates(x,y)
         """
-        self.id = node.id
+        self.id = id
         self.pos_x = node.posX
         self.pos_y = node.posY
         self.elements = []
