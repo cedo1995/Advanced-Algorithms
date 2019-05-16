@@ -34,8 +34,6 @@ class Graph:
             print(len(idToCluster))
 
             minimum = self.fastClosestPair(P, S, idToCluster)
-            #print(minimum)
-            #print("ciao")
             newCluster = minimum[1]
             delCluster = minimum[2]     # l'indice corrisponde all'id del cluster
 
