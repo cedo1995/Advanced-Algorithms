@@ -8,12 +8,13 @@ import matplotlib.cm
 
 def main():
     path_file = ["./unifiedCancerData_212.csv", "./unifiedCancerData_562.csv", "./unifiedCancerData_1041.csv",
-                 "./unifiedCancerData_3108.csv", "./piccolo_esempietto.csv"]
+                 "./unifiedCancerData_3108.csv"]
     #path_file = ["./unifiedCancerData_3108.csv"]
     #path_file = ["./unifiedCancerData_562.csv"]
     #path_file = ["./piccolo_esempietto.csv"]
-    points = np.loadtxt(path_file[2], delimiter=",", usecols=(0, 1, 2))
+
     for file in path_file:
+        points = np.loadtxt(file, delimiter=",", usecols=(0, 1, 2))
         shire_list = []  # contiene tutte le contee presenti nel file
         with open(file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -26,26 +27,38 @@ def main():
         graph = Graph(len(shire_list), shire_list)
         #print(points)
 
-        clusters = graph.hierarchicalClustering(points, 15)
+        clustersH = -1
+        clustersK = -1
 
-        #clusters = graph.kMeansClustering(15, 5, shire_list)
+        #clustersH = graph.hierarchicalClustering(points, 15)
 
-        """
-        for cl in clusters:
-            clusters[cl].printCluster()
-        """
-        x = [x for x in range(15)]
-        colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
-        i = 0
-        for cl in clusters:
-            print(cl)
-            shires_x = [x[0] for x in clusters[cl].elements]
-            shires_y = [x[1] for x in clusters[cl].elements]
-            plt.scatter(shires_x, shires_y, c=colors[i], s=1, marker="o")
-            i += 1
-        plt.gca().invert_yaxis()
+        if clustersH != -1:
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
+            i = 0
+            for cl in clustersH:
+                shires_x = [x[0] for x in clustersH[cl].elements]
+                shires_y = [x[1] for x in clustersH[cl].elements]
+                plt.scatter(shires_x, shires_y, c=colors[i], s=1, marker="o")
+                i += 1
+            plt.gca().invert_yaxis()
 
-        plt.show()
+            plt.show()
+
+        clustersK = graph.kMeansClustering(15, 5, shire_list)
+
+        if clustersK != -1:
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
+            i = 0
+            for cl in clustersK:
+
+                shires_x = [x[0] for x in cl.elements]
+                shires_y = [x[1] for x in cl.elements]
+                plt.scatter(shires_x, shires_y, c=colors[i], s=1, marker="o")
+                i += 1
+            plt.gca().invert_yaxis()
+
+            plt.show()
+
 
 
 

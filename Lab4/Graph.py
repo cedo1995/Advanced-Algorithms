@@ -166,10 +166,13 @@ class Graph:
         for i in range(k):          # creo i k centroidi iniziali
             centroids.append([top_shires[i].posX, top_shires[i].posY])
 
+
         for i in range(iter):   # aggiungo k cluster, ciascuno con una delle k contee con più popolazione
-            clusters = {}           # lista di cluster in del tipo (id_cluster: cluster) TODO LASCIAMOLO DENTRO
-            #cluster = Cluster(top_shires[i])  # creo l'istanza di cluster corrente
-            #clusters[cluster.id] = cluster     TODO Forse non servono
+            clusters = []          # lista di cluster in del tipo (id_cluster: cluster) TODO LASCIAMOLO DENTRO
+            for i in range(k):
+                clusters.append(-1)
+            #cluster = Cluster(top_shires[i].posX, top_shires[i].posY, top_shires[i].id)  # creo l'istanza di cluster corrente
+            #clusters[cluster.id] = cluster      #     TODO Forse non servono
             for j in range(n):
                 minimum = sys.maxsize
 
@@ -178,12 +181,13 @@ class Graph:
                         minimum = self.distanceBetweenPoints(centroids[f], [points[j].posX, points[j].posY])
                         l = f       # assegno l'indice del centroide avente distanza minima dal punto
 
-                if l not in clusters.keys():
+                if clusters[l] == -1:
 
-                    clusters[l] = Cluster(points[j])
+                    clusters[l] = Cluster(points[j].posX, points[j].posY, points[j].id)
                 else:
 
-                    clusters[l].addElementToCluster(points[j])        # aggiungo al cluster con indice l il punto j
+                    clusters[l].addElementToCluster([points[j].posX, points[j].posY])        # aggiungo al cluster con indice l il punto j
+
             for index in range(k):
                 clusters[index].updateCentroids()
                 centroids[index] = [clusters[index].pos_x, clusters[index].pos_y]
