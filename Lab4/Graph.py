@@ -35,6 +35,7 @@ class Graph:
 
             minimum = self.fastClosestPair(P, S, idToCluster)
 
+
             newCluster = minimum[1]
             delCluster = minimum[2]     # l'indice corrisponde all'id del cluster
 
@@ -81,10 +82,13 @@ class Graph:
             else:
                 tripla_minima = tripla_minima_r
             mid = 0.5 * (P[m-1][1] + P[m][1])
-            if tripla_minima[0] <= self.closestPairStrip(S, mid, tripla_minima[0], P, idToCluster)[0]:
+
+            to_return = self.closestPairStrip(S, mid, tripla_minima[0], P, idToCluster)
+
+            if tripla_minima[0] <= to_return[0]:
                 return tripla_minima
             else:
-                return self.closestPairStrip(S, mid, tripla_minima[0], P, idToCluster)
+                return to_return
 
 
     def closestPairStrip(self, S, mid, d, P, idToCluster):
@@ -105,13 +109,16 @@ class Graph:
                 k += 1
         tripla_minima = [sys.maxsize, -1, -1]
 
+
+
         for u in range(k-1):         #TODO: CONTROLLAMI L'intervallo
 
             for v in range(u+1, min(u + 5, n - 1) + 1):
                 #print(S_)
-
-                if v < len(S_) and tripla_minima[0] > self.distanceBetweenPoints([idToCluster[S_[u]].pos_x, idToCluster[S_[u]].pos_y], [idToCluster[S_[v]].pos_x, idToCluster[S_[v]].pos_y]):
-                    tripla_minima = [self.distanceBetweenPoints([idToCluster[S_[u]].pos_x, idToCluster[S_[u]].pos_y], [idToCluster[S_[v]].pos_x, idToCluster[S_[v]].pos_y]), S_[u], S_[v]]
+                if v < len(S_):
+                    temp = self.distanceBetweenPoints([idToCluster[S_[u]].pos_x, idToCluster[S_[u]].pos_y], [idToCluster[S_[v]].pos_x, idToCluster[S_[v]].pos_y])
+                    if v < len(S_) and tripla_minima[0] > temp:
+                        tripla_minima = [temp, S_[u], S_[v]]
         return tripla_minima
 
     def slowClosestPair(self, clusters):

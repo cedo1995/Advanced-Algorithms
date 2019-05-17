@@ -14,7 +14,7 @@ def main():
     #path_file = ["./piccolo_esempietto.csv"]
 
     for file in path_file:
-        points = np.loadtxt(path_file[1], delimiter=",", usecols=(0, 1, 2))
+        points = np.loadtxt(file, delimiter=",", usecols=(0, 1, 2))
         shire_list = []  # contiene tutte le contee presenti nel file
         with open(file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -29,6 +29,7 @@ def main():
 
         clustersH = -1
         clustersK = -1
+        clustersH = graph.hierarchicalClustering(points, 15)
         # SERVE PER PROVA PER CAPIRE SE I CLUSTER SONO GIUSTI
         '''  
         data_set = np.loadtxt(fname="./unifiedCancerData_3108.csv",  delimiter=",", usecols=(1, 2))
@@ -53,7 +54,7 @@ def main():
 
             plt.show()
 
-        #clustersK = graph.kMeansClustering(15, 5, shire_list)
+        clustersK = graph.kMeansClustering(15, 5, shire_list)
 
         if clustersK != -1:
             colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
