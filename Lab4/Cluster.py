@@ -29,6 +29,7 @@ class Cluster:
 
         # Calcolo la nuova x e y come baricentro tra tutti i nodi
         self.updateCentroids()
+        return self
 
     def distanceBetweenCluster(self, cluster_2):
         """
