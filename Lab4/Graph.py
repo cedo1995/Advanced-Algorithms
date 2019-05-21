@@ -194,7 +194,7 @@ class Graph:
                     clusters[l] = Cluster(points[j].posX, points[j].posY, points[j].id)
                 else:
 
-                    clusters[l].addElementToCluster([points[j].posX, points[j].posY])        # aggiungo al cluster con indice l il punto j
+                    clusters[l].addElementToCluster([points[j].posX, points[j].posY, points[j].id])        # aggiungo al cluster con indice l il punto j
 
             for index in range(k):
                 clusters[index].updateCentroids()

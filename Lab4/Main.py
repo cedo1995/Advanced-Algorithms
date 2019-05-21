@@ -16,32 +16,29 @@ def main():
     for file in path_file:
         points = np.loadtxt(file, delimiter=",", usecols=(0, 1, 2))
         shire_list = []  # contiene tutte le contee presenti nel file
+        shire_dict = {}  # contiene l'id della contea associata alla shire
         with open(file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
                 line_count += 1
-                shire = Shire(row[0], float(row[1]), float(row[2]), row[3], row[4])
+                shire = Shire(int(row[0]), float(row[1]), float(row[2]), row[3], row[4])
                 shire_list.append(shire)
+                shire_dict[int(row[0])] = shire
 
         graph = Graph(len(shire_list), shire_list)
-        #print(points)
 
         clustersH = -1
         clustersK = -1
-        clustersH = graph.hierarchicalClustering(points, 15)
-        # SERVE PER PROVA PER CAPIRE SE I CLUSTER SONO GIUSTI
-        '''  
-        data_set = np.loadtxt(fname="./unifiedCancerData_3108.csv",  delimiter=",", usecols=(1, 2))
-        clustersH = graph.hierarchicalClustering(points, 15)
-        cluster = AgglomerativeClustering(n_clusters=15, affinity='euclidean', linkage='ward')
-        cluster.fit_predict(data_set)
-        plt.scatter(data_set[:, 0], data_set[:, 1], c=cluster.labels_, cmap='rainbow', alpha=0.5)
-        plt.gca().invert_yaxis()
-        plt.show()
-        '''
+
+        clustersH = graph.hierarchicalClustering(points, 16)
+
+
         if clustersH != -1:
-            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
+
+            distortion = calculateErrorHierarchical(shire_dict, clustersH)
+            print("Distorsione = ", distortion)
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 16))
             i = 0
             img = plt.imread("./USA_Counties.png")
             fig, ax = plt.subplots()
@@ -59,10 +56,12 @@ def main():
             plt.show()
 
 
-        clustersK = graph.kMeansClustering(15, 5, shire_list)
+        clustersK = graph.kMeansClustering(16, 5, shire_list)
 
         if clustersK != -1:
-            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
+            distortion = calculateErrorKMeans(shire_dict, clustersK)
+            print("Distorsione = ", distortion)
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 16))
             i = 0
             img = plt.imread("./USA_Counties.png")
             fig, ax = plt.subplots()
@@ -75,10 +74,46 @@ def main():
             ax.imshow(img)
             plt.show()
 
+def calculateErrorHierarchical(shire_dict, clusters):
+    """
+    :param shire_dict:
+    :param clusters: elenco dei cluster creati dall'algoritmo
+    :return:
+    """
+    distortion = 0
+    for cl in clusters:
+        centroid = [clusters[cl].pos_x, clusters[cl].pos_y]
+        total_sum = 0
+        for el in clusters[cl].elements:
+            element = [el[0], el[1]]
+            delta = calculateDistance(centroid, element)
+            population = float(shire_dict[el[2]].population)
+            total_sum += population*(delta**2)
+        distortion += total_sum
 
+    return distortion
 
+def calculateErrorKMeans(shire_dict, clusters):
+    """
+    :param shire_list:
+    :param clusters:
+    :return:
+    """
+    distortion = 0
+    for cl in clusters:
+        centroid = [cl.pos_x, cl.pos_y]
+        total_sum = 0
+        for el in cl.elements:
+            element = [el[0], el[1]]
+            delta = calculateDistance(centroid, element)
+            population = float(shire_dict[el[2]].population)
+            total_sum += population*(delta**2)
+        distortion += total_sum
 
+    return distortion
 
+def calculateDistance(centroid, point):
+    return float(((centroid[0] - point[0]) ** 2 + (centroid[1] - point[1]) ** 2) ** 0.5)
 
 
 if __name__ == '__main__':

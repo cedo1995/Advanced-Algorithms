@@ -11,7 +11,7 @@ class Cluster:
         self.pos_x = i
         self.pos_y = j
         self.elements = []
-        self.addElementToCluster([self.pos_x, self.pos_y])
+        self.addElementToCluster([self.pos_x, self.pos_y, self.id])
 
 
     def printCluster(self):
