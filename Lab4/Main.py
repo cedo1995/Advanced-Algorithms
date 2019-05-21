@@ -43,29 +43,36 @@ def main():
         if clustersH != -1:
             colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
             i = 0
+            img = plt.imread("./USA_Counties.png")
+            fig, ax = plt.subplots()
             for cl in clustersH:
                 shires_x = [x[0] for x in clustersH[cl].elements]
                 shires_y = [x[1] for x in clustersH[cl].elements]
-                plt.plot(clustersH[cl].pos_x, clustersH[cl].pos_y, 'o', markersize=4, c=colors[i])
-                for el in clustersH[cl].elements:
-                    plt.plot([clustersH[cl].pos_x, el[0]], [clustersH[cl].pos_y, el[1]], 'o-', c=colors[i], lw=0.2, markersize=2)
-                i += 1
-            plt.gca().invert_yaxis()
 
+
+                ax.plot(clustersH[cl].pos_x, clustersH[cl].pos_y, 'o', markersize=4, c=colors[i])
+                for el in clustersH[cl].elements:
+                    ax.plot([clustersH[cl].pos_x, el[0]], [clustersH[cl].pos_y, el[1]], 'o-', c=colors[i], lw=0.2, markersize=2)
+                i += 1
+            ax.invert_yaxis()
+            ax.imshow(img)
             plt.show()
+
 
         clustersK = graph.kMeansClustering(15, 5, shire_list)
 
         if clustersK != -1:
             colors = matplotlib.cm.rainbow(np.linspace(0, 1, 15))
             i = 0
+            img = plt.imread("./USA_Counties.png")
+            fig, ax = plt.subplots()
             for cl in clustersK:
-                plt.plot(cl.pos_x, cl.pos_y, 'o', markersize=4, c=colors[i])
+                ax.plot(cl.pos_x, cl.pos_y, 'o', markersize=4, c=colors[i])
                 for k in cl.elements:
-                    plt.plot([cl.pos_x, k[0]], [cl.pos_y, k[1]], 'o-', c=colors[i], lw=0.2, markersize=2)
+                    ax.plot([cl.pos_x, k[0]], [cl.pos_y, k[1]], 'o-', c=colors[i], lw=0.2, markersize=2)
                 i += 1
-            plt.gca().invert_yaxis()
-
+            ax.invert_yaxis()
+            ax.imshow(img)
             plt.show()
 
 
