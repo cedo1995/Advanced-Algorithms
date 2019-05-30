@@ -47,7 +47,8 @@ def main():
         plt.legend()
         plt.savefig(str(len(points))+" nodes.png")
         plt.show()
-        #ax.legend()
+        print("DISTORTION HIERARCHICAL:", distH)
+        print("DISTORTION K_MEANS:", distK)
         """
         if clustersH != -1:
 
