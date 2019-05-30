@@ -1,5 +1,6 @@
 from Cluster import Cluster
 from Shire import Shire
+
 import numpy as np
 import sys
 import copy
@@ -14,7 +15,7 @@ class Graph:
         # for i in range(number_of_shires):
         #    self.shires.append(Shire(shires[i].id, shires[i].posX, shires[i].posY, shires[i].population, shires[i].cancer_risk))
 
-    def hierarchicalClustering(self, points, k):
+    def hierarchicalClustering(self, points, k, shire_dict):
         """
         :param k: numero di cluster richiesti
         :return: un insieme di k cluster che partizionano le contee
@@ -29,6 +30,7 @@ class Graph:
         for cl in clusters:
             idToCluster[cl.id] = cl
 
+        distortion = []
 
         while len(idToCluster) > k:
             print(len(idToCluster))
@@ -53,12 +55,15 @@ class Graph:
             S = P[P[:, 2].argsort()]
 
 
+            if len(idToCluster) <= 20:
+                distortion.append(self.calculateErrorHierarchical(shire_dict, idToCluster))
 
 
 
 
 
-        return idToCluster      # ritorno la lista dei cluster
+
+        return distortion, idToCluster      # ritorno la lista dei cluster
 
     def fastClosestPair(self, P, S, idToCluster):
         '''
@@ -215,3 +220,26 @@ class Graph:
         :return :
         """
         return float(((centroid[0] - point[0])**2 + (centroid[1] - point[1])**2)**0.5)
+
+    def calculateErrorHierarchical(self, shire_dict, clusters):
+        """
+        :param shire_dict:
+        :param clusters: elenco dei cluster creati dall'algoritmo
+        :return:
+        """
+        distortion = 0
+        for cl in clusters:
+            centroid = [clusters[cl].pos_x, clusters[cl].pos_y]
+            total_sum = 0
+            for el in clusters[cl].elements:
+                element = [el[0], el[1]]
+                delta = self.calculateDistance(centroid, element)
+                population = float(shire_dict[el[2]].population)
+                total_sum += population * (delta ** 2)
+            distortion += total_sum
+
+        return distortion
+
+    def calculateDistance(self, centroid, point):
+        return float(((centroid[0] - point[0]) ** 2 + (centroid[1] - point[1]) ** 2) ** 0.5)
+

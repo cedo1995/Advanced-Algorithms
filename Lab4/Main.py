@@ -31,14 +31,29 @@ def main():
         clustersH = -1
         clustersK = -1
 
-        clustersH = graph.hierarchicalClustering(points, 16)
+        distH = []
+        distK = []
 
-
+        distH, clustersH = graph.hierarchicalClustering(points, 6, shire_dict)
+        distH.reverse()
+        for i in range(6, 21):
+            clustersK = graph.kMeansClustering(i, 5, shire_list)
+            distK.append(calculateErrorKMeans(shire_dict, clustersK))
+        x = np.arange(6, 21)
+        fig, ax = plt.subplots()
+        ax.plot(x, distH, color='r', label="Hierarchical")
+        ax.plot(x, distK, color='g', label="K_Means")
+        ax.set(xlabel="Number of clusters", ylabel="Distortion", title=str(len(points))+" nodes")
+        plt.legend()
+        plt.savefig(str(len(points))+" nodes.png")
+        plt.show()
+        #ax.legend()
+        """
         if clustersH != -1:
 
             distortion = calculateErrorHierarchical(shire_dict, clustersH)
             print("Distorsione = ", distortion)
-            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 16))
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 30))
             i = 0
             img = plt.imread("./USA_Counties.png")
             fig, ax = plt.subplots()
@@ -54,14 +69,14 @@ def main():
             ax.invert_yaxis()
             ax.imshow(img)
             plt.show()
-
-
-        clustersK = graph.kMeansClustering(16, 5, shire_list)
-
+        
+        
+        clustersK = graph.kMeansClustering(30, 5, shire_list)
+        
         if clustersK != -1:
             distortion = calculateErrorKMeans(shire_dict, clustersK)
             print("Distorsione = ", distortion)
-            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 16))
+            colors = matplotlib.cm.rainbow(np.linspace(0, 1, 30))
             i = 0
             img = plt.imread("./USA_Counties.png")
             fig, ax = plt.subplots()
@@ -73,6 +88,7 @@ def main():
             ax.invert_yaxis()
             ax.imshow(img)
             plt.show()
+        """
 
 def calculateErrorHierarchical(shire_dict, clusters):
     """
