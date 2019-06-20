@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
@@ -10,29 +8,30 @@ class KMeans{
     public List<Cluster> serialKMeans(List<City> cities, int k, int num_it){
         int n = cities.size();
 
-
-
         List<City> firstFifty = cities.subList(0,k);
 
+        // Creo la lista dei centroidi
         List<Point> centroids = new ArrayList<Point>();
         for (int i = 0; i < k; i++) {
             centroids.add(firstFifty.get(i).coordinates);
-
         }
+
         List<Cluster> clusters = new ArrayList<Cluster>();
-        for (int i=0; i<num_it; i++){
+        for (int i=0; i<num_it; i++) {
             clusters = new ArrayList<Cluster>();
-            //creo n cluster vuoti(solo con i centroidi)
+
+            // Creo n cluster vuoti (solo con i centroidi)
             for (Point a:centroids){
                 clusters.add(new Cluster(a, new ArrayList<City>()));
             }
-            for (int j = 0; j < n; j++){
-                //devo confrontare la citta con indice j e tutti i centroidi: il centroide piu vicino e' quello scelto
-                // salvo il suo valore e lo aggiungo il punto al cluster
-                int nearestCentroidIndex= findNearestIndexOfCentroid(cities.get(j), centroids);
+
+            // Trovo per ogni città il centroide più vicino
+            for(int j = 0; j < n; j++) {
+                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);
                 clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));
             }
-            //aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
+
+            // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
             for (int j = 0; j < k ; j++){
                 Point newCentroid = clusters.get(j).updateCentroid();
                 centroids.set(j, newCentroid);
@@ -42,7 +41,7 @@ class KMeans{
     }
 
 
-    private int findNearestIndexOfCentroid( City nodo, List<Point> centroids) {
+    private int findNearestIndexOfCentroid(City nodo, List<Point> centroids) {
         double minDistFound = 1000000000;
         int indexMinCentroid = -1;
         int count = 0;
@@ -59,38 +58,36 @@ class KMeans{
     }
 
 
-    public List<Cluster> parallelKMeans(List<City> cities, int k, int num_it){
+    public List<Cluster> parallelKMeans(List<City> cities, int k, int num_it) {
         int n = cities.size();
 
-
-        List<City> firstFifty = cities.subList(0,k);
-
+        List<City> firstFifty = cities.subList(0, k);
         List<Point> centroids = new ArrayList<Point>(k);
-        for (int i = 0; i < k; i++) {       //TODO PARALLELIZZARE
-            centroids.set(i, firstFifty.get(i).coordinates);
+        for (int i = 0; i < k; i++) {       // TODO: PARALLELIZZARE
+            centroids.add(i, firstFifty.get(i).coordinates);
         }
         List<Cluster> clusters = new ArrayList<Cluster>();
         for (int i=0; i<num_it; i++){
             clusters = new ArrayList<Cluster>(k);
-            //creo n cluster vuoti(solo con i centroidi)
-            for (int w=0; w<centroids.size(); w++){         //TODO PARALLELIZZARE
-                clusters.set(w, new Cluster(centroids.get(w), new ArrayList<City>()));
+
+            // Creo n cluster vuoti (solo con i centroidi)
+            for (int w=0; w<centroids.size(); w++){         // TODO: PARALLELIZZARE
+                clusters.add(w, new Cluster(centroids.get(w), new ArrayList<City>()));
             }
-            for(int j = 0; j < n; j++){
-                //devo confrontare la citta con indice j e tutti i centroidi: il centroide piu vicino e' quello scelto
-                // salvo il suo valore e lo aggiungo il punto al cluster
-                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);    //TODO PARALLELIZZARE LA FUNZIONE
-                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));      //TODO GUARDARE SE SI PUO in ADDELEMTOCL
+
+            // Trovo per ogni città il centroide più vicino
+            for(int j = 0; j < n; j++) {
+                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);
+                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));
             }
-            //aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
-            for (int j = 0; j < k ; j++){       //TODO PARALLELIZZARE
+
+            // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
+            for (int j = 0; j < k ; j++){       // TODO: PARALLELIZZARE
                 Point newCentroid = clusters.get(j).updateCentroid();
                 centroids.set(j, newCentroid);
             }
+
         }
         return clusters;
     }
-
-
-
 }

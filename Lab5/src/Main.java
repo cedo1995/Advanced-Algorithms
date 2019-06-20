@@ -17,28 +17,45 @@ public class Main {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 City city = new City(values);
-                //System.out.println(city);
                 citiesList.add(city);
             }
-            int threshold = 250;
-            citiesList.sort((a,b )-> a.getPopulation() - b.getPopulation());
+
+            // Parametri
+            int threshold = 250; // popolazione minima
+            int k = 50; // numero cluster
+            int iter = 100; // iterazioni
+
+            // Ordinamento e selezione delle città
+            citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
             Collections.reverse(citiesList);
             int index_threshold = citiesList.size();
-            //TODO Da commentare il ciclo se viene fatto l'algoritmo senza soglia minima
             for(int i = 0; i< citiesList.size(); i++){
                 if (citiesList.get(i).getPopulation()<threshold){
                     index_threshold = i;
                     break;
                 }
             }
-            System.out.println("Dimensione originale"+citiesList.size());
-            List<City> cities = citiesList.subList(0,index_threshold);
-            System.out.println("Dimensione dopo la rimozione"+cities.size());
-            KMeans a =new KMeans();
-            long start = System.currentTimeMillis();
-            List<Cluster> clusters = a.serialKMeans(cities, 50, 100);
-            long serialTime = System.currentTimeMillis()-start;
+            System.out.println("Nr. totale città: " + citiesList.size());
+            List<City> cities = citiesList.subList(0, index_threshold);
+            System.out.println("Nr. città selezionate: " + cities.size());
+
+            KMeans kmeans = new KMeans();
+
+            // Non mi spiego perchè ma la prima volta che fa il seriaKMeans o il parallelKMeans ci mette di più,
+            // Così se confronto subito un serial e un parallel il primo mi viene sballato..
+            // sarà qualcosa sull'allocazione di memoria?
+            List<Cluster> test = kmeans.serialKMeans(cities, k, iter);
+
+            long startSer = System.currentTimeMillis();
+            List<Cluster> serialClusters = kmeans.serialKMeans(cities, k, iter);
+            long serialTime = System.currentTimeMillis() - startSer;
+
+            long startPar = System.currentTimeMillis();
+            List<Cluster> parallelClusters = kmeans.parallelKMeans(cities, k, iter);
+            long parallelTime = System.currentTimeMillis() - startPar;
+
             System.out.println("Tempo K_Means seriale: "+ serialTime);
+            System.out.println("Tempo K_Means parallelo: "+ parallelTime);
 
         }
         catch(Exception e) {
