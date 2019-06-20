@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Main {
 
-    private static final String SAMPLE_CSV_FILE_PATH = "./cities-and-towns-of-usa.csv";
+    private static final String SAMPLE_CSV_FILE_PATH = "./src/cities-and-towns-of-usa.csv";
 
     public static void main(String[] args) {
         List<City> citiesList = new ArrayList<>();
@@ -19,7 +19,8 @@ public class Main {
                 //System.out.println(city);
                 citiesList.add(city);
             }
-            KMeans.serialKMeans(citiesList, 0, 0);
+            KMeans a =new KMeans();
+            a.serialKMeans(citiesList, 0, 0);
 
 
         }
