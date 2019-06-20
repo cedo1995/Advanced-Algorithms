@@ -1,13 +1,13 @@
 import java.util.List;
 public class Point{
-    private double x;
-    private double y;
+    public double x;
+    public double y;
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    private double getDistance(Point other) {
+    public double getDistance(Point other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2)
                 + Math.pow(this.y - other.y, 2));
     }
