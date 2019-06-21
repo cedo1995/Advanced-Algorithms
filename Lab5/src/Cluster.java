@@ -10,6 +10,7 @@ public class Cluster {
     public void addElementToCluster(City element){
         this.elements.add(element);
     }
+
     public Point updateCentroid(){
         double sumX = 0;
         double sumY = 0;
@@ -20,6 +21,10 @@ public class Cluster {
         this.centroid = new Point(sumX / this.elements.size(), sumY / this.elements.size());
 
         return this.centroid;
+    }
+
+    public String toString() {
+        return "[" + this.centroid + "," + this.elements.size() + "]";
     }
 
 

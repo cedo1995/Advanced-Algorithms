@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
 public class Main {
 
@@ -35,9 +36,7 @@ public class Main {
                     break;
                 }
             }
-            System.out.println("Nr. totale città: " + citiesList.size());
             List<City> cities = citiesList.subList(0, index_threshold);
-            System.out.println("Nr. città selezionate: " + cities.size());
 
             KMeans kmeans = new KMeans();
 
@@ -49,14 +48,19 @@ public class Main {
             long startSer = System.currentTimeMillis();
             List<Cluster> serialClusters = kmeans.serialKMeans(cities, k, iter);
             long serialTime = System.currentTimeMillis() - startSer;
+            System.out.println("Tempo K_Means seriale: "+ serialTime);
+
+            //for(Cluster c: serialClusters) {
+            //    System.out.println(c);
+            //}
 
             long startPar = System.currentTimeMillis();
             List<Cluster> parallelClusters = kmeans.parallelKMeans(cities, k, iter);
             long parallelTime = System.currentTimeMillis() - startPar;
-
-            System.out.println("Tempo K_Means seriale: "+ serialTime);
             System.out.println("Tempo K_Means parallelo: "+ parallelTime);
-
+            for(Cluster c: parallelClusters) {
+                System.out.println(c);
+            }
         }
         catch(Exception e) {
             System.out.println(e);
