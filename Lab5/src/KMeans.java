@@ -1,8 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 class KMeans{
 
@@ -57,33 +60,53 @@ class KMeans{
         return indexMinCentroid;
     }
 
-    // PROBLEMA:
-    // ogni ciclo for da parallelizzare è dentro un invoke sul pool
-    // Ma il codice scritto dopo gli invoke continua ad essere fatto senza aspettare che i cicli paralleli finiscano,
-    // quindi si mescola tutto e succede un casino!
     public List<Cluster> parallelKMeans(List<City> cities, int k, int num_it) throws InterruptedException {
         int n = cities.size();
 
         List<City> firstFifty = cities.subList(0, k);
 
+        // Creo la lista dei centroidi
+        List<Point> centroids = new CopyOnWriteArrayList<Point>();
 
-        List<Point> centroids = new ArrayList<Point>(k);
-        //ForkJoinPool pool = new ForkJoinPool(100);
-        ForkJoinPool.commonPool().invoke(new ForEach(centroids, firstFifty, 0, k)); // In realtà ci mette di più
+        List<Cluster> clusters = new CopyOnWriteArrayList<Cluster>();
 
-        List<Cluster> clusters = new ArrayList<Cluster>();
-        for (int i=0; i<1; i++){
-            clusters = new ArrayList<Cluster>(k);
+        for (int i = 0; i < k; i++) {
+            centroids.add(firstFifty.get(i).coordinates);
+            clusters.add(i,new Cluster(centroids.get(i), new  CopyOnWriteArrayList<City>()));
+        }
+
+
+        for (int i=0; i<num_it; i++) {
+            // clusters = new CopyOnWriteArrayList<Cluster>();
 
             // Creo n cluster vuoti (solo con i centroidi)
-            ForkJoinPool.commonPool().invoke(new ForEach2(clusters, centroids, 0, centroids.size()));
+            for (int w=0; w < centroids.size(); w++){
+                clusters.set(w, new Cluster(centroids.get(w), new  CopyOnWriteArrayList<City>()));
+            }
 
-            // Trovo per ogni città il centroide più vicino
-            ForkJoinPool.commonPool().invoke(new ForEach3(clusters, cities, centroids, 0, n));
+            ForkJoinPool pool = new ForkJoinPool();
+            AtomicInteger a = new AtomicInteger(n);
+            for (int j = 0; j < n; j++) {
+                pool.invoke(new ParallelAction(a, j,
+                        new Consumer<Integer>() {
+                            @Override
+                            public void accept(Integer integer) {
+                                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(integer), centroids);
+                                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(integer));
+                            }
+                        }
+                ));
+            }
+
+            while( a.get() > 0 ) {
+                Thread.yield();
+            }
 
             // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
-            ForkJoinPool.commonPool().invoke(new ForEach4(clusters, centroids, 0, k));
-
+            for (int j = 0; j < k ; j++){
+                Point newCentroid = clusters.get(j).updateCentroid();
+                centroids.set(j, newCentroid);
+            }
         }
         return clusters;
     }
