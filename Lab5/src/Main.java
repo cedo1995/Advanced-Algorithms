@@ -24,7 +24,7 @@ public class Main {
             // Parametri
             int threshold = 250; // popolazione minima
             int k = 50; // numero cluster
-            int iter = 100; // iterazioni
+            int iter = 1; // iterazioni
 
             // Ordinamento e selezione delle città
             citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
