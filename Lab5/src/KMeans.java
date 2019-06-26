@@ -59,8 +59,10 @@ class KMeans{
         return indexMinCentroid;
     }
 
-    private int findNearestIndexOfCentroidWow(ForkJoinPool pool, City nodo, List<Point> centroids) throws InterruptedException {
+    private int findNearestIndexOfCentroidWow(City nodo, List<Point> centroids) throws InterruptedException {
+        ForkJoinPool pool = new ForkJoinPool();
         CountDownLatch c = new CountDownLatch(centroids.size());
+        AtomicInteger b = new AtomicInteger(centroids.size());
 
         ConcurrentLinkedQueue<ArrayList<Double>> distances = new ConcurrentLinkedQueue<ArrayList<Double>>();
 
@@ -73,11 +75,14 @@ class KMeans{
                     array.add((double)index);
                     array.add(centroids.get(index).getDistance(nodo.coordinates));
                     distances.add(array);
-                    c.countDown();
+                    b.decrementAndGet();
                 }
             });
         }
-        c.await();
+        //c.await();
+        while( b.get() > 0 ) {
+            Thread.yield();
+        }
 
         ArrayList<Double> min = null;
         for(ArrayList<Double> d : distances)
@@ -88,7 +93,7 @@ class KMeans{
     }
 
     public List<Cluster> parallelKMeans(List<City> cities, int k, int num_it) throws InterruptedException {
-        ForkJoinPool pool = new ForkJoinPool();
+        ExecutorService pool = Executors.newFixedThreadPool(12);
         int n = cities.size();
 
         List<City> firstFifty = cities.subList(0, k);
@@ -109,7 +114,7 @@ class KMeans{
 
             // Creo n cluster vuoti (solo con i centroidi)
             for (int w=0; w < centroids.size(); w++){
-                clusters.set(w, new Cluster(centroids.get(w), new  CopyOnWriteArrayList<City>()));
+                clusters.set(w, new Cluster(centroids.get(w), new CopyOnWriteArrayList<City>()));
             }
 
             AtomicInteger a = new AtomicInteger(n);
@@ -119,32 +124,17 @@ class KMeans{
                     @Override
                     public void run() {
                         int nearestCentroidIndex = 0;
-
-                        nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(integer), centroids);
-
+                            nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(integer), centroids);
                         clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(integer));
                         a.decrementAndGet();
                     }
                 });
-//                pool.execute(new ParallelAction(a, j,
-//                    new Consumer<Integer>() {
-//                        @Override
-//                        public void accept(Integer integer) {
-//                            int nearestCentroidIndex = 0;
-//                            try {
-//                                nearestCentroidIndex = findNearestIndexOfCentroidWow(pool, cities.get(integer), centroids);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(integer));
-//                        }
-//                    }
-//                ));
             }
 
             while( a.get() > 0 ) {
                 Thread.yield();
             }
+
 
             // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
             for (int j = 0; j < k ; j++){
