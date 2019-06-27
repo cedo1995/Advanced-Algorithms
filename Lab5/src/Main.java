@@ -1,9 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
@@ -11,7 +8,7 @@ public class Main {
     private static final String SAMPLE_CSV_FILE_PATH = "./src/cities-and-towns-of-usa.csv";
 
     public static void main(String[] args) {
-        List<City> citiesList = new ArrayList<>();
+        List<City> citiesList = new ArrayList<City>();
         try (BufferedReader br = new BufferedReader(new FileReader(SAMPLE_CSV_FILE_PATH))) {
             String line;
             br.readLine();
@@ -33,22 +30,33 @@ public class Main {
 
             int k = 50;
 
-            int iter = 100; // iterazioni
+            int iter = 1; // iterazioni
+
+            citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
+            Collections.reverse(citiesList);
 
             KMeans kmeans = new KMeans();
 
+            //Map<Integer, Cluster> test = kmeans.serialKMeans(citiesList, k, iter);
+
             //Prova
             // Seriale
-            long startS = System.currentTimeMillis();
-            List<Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
-            long timeS = System.currentTimeMillis() - startS;
-            System.out.println(timeS);
+//            long startS = System.currentTimeMillis();
+//            Map<Integer, Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
+//            long timeS = System.currentTimeMillis() - startS;
+//            System.out.println(timeS);
+
+//            for(Map.Entry<Integer, Cluster> c : S.entrySet())
+//                System.out.println(c);
 
             // Parallelo
             long startP = System.currentTimeMillis();
-            List<Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
+            Map<Integer, Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
             long timeP = System.currentTimeMillis() - startP;
             System.out.println(timeP);
+
+//            for(Map.Entry<Integer, Cluster> c1 : P.entrySet())
+//                System.out.println(c1);
 
             // DOMANDA 1
 //            ArrayList<Long> serialTimeD1 = new ArrayList<Long>();

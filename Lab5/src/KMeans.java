@@ -1,31 +1,29 @@
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 class KMeans{
 
-    public List<Cluster> serialKMeans(List<City> cities, int k, int num_it){
+    public Map<Integer, Cluster> serialKMeans(List<City> cities, int k, int num_it){
         int n = cities.size();
 
         List<City> firstFifty = cities.subList(0, k);
 
         // Creo la lista dei centroidi
-        List<Point> centroids = new ArrayList<Point>();
+        Map<Integer, Point> centroids = new HashMap<Integer, Point>();
         for (int i = 0; i < k; i++) {
-            centroids.add(firstFifty.get(i).coordinates);
+            centroids.put(i, firstFifty.get(i).coordinates);
         }
 
-        List<Cluster> clusters = new ArrayList<Cluster>();
+        Map<Integer, Cluster> clusters = new HashMap<Integer, Cluster>();
         for (int i=0; i<num_it; i++) {
-            clusters = new ArrayList<Cluster>();
+            clusters = new HashMap<Integer, Cluster>();
 
             // Creo n cluster vuoti (solo con i centroidi)
-            for (Point a:centroids){
-                clusters.add(new Cluster(a, new ArrayList<City>()));
+            for(Map.Entry<Integer, Point> c : centroids.entrySet()) {
+                clusters.put(c.getKey(), new Cluster(c.getValue(), new LinkedList<>()));
             }
 
             // Trovo per ogni città il centroide più vicino
@@ -37,24 +35,22 @@ class KMeans{
             // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
             for (int j = 0; j < k ; j++){
                 Point newCentroid = clusters.get(j).updateCentroid();
-                centroids.set(j, newCentroid);
+                centroids.put(j, newCentroid);
             }
         }
         return clusters;
     }
 
-    private int findNearestIndexOfCentroid(City nodo, List<Point> centroids) {
+    private int findNearestIndexOfCentroid(City nodo, Map<Integer, Point> centroids) {
         double minDistFound = 1000000000;
         int indexMinCentroid = -1;
-        int count = 0;
 
-        for (Point a : centroids) {
-            double distance = a.getDistance(nodo.coordinates);
+        for(Map.Entry<Integer, Point> a : centroids.entrySet()) {
+            double distance = a.getValue().getDistance(nodo.coordinates);
             if (distance < minDistFound) {
                 minDistFound = distance;
-                indexMinCentroid = count;
+                indexMinCentroid = a.getKey();
             }
-            count += 1;
         }
         return indexMinCentroid;
     }
@@ -92,54 +88,48 @@ class KMeans{
         return min.get(0).intValue();
     }
 
-    public List<Cluster> parallelKMeans(List<City> cities, int k, int num_it) throws InterruptedException {
-        ExecutorService pool = Executors.newFixedThreadPool(12);
+    public Map<Integer, Cluster> parallelKMeans(List<City> cities, int k, int num_it) {
+        ForkJoinPool pool = new ForkJoinPool();
+
         int n = cities.size();
 
         List<City> firstFifty = cities.subList(0, k);
 
         // Creo la lista dei centroidi
-        List<Point> centroids = new CopyOnWriteArrayList<Point>();
+        Map<Integer, Point> centroids = new HashMap<Integer, Point>();
 
-        List<Cluster> clusters = new CopyOnWriteArrayList<Cluster>();
-
-        for (int i = 0; i < k; i++) {
-            centroids.add(firstFifty.get(i).coordinates);
-            clusters.add(i,new Cluster(centroids.get(i), new  CopyOnWriteArrayList<City>()));
+        AtomicInteger a = new AtomicInteger(k);
+        pool.invoke(new ParallelFor1(centroids, firstFifty, 0, k, a));
+        while( a.get() > 0 ) {
+            Thread.yield();
         }
 
-
+        Map<Integer, Cluster> clusters = new HashMap<Integer, Cluster>();
         for (int i=0; i<num_it; i++) {
-            // clusters = new CopyOnWriteArrayList<Cluster>();
+            clusters = new HashMap<Integer, Cluster>();
 
             // Creo n cluster vuoti (solo con i centroidi)
-            for (int w=0; w < centroids.size(); w++){
-                clusters.set(w, new Cluster(centroids.get(w), new CopyOnWriteArrayList<City>()));
-            }
+//            for(Map.Entry<Integer, Point> c : centroids.entrySet()) {
+//                clusters.put(c.getKey(), new Cluster(c.getValue(), new LinkedList<>()));
+//            }
 
-            AtomicInteger a = new AtomicInteger(n);
-            for (int j = 0; j < n; j++) {
-                final int integer = j;
-                pool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        int nearestCentroidIndex = 0;
-                            nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(integer), centroids);
-                        clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(integer));
-                        a.decrementAndGet();
-                    }
-                });
-            }
-
-            while( a.get() > 0 ) {
+            AtomicInteger b = new AtomicInteger(k);
+            pool.invoke(new ParallelFor2(clusters, centroids, 0, k, b));
+            while( b.get() > 0 ) {
                 Thread.yield();
+            }
+
+            // Trovo per ogni città il centroide più vicino
+            for(int j = 0; j < n; j++) {
+                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);
+                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));
             }
 
 
             // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
             for (int j = 0; j < k ; j++){
                 Point newCentroid = clusters.get(j).updateCentroid();
-                centroids.set(j, newCentroid);
+                centroids.put(j, newCentroid);
             }
         }
         return clusters;
