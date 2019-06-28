@@ -103,7 +103,7 @@ public class Main {
             for (double time: parallelTimeD1) {
                 System.out.print(time + " ");
             }
-            //double[] xData = new double[] { 0.0, 1.0, 2.0 , 3.0, 4.0, 5.0, 6.0};
+
             double[] yDataS=new double[7];
             for(int i=0; i< serialTimeD1.size(); i++) {
                 yDataS[i] = serialTimeD1.get(i);
@@ -118,51 +118,70 @@ public class Main {
             }
 
 
-// Create Chart
-            //XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)", xData, yDataD);
+            // Create Chart
             XYChart chart = new XYChartBuilder().width(800).height(600).title("Grafico").xAxisTitle("Numero di iterazioni").yAxisTitle("Tempo di esecuzione in ms").build();
             chart.addSeries("seriale", xData, yDataS);
             chart.addSeries("parallelo", xData, yDataD);
-// Show it
+            // Show it
             new SwingWrapper(chart).displayChart();
 
-// Save it
+            // Save it
             BitmapEncoder.saveBitmap(chart, "./Sample_Chart", BitmapEncoder.BitmapFormat.PNG);
 
-// or save it in high-res
-            BitmapEncoder.saveBitmapWithDPI(chart, "./Sample_Chart_300_DPI", BitmapEncoder.BitmapFormat.PNG, 300);
 
 
-//
-//            // DOMANDA 2
-//            ArrayList<Long> serialTimeD2 = new ArrayList<Long>();
-//            ArrayList<Long> parallelTimeD2 = new ArrayList<Long>();
-//
-//
-//            for (int kappa=10; kappa <101; kappa++) {
-//
-//                // Seriale
-//                long startD2S = System.currentTimeMillis();
-//                List<Cluster> D2S = kmeans.serialKMeans(citiesList, kappa, iter);
-//                long timeD2S = System.currentTimeMillis() - startD2S;
-//                serialTimeD2.add(timeD2S);
-//
-//                // Parallelo
-//                long startD2P = System.currentTimeMillis();
-//                List<Cluster> D2P = kmeans.parallelKMeans(citiesList, kappa, iter);
-//                long timeD2P = System.currentTimeMillis() - startD2P;
-//                parallelTimeD2.add(timeD2P);
-//            }
-//            System.out.println("\n\n~~~~ Domanda 2: variare del numero di cluster (sempre più grande)");
-//            System.out.print("KMeans seriale: \n\t");
-//            for (long time: serialTimeD2) {
-//                System.out.print(time + " ");
-//            }
-//            System.out.print("\nKMeans parallelo: \n\t");
-//            for (long time: parallelTimeD2) {
-//                System.out.print(time + " ");
-//            }
-//
+            // DOMANDA 2
+            ArrayList<Double> serialTimeD2 = new ArrayList<Double>();
+            ArrayList<Double> parallelTimeD2 = new ArrayList<Double>();
+
+            for (int kappa=10; kappa <101; kappa++) {
+                // Seriale
+                double startD2S = System.currentTimeMillis();
+                Map<Integer, Cluster> D2S = kmeans.serialKMeans(citiesList, k, iter);
+                double timeD2S = System.currentTimeMillis() - startD2S;
+                serialTimeD2.add(timeD2S);
+
+                // Parallelo
+                double startD2P = System.currentTimeMillis();
+                ConcurrentHashMap<Integer, Cluster> D2P = kmeans.parallelKMeans(citiesList, k, iter);
+                double timeD2P = System.currentTimeMillis() - startD2P;
+                parallelTimeD2.add(timeD2P);
+            }
+            System.out.println("\n\n~~~~ Domanda 2: variare del numero di cluster (sempre più grande)");
+            System.out.print("KMeans seriale: \n\t");
+            for (double time: serialTimeD2) {
+                System.out.print(time + " ");
+            }
+            System.out.print("\nKMeans parallelo: \n\t");
+            for (double time: parallelTimeD2) {
+                System.out.print(time + " ");
+            }
+
+            double[] yDataS2=new double[7];
+            for(int i=0; i< serialTimeD2.size(); i++) {
+                yDataS2[i] = serialTimeD2.get(i);
+            }
+            double[] yDataD2=new double[7];
+            for(int i=0; i< parallelTimeD2.size(); i++) {
+                yDataD2[i] = parallelTimeD2.get(i);
+            }
+            double[] xData2=new double[101];
+            for(int i=0; i< 101; i++) {
+                yDataD2[i] = i;
+            }
+
+            // Create Chart
+            XYChart chart2 = new XYChartBuilder().width(800).height(600).title("Grafico").xAxisTitle("Numero di iterazioni").yAxisTitle("Tempo di esecuzione in ms").build();
+            chart2.addSeries("seriale", xData2, yDataS2);
+            chart2.addSeries("parallelo", xData2, yDataD2);
+            // Show it
+            new SwingWrapper(chart2).displayChart();
+
+            // Save it
+            BitmapEncoder.saveBitmap(chart2, "./Sample_Chart", BitmapEncoder.BitmapFormat.PNG);
+
+
+
 //            // DOMANDA 3
 //            ArrayList<Long> serialTimeD3 = new ArrayList<Long>();
 //            ArrayList<Long> parallelTimeD3 = new ArrayList<Long>();
