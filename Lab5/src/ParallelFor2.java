@@ -1,13 +1,14 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class ParallelFor2 extends RecursiveAction {
 
     private Map<Integer, Cluster> arrayConteniore;
-    Map<Integer, Point> arrayDaAggiungere;
+    private Map<Integer, Point> arrayDaAggiungere;
     private int from;
     private int to;
     private AtomicInteger a;
@@ -37,7 +38,7 @@ class ParallelFor2 extends RecursiveAction {
 
     private void work(Map<Integer, Cluster> arrayConteniore, Map<Integer, Point> arrayDaAggiungere, int from, int to) {
         for (int j = from; j < to; j++) {
-            arrayConteniore.put(j, new Cluster(arrayDaAggiungere.get(j), new ArrayList<City>()));
+            arrayConteniore.put(j, new Cluster(arrayDaAggiungere.get(j), new CopyOnWriteArrayList<City>()));
             a.decrementAndGet();
         }
     }

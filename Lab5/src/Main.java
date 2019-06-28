@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
@@ -28,9 +29,9 @@ public class Main {
             threshold.add(50000);
             threshold.add(100000);
 
-            int k = 50;
+            int k = 100;
 
-            int iter = 1; // iterazioni
+            int iter = 100; // iterazioni
 
             citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
             Collections.reverse(citiesList);
@@ -46,17 +47,12 @@ public class Main {
             long timeS = System.currentTimeMillis() - startS;
             System.out.println(timeS);
 
-//            for(Map.Entry<Integer, Cluster> c : S.entrySet())
-//                System.out.println(c);
-
             // Parallelo
             long startP = System.currentTimeMillis();
-            Map<Integer, Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
+            ConcurrentHashMap<Integer, Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
             long timeP = System.currentTimeMillis() - startP;
             System.out.println(timeP);
 
-//            for(Map.Entry<Integer, Cluster> c1 : P.entrySet())
-//                System.out.println(c1);
 
             // DOMANDA 1
 //            ArrayList<Long> serialTimeD1 = new ArrayList<Long>();
@@ -166,7 +162,7 @@ public class Main {
 
         }
         catch(Exception e) {
-            System.out.println(e);
+            System.out.println("Errore grande: " + e);
         }
 
     }
