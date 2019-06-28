@@ -30,14 +30,14 @@ class ParallelFor2 extends RecursiveAction {
         } else {
             int mid = (from + to) / 2;
            invokeAll(new ParallelFor2(arrayConteniore, arrayDaAggiungere, from, mid, a),
-            new ParallelFor2(arrayConteniore, arrayDaAggiungere, mid+1, to, a));
+            new ParallelFor2(arrayConteniore, arrayDaAggiungere, mid, to, a));
         }
 
     }
 
-    private void work(Map<Integer, Cluster> arrayContenitore, Map<Integer, Point> arrayDaAggiungere, int from, int to) {
-        for (int j = from; j <= to; j++) {
-            arrayContenitore.put(j, new Cluster(arrayDaAggiungere.get(j), new ArrayList<City>()));
+    private void work(Map<Integer, Cluster> arrayConteniore, Map<Integer, Point> arrayDaAggiungere, int from, int to) {
+        for (int j = from; j < to; j++) {
+            arrayConteniore.put(j, new Cluster(arrayDaAggiungere.get(j), new ArrayList<City>()));
             a.decrementAndGet();
         }
     }

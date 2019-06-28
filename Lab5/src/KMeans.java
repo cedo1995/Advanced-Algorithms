@@ -96,7 +96,7 @@ class KMeans{
         List<City> firstFifty = cities.subList(0, k);
 
         // Creo la lista dei centroidi
-        Map<Integer, Point> centroids = new HashMap<Integer, Point>();
+        Map<Integer, Point> centroids = new ConcurrentHashMap<Integer, Point>();
 
         AtomicInteger a = new AtomicInteger(k);
         pool.invoke(new ParallelFor1(centroids, firstFifty, 0, k, a));
@@ -104,14 +104,10 @@ class KMeans{
             Thread.yield();
         }
 
-        Map<Integer, Cluster> clusters = new HashMap<Integer, Cluster>();
+        Map<Integer, Cluster> clusters = new ConcurrentHashMap<Integer, Cluster>();
         for (int i=0; i<num_it; i++) {
-            clusters = new HashMap<Integer, Cluster>();
+            clusters = new ConcurrentHashMap<Integer, Cluster>();
 
-            // Creo n cluster vuoti (solo con i centroidi)
-//            for(Map.Entry<Integer, Point> c : centroids.entrySet()) {
-//                clusters.put(c.getKey(), new Cluster(c.getValue(), new LinkedList<>()));
-//            }
 
             AtomicInteger b = new AtomicInteger(k);
             pool.invoke(new ParallelFor2(clusters, centroids, 0, k, b));
@@ -120,11 +116,16 @@ class KMeans{
             }
 
             // Trovo per ogni città il centroide più vicino
-            for(int j = 0; j < n; j++) {
-                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);
-                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));
+//            for(int j = 0; j < n; j++) {
+//                int nearestCentroidIndex = findNearestIndexOfCentroid(cities.get(j), centroids);
+//                clusters.get(nearestCentroidIndex).addElementToCluster(cities.get(j));
+//
+//            }
+            AtomicInteger c = new AtomicInteger(n);
+            pool.invoke(new ParallelFor3(clusters, centroids, cities, 0, n, c));
+            while( c.get() > 0 ) {
+                Thread.yield();
             }
-
 
             // Aggiorno tutti i centroidi dopo l'aggiunta degli elementi ai cluster
             for (int j = 0; j < k ; j++){

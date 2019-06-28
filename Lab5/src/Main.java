@@ -41,10 +41,10 @@ public class Main {
 
             //Prova
             // Seriale
-//            long startS = System.currentTimeMillis();
-//            Map<Integer, Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
-//            long timeS = System.currentTimeMillis() - startS;
-//            System.out.println(timeS);
+            long startS = System.currentTimeMillis();
+            Map<Integer, Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
+            long timeS = System.currentTimeMillis() - startS;
+            System.out.println(timeS);
 
 //            for(Map.Entry<Integer, Cluster> c : S.entrySet())
 //                System.out.println(c);
