@@ -29,7 +29,7 @@ public class Main {
             threshold.add(50000);
             threshold.add(100000);
 
-            int k = 100;
+            int k = 50;
 
             int iter = 100; // iterazioni
 
@@ -38,68 +38,67 @@ public class Main {
 
             KMeans kmeans = new KMeans();
 
-            //Map<Integer, Cluster> test = kmeans.serialKMeans(citiesList, k, iter);
+            Map<Integer, Cluster> test = kmeans.serialKMeans(citiesList, k, iter);
 
             //Prova
             // Seriale
-            long startS = System.currentTimeMillis();
-            Map<Integer, Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
-            long timeS = System.currentTimeMillis() - startS;
-            System.out.println(timeS);
-
-            // Parallelo
-            long startP = System.currentTimeMillis();
-            ConcurrentHashMap<Integer, Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
-            long timeP = System.currentTimeMillis() - startP;
-            System.out.println(timeP);
+//            long startS = System.currentTimeMillis();
+//            Map<Integer, Cluster> S = kmeans.serialKMeans(citiesList, k, iter);
+//            long timeS = System.currentTimeMillis() - startS;
+//            System.out.println(timeS);
+//
+//            // Parallelo
+//            long startP = System.currentTimeMillis();
+//            ConcurrentHashMap<Integer, Cluster> P = kmeans.parallelKMeans(citiesList, k, iter);
+//            long timeP = System.currentTimeMillis() - startP;
+//            System.out.println(timeP);
 
 
             // DOMANDA 1
-//            ArrayList<Long> serialTimeD1 = new ArrayList<Long>();
-//            ArrayList<Long> parallelTimeD1 = new ArrayList<Long>();
-//
-//            // Ordinamento città
-//            citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
-//            Collections.reverse(citiesList);
-//            int index_threshold = citiesList.size();
-//
-//            List<City> cities = new ArrayList<>(citiesList);
-//            List<Cluster> test = kmeans.serialKMeans(cities, k, iter);
-//            for (int tr: threshold) {
-//
-//                if(tr != -1) {
-//                    for (int i = 0; i < citiesList.size(); i++) {
-//                        if ((tr != -1) && citiesList.get(i).getPopulation() < tr) {
-//                            index_threshold = i;
-//                            break;
-//                        }
-//                    }
-//                    cities = citiesList.subList(0, index_threshold);
-//                }
-//
-//                // Seriale
-//                long startD1S = System.currentTimeMillis();
-//                List<Cluster> D1S = kmeans.serialKMeans(cities, k, iter);
-//                long timeD1S = System.currentTimeMillis() - startD1S;
-//                serialTimeD1.add(timeD1S);
-//
-//                // Parallelo
-//                long startD1P = System.currentTimeMillis();
-//                List<Cluster> D1P = kmeans.parallelKMeans(cities, k, iter);
-//                long timeD1P = System.currentTimeMillis() - startD1P;
-//                parallelTimeD1.add(timeD1P);
-//            }
-//            System.out.println("~~~~ Domanda 1: variare del dataset (sempre più piccolo)");
-//            System.out.print("KMeans seriale: \n\t");
-//            for (long time: serialTimeD1) {
-//                System.out.print(time + " ");
-//            }
-//            System.out.print("\nKMeans parallelo: \n\t");
-//            for (long time: parallelTimeD1) {
-//                System.out.print(time + " ");
-//            }
-//
-//
+            ArrayList<Long> serialTimeD1 = new ArrayList<Long>();
+            ArrayList<Long> parallelTimeD1 = new ArrayList<Long>();
+
+            // Ordinamento città
+            citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
+            Collections.reverse(citiesList);
+            int index_threshold = citiesList.size();
+
+            List<City> cities = new ArrayList<>(citiesList);
+            for (int tr: threshold) {
+
+                if(tr != -1) {
+                    for (int i = 0; i < citiesList.size(); i++) {
+                        if ((tr != -1) && citiesList.get(i).getPopulation() < tr) {
+                            index_threshold = i;
+                            break;
+                        }
+                    }
+                    cities = citiesList.subList(0, index_threshold);
+                }
+
+                // Seriale
+                long startD1S = System.currentTimeMillis();
+                Map<Integer, Cluster> D1S = kmeans.serialKMeans(cities, k, iter);
+                long timeD1S = System.currentTimeMillis() - startD1S;
+                serialTimeD1.add(timeD1S);
+
+                // Parallelo
+                long startD1P = System.currentTimeMillis();
+                ConcurrentHashMap<Integer, Cluster> P = kmeans.parallelKMeans(cities, k, iter);
+                long timeD1P = System.currentTimeMillis() - startD1P;
+                parallelTimeD1.add(timeD1P);
+            }
+            System.out.println("~~~~ Domanda 1: variare del dataset (sempre più piccolo)");
+            System.out.print("KMeans seriale: \n\t");
+            for (long time: serialTimeD1) {
+                System.out.print(time + " ");
+            }
+            System.out.print("\nKMeans parallelo: \n\t");
+            for (long time: parallelTimeD1) {
+                System.out.print(time + " ");
+            }
+
+
 //
 //            // DOMANDA 2
 //            ArrayList<Long> serialTimeD2 = new ArrayList<Long>();
