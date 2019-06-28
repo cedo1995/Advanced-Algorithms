@@ -1,8 +1,12 @@
+import org.knowm.xchart.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
+
+
 
 public class Main {
 
@@ -55,8 +59,8 @@ public class Main {
 
 
             // DOMANDA 1
-            ArrayList<Long> serialTimeD1 = new ArrayList<Long>();
-            ArrayList<Long> parallelTimeD1 = new ArrayList<Long>();
+            ArrayList<Double> serialTimeD1 = new ArrayList<Double>();
+            ArrayList<Double> parallelTimeD1 = new ArrayList<Double>();
 
             // Ordinamento città
             citiesList.sort((a, b)-> a.getPopulation() - b.getPopulation());
@@ -64,6 +68,8 @@ public class Main {
             int index_threshold = citiesList.size();
 
             List<City> cities = new ArrayList<>(citiesList);
+
+            ArrayList<Double> numero_citta = new ArrayList<>();
             for (int tr: threshold) {
 
                 if(tr != -1) {
@@ -75,28 +81,56 @@ public class Main {
                     }
                     cities = citiesList.subList(0, index_threshold);
                 }
-
+                numero_citta.add((double)cities.size());
                 // Seriale
-                long startD1S = System.currentTimeMillis();
+                double startD1S = System.currentTimeMillis();
                 Map<Integer, Cluster> D1S = kmeans.serialKMeans(cities, k, iter);
-                long timeD1S = System.currentTimeMillis() - startD1S;
+                double timeD1S = System.currentTimeMillis() - startD1S;
                 serialTimeD1.add(timeD1S);
 
                 // Parallelo
-                long startD1P = System.currentTimeMillis();
+                double startD1P = System.currentTimeMillis();
                 ConcurrentHashMap<Integer, Cluster> P = kmeans.parallelKMeans(cities, k, iter);
-                long timeD1P = System.currentTimeMillis() - startD1P;
+                double timeD1P = System.currentTimeMillis() - startD1P;
                 parallelTimeD1.add(timeD1P);
             }
             System.out.println("~~~~ Domanda 1: variare del dataset (sempre più piccolo)");
             System.out.print("KMeans seriale: \n\t");
-            for (long time: serialTimeD1) {
+            for (double time: serialTimeD1) {
                 System.out.print(time + " ");
             }
             System.out.print("\nKMeans parallelo: \n\t");
-            for (long time: parallelTimeD1) {
+            for (double time: parallelTimeD1) {
                 System.out.print(time + " ");
             }
+            //double[] xData = new double[] { 0.0, 1.0, 2.0 , 3.0, 4.0, 5.0, 6.0};
+            double[] yDataS=new double[7];
+            for(int i=0; i< serialTimeD1.size(); i++) {
+                yDataS[i] = serialTimeD1.get(i);
+            }
+            double[] yDataD=new double[7];
+            for(int i=0; i< parallelTimeD1.size(); i++) {
+                yDataD[i] = parallelTimeD1.get(i);
+            }
+            double[] xData=new double[7];
+            for(int i=0; i< parallelTimeD1.size(); i++) {
+                xData[i] = numero_citta.get(i);
+            }
+
+
+// Create Chart
+            //XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)", xData, yDataD);
+            XYChart chart = new XYChartBuilder().width(800).height(600).title("Grafico").xAxisTitle("Numero di iterazioni").yAxisTitle("Tempo di esecuzione in ms").build();
+            chart.addSeries("seriale", xData, yDataS);
+            chart.addSeries("parallelo", xData, yDataD);
+// Show it
+            new SwingWrapper(chart).displayChart();
+
+// Save it
+            BitmapEncoder.saveBitmap(chart, "./Sample_Chart", BitmapEncoder.BitmapFormat.PNG);
+
+// or save it in high-res
+            BitmapEncoder.saveBitmapWithDPI(chart, "./Sample_Chart_300_DPI", BitmapEncoder.BitmapFormat.PNG, 300);
 
 
 //
