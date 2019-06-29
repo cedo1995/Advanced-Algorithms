@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.RecursiveAction;
@@ -12,26 +10,26 @@ class ParallelFor2 extends RecursiveAction {
     private int from;
     private int to;
     private AtomicInteger a;
+    private int cutoff ;
 
-    public final static int TASK_LEN = 20;
-
-    public ParallelFor2(Map<Integer, Cluster> arrayConteniore, Map<Integer, Point> arrayDaAggiungere, int from, int to, AtomicInteger a) {
+    public ParallelFor2(Map<Integer, Cluster> arrayConteniore, Map<Integer, Point> arrayDaAggiungere, int from, int to, AtomicInteger a, int cutoff) {
         this.arrayConteniore = arrayConteniore;
         this.arrayDaAggiungere = arrayDaAggiungere;
         this.from = from;
         this.to = to;
         this.a = a;
+        this.cutoff = cutoff;
     }
 
     @Override
     protected void compute() {
         int len = to - from;
-        if (len < TASK_LEN) {
+        if (len < cutoff) {
             work(arrayConteniore, arrayDaAggiungere, from, to);
         } else {
             int mid = (from + to) / 2;
-           invokeAll(new ParallelFor2(arrayConteniore, arrayDaAggiungere, from, mid, a),
-            new ParallelFor2(arrayConteniore, arrayDaAggiungere, mid, to, a));
+           invokeAll(new ParallelFor2(arrayConteniore, arrayDaAggiungere, from, mid, a, cutoff),
+            new ParallelFor2(arrayConteniore, arrayDaAggiungere, mid, to, a, cutoff));
         }
 
     }

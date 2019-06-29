@@ -55,40 +55,8 @@ class KMeans{
         return indexMinCentroid;
     }
 
-    private int findNearestIndexOfCentroidWow(City nodo, List<Point> centroids) throws InterruptedException {
-        ForkJoinPool pool = new ForkJoinPool();
-        CountDownLatch c = new CountDownLatch(centroids.size());
-        AtomicInteger b = new AtomicInteger(centroids.size());
 
-        ConcurrentLinkedQueue<ArrayList<Double>> distances = new ConcurrentLinkedQueue<ArrayList<Double>>();
-
-        for (int a = 0; a < centroids.size(); a++) {
-            final int index = a;
-            pool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    ArrayList<Double> array = new ArrayList<Double>();
-                    array.add((double)index);
-                    array.add(centroids.get(index).getDistance(nodo.coordinates));
-                    distances.add(array);
-                    b.decrementAndGet();
-                }
-            });
-        }
-        //c.await();
-        while( b.get() > 0 ) {
-            Thread.yield();
-        }
-
-        ArrayList<Double> min = null;
-        for(ArrayList<Double> d : distances)
-        {
-            min = (min==null|| d.get(0)<min.get(0)?d:min);
-        }
-        return min.get(0).intValue();
-    }
-
-    public ConcurrentHashMap<Integer, Cluster> parallelKMeans(List<City> cities, int k, int num_it) {
+    public ConcurrentHashMap<Integer, Cluster> parallelKMeans(List<City> cities, int k, int num_it, int cutoff) {
         ForkJoinPool pool = new ForkJoinPool();
 
         int n = cities.size();
@@ -99,7 +67,7 @@ class KMeans{
         ConcurrentHashMap<Integer, Point> centroids = new ConcurrentHashMap<Integer, Point>();
 
         AtomicInteger a = new AtomicInteger(k);
-        pool.invoke(new ParallelFor1(centroids, firstFifty, 0, k, a));
+        pool.invoke(new ParallelFor1(centroids, firstFifty, 0, k, a, cutoff));
         while( a.get() > 0 ) {
             Thread.yield();
         }
@@ -109,14 +77,14 @@ class KMeans{
             clusters = new ConcurrentHashMap<Integer, Cluster>();
 
             AtomicInteger b = new AtomicInteger(k);
-            pool.invoke(new ParallelFor2(clusters, centroids, 0, k, b));
+            pool.invoke(new ParallelFor2(clusters, centroids, 0, k, b, cutoff));
             while (b.get() > 0) {
                 Thread.yield();
             }
 
 
             AtomicInteger c = new AtomicInteger(n);
-            pool.invoke(new ParallelFor3(clusters, centroids, cities, 0, n, c));
+            pool.invoke(new ParallelFor3(clusters, centroids, cities, 0, n, c, cutoff));
             while (c.get() > 0) {
                 Thread.yield();
             }

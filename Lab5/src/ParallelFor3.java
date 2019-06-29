@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,45 +12,35 @@ class ParallelFor3 extends RecursiveAction {
     private int from;
     private int to;
     private AtomicInteger a;
+    private int cutoff ;
 
-    public final static int TASK_LEN = 20;
-
-    public ParallelFor3(ConcurrentHashMap<Integer, Cluster> arrayConteniore, ConcurrentHashMap<Integer, Point> arrayDaAggiungere, List<City> arrayCity, int from, int to, AtomicInteger a) {
+    public ParallelFor3(ConcurrentHashMap<Integer, Cluster> arrayConteniore, ConcurrentHashMap<Integer, Point> arrayDaAggiungere, List<City> arrayCity, int from, int to, AtomicInteger a, int cutoff) {
         this.arrayConteniore = arrayConteniore;
         this.arrayDaAggiungere = arrayDaAggiungere;
         this.arrayCity = arrayCity;
         this.from = from;
         this.to = to;
         this.a = a;
+        this.cutoff = cutoff;
     }
 
     @Override
     protected void compute() {
         int len = to - from;
-        if (len < TASK_LEN) {
+        if (len < cutoff) {
             work(arrayConteniore, arrayDaAggiungere, arrayCity, from, to);
         } else {
             int mid = (from + to) / 2;
-            invokeAll(new ParallelFor3(arrayConteniore, arrayDaAggiungere, arrayCity, from, mid, a),
-                    new ParallelFor3(arrayConteniore, arrayDaAggiungere, arrayCity, mid, to, a));
+            invokeAll(new ParallelFor3(arrayConteniore, arrayDaAggiungere, arrayCity, from, mid, a, cutoff),
+                    new ParallelFor3(arrayConteniore, arrayDaAggiungere, arrayCity, mid, to, a, cutoff));
         }
 
     }
 
     private void work(ConcurrentHashMap<Integer, Cluster> arrayConteniore, ConcurrentHashMap<Integer, Point> arrayDaAggiungere, List<City> arrayCity, int from, int to) {
         for (int j = from; j < to; j++) {
-            try {
-                int nearestCentroidIndex = findNearestIndexOfCentroid(arrayCity.get(j), arrayDaAggiungere);
-                double i = arrayCity.get(j).coordinates.x;
-                if(arrayCity.get(j).coordinates == null) {
-                    System.out.println("CICCIO");
-                }
-                arrayConteniore.get(nearestCentroidIndex).addElementToCluster(arrayCity.get(j));
-            }
-            catch (Exception e) {
-                System.out.println(e + "ewgregerg");
-            }
-//
+            int nearestCentroidIndex = findNearestIndexOfCentroid(arrayCity.get(j), arrayDaAggiungere);
+            arrayConteniore.get(nearestCentroidIndex).addElementToCluster(arrayCity.get(j));
             a.decrementAndGet();
         }
     }
