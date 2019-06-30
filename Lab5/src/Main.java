@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.lang.Math;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -100,6 +101,7 @@ public class Main {
 
 
             // DOMANDA 1
+            /*
             ArrayList<Double> serialTimeD1 = new ArrayList<Double>();
             ArrayList<Double> parallelTimeD1 = new ArrayList<Double>();
 
@@ -135,6 +137,13 @@ public class Main {
                 double timeD1P = System.currentTimeMillis() - startD1P;
                 parallelTimeD1.add(timeD1P);
             }
+            double sum = 0;
+            for(int i=0; i<serialTimeD1.size(); i++){
+                sum = sum + (serialTimeD1.get(i) / parallelTimeD1.get(i));
+                System.out.println("Speed up: "+numero_citta.get(i)+"\t"+serialTimeD1.get(i)/parallelTimeD1.get(i));
+            }
+            double speedUp = sum/serialTimeD1.size();
+            System.out.println("SpeedUp: " + speedUp);
 
             stampaTerminale("Domanda 1: variare del numero di città", serialTimeD1, parallelTimeD1);
             stampaGrafico("Domanda 1", "Numero di città", serialTimeD1, parallelTimeD1, numero_citta);
@@ -160,17 +169,24 @@ public class Main {
                 double timeD2P = System.currentTimeMillis() - startD2P;
                 parallelTimeD2.add(timeD2P);
             }
+            double sum=0;
+            for(int i=0; i<serialTimeD2.size(); i++){
+                sum = sum + (serialTimeD2.get(i) / parallelTimeD2.get(i));
+                System.out.println("Speed up: "+numero_cluster.get(i)+"\t"+serialTimeD2.get(i)/parallelTimeD2.get(i));
+            }
+            double speedUp = sum/serialTimeD2.size();
+            System.out.println("SpeedUp: " + speedUp);
 
             stampaTerminale("Domanda 2: variare del numero di cluster", serialTimeD2, parallelTimeD2);
             stampaGrafico("Domanda 2", "Numero di cluster", serialTimeD2, parallelTimeD2, numero_cluster);
 
-
+            */
             // DOMANDA 3
             ArrayList<Double> serialTimeD3 = new ArrayList<Double>();
             ArrayList<Double> parallelTimeD3 = new ArrayList<Double>();
             ArrayList<Double> numero_iterazioni = new ArrayList<Double>();
 
-            for (int iterazioni=10;  iterazioni<1000; iterazioni++) {
+            for (int iterazioni=10;  iterazioni<1000; iterazioni+=10) {
                 numero_iterazioni.add((double)iterazioni);
 
                 // Seriale
@@ -186,6 +202,13 @@ public class Main {
                 parallelTimeD3.add(timeD3P);
             }
 
+            double sum=0;
+            for(int i=0; i<serialTimeD3.size(); i++){
+                sum = sum + (serialTimeD3.get(i) / parallelTimeD3.get(i));
+                System.out.println("Speed up: "+citiesList.get(i)+"\t"+serialTimeD3.get(i)/parallelTimeD3.get(i));
+            }
+            double speedUp = sum/serialTimeD3.size();
+            System.out.println("SpeedUp: " + speedUp);
             stampaTerminale("Domanda 3: variare del numero di iterazioni", serialTimeD3, parallelTimeD3);
             stampaGrafico("Domanda 3", "Numero di iterazioni", serialTimeD3, parallelTimeD3, numero_iterazioni);
 
