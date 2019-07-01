@@ -64,6 +64,14 @@ public class Main {
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
+                int deg = (int)(Double.parseDouble(values[3]));      // tronca all'intero
+                double min = Float.parseFloat(values[3]) - deg;
+                double rad_x= Math.PI * (deg + 5.0 * min / 3.0) / 180.0;    //calcolo coordinata x
+                values[3] = ""+rad_x;
+                deg = (int)(Double.parseDouble(values[4]));
+                min = Float.parseFloat(values[4]) - deg;
+                double rad_y = Math.PI * (deg + 5.0 * min / 3.0) / 180.0;    // calcolo coordinata y
+                values[4] = ""+rad_y;
                 City city = new City(values);
                 citiesList.add(city);
             }
@@ -101,7 +109,7 @@ public class Main {
 
 
             // DOMANDA 1
-            /*
+
             ArrayList<Double> serialTimeD1 = new ArrayList<Double>();
             ArrayList<Double> parallelTimeD1 = new ArrayList<Double>();
 
@@ -169,18 +177,18 @@ public class Main {
                 double timeD2P = System.currentTimeMillis() - startD2P;
                 parallelTimeD2.add(timeD2P);
             }
-            double sum=0;
+            sum=0;
             for(int i=0; i<serialTimeD2.size(); i++){
                 sum = sum + (serialTimeD2.get(i) / parallelTimeD2.get(i));
                 System.out.println("Speed up: "+numero_cluster.get(i)+"\t"+serialTimeD2.get(i)/parallelTimeD2.get(i));
             }
-            double speedUp = sum/serialTimeD2.size();
+            speedUp = sum/serialTimeD2.size();
             System.out.println("SpeedUp: " + speedUp);
 
             stampaTerminale("Domanda 2: variare del numero di cluster", serialTimeD2, parallelTimeD2);
             stampaGrafico("Domanda 2", "Numero di cluster", serialTimeD2, parallelTimeD2, numero_cluster);
 
-            */
+
             // DOMANDA 3
             ArrayList<Double> serialTimeD3 = new ArrayList<Double>();
             ArrayList<Double> parallelTimeD3 = new ArrayList<Double>();
@@ -202,12 +210,12 @@ public class Main {
                 parallelTimeD3.add(timeD3P);
             }
 
-            double sum=0;
+            sum=0;
             for(int i=0; i<serialTimeD3.size(); i++){
                 sum = sum + (serialTimeD3.get(i) / parallelTimeD3.get(i));
-                System.out.println("Speed up: "+citiesList.get(i)+"\t"+serialTimeD3.get(i)/parallelTimeD3.get(i));
+                System.out.println("Speed up: "+(int)((i*10)+10) +"\t"+serialTimeD3.get(i)/parallelTimeD3.get(i));
             }
-            double speedUp = sum/serialTimeD3.size();
+            speedUp = sum/serialTimeD3.size();
             System.out.println("SpeedUp: " + speedUp);
             stampaTerminale("Domanda 3: variare del numero di iterazioni", serialTimeD3, parallelTimeD3);
             stampaGrafico("Domanda 3", "Numero di iterazioni", serialTimeD3, parallelTimeD3, numero_iterazioni);
